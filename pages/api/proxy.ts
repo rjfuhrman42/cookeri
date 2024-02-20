@@ -48,6 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('Fetching data from:', url);
     const response = await fetch(url as string);
     const data = await response.text(); 
+    
     console.log(data.length)
     res.status(200).send(`${data}`);
   } catch (error) {

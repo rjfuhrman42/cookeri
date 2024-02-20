@@ -1,3 +1,4 @@
+import { JsonLdDocument, JsonLdProcessor } from "jsonld";
 import React from "react";
 
 type Props = {
@@ -11,7 +12,18 @@ function ImportBar({ url, setUrl }: Props) {
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
       const data = await res.text();
-      console.log("res", data);
+
+      const parser = new DOMParser();
+      // const reg = /<script type="application\/ld\+json">([^;]*)<\/script>/gm
+      const temp_doc = parser.parseFromString(data, "text/html");
+      const el = temp_doc.querySelector('script[type="application/ld+json"]');
+
+      // Use the JSON-LD processor to expand the document
+      const compact = await JsonLdProcessor.compact(
+        el?.innerHTML as JsonLdDocument,
+        {}
+      );
+      console.log("res", data.length, compact);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
