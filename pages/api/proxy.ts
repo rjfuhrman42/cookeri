@@ -44,11 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await runMiddleware(req, res, cors);
     
     if(!url)  return res.status(400).send('No URL provided');
-    
     console.log('Fetching data from:', url);
     const response = await fetch(url as string);
     const data = await response.text(); 
-    
+ 
     console.log(data.length)
     res.status(200).send(`${data}`);
   } catch (error) {

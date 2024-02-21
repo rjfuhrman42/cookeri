@@ -14,16 +14,23 @@ function ImportBar({ url, setUrl }: Props) {
       const data = await res.text();
 
       const parser = new DOMParser();
-      // const reg = /<script type="application\/ld\+json">([^;]*)<\/script>/gm
+
       const temp_doc = parser.parseFromString(data, "text/html");
       const el = temp_doc.querySelector('script[type="application/ld+json"]');
 
-      // Use the JSON-LD processor to expand the document
-      const compact = await JsonLdProcessor.compact(
-        el?.innerHTML as JsonLdDocument,
-        {}
-      );
-      console.log("res", data.length, compact);
+      /* TODO: Handle cases where there is no JSON-LD
+         For now, skip over the JSON-LD parsing portion and return */
+      if (el === null) return;
+
+      // Search for the Recipe @type and parse it
+      const json = JSON.parse(el?.innerHTML as string);
+      json["@graph"].forEach((item: any) => {
+        if (item["@type"] === "Recipe") {
+          console.log(item);
+        }
+      });
+
+      console.log("res", data.length);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
