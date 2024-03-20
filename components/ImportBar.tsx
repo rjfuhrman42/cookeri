@@ -1,18 +1,18 @@
-import { JsonLdDocument, JsonLdProcessor } from "jsonld";
 import React from "react";
 
 type Props = {
   url: string;
   setUrl: (url: string) => void;
+  setData: (data: string) => void;
 };
 
-function ImportBar({ url, setUrl }: Props) {
+function ImportBar({ url, setUrl, setData }: Props) {
   async function importData() {
     if (url.length <= 0) return;
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
       const data = await res.text();
-
+      console.log(data);
       const parser = new DOMParser();
 
       const temp_doc = parser.parseFromString(data, "text/html");
@@ -24,12 +24,13 @@ function ImportBar({ url, setUrl }: Props) {
 
       // Search for the Recipe @type and parse it
       const json = JSON.parse(el?.innerHTML as string);
-      json["@graph"].forEach((item: any) => {
+      const metaData = json["@graph"].map((item: any) => {
         if (item["@type"] === "Recipe") {
           console.log(item);
+          return item;
         }
       });
-
+      setData(metaData);
       console.log("res", data.length);
     } catch (error) {
       console.error("Error fetching data:", error);
