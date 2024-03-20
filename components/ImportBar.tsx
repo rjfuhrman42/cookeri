@@ -3,15 +3,35 @@ import React from "react";
 type Props = {
   url: string;
   setUrl: (url: string) => void;
+  setData: (data: string) => void;
 };
 
-function ImportBar({ url, setUrl }: Props) {
+function ImportBar({ url, setUrl, setData }: Props) {
   async function importData() {
     if (url.length <= 0) return;
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
       const data = await res.text();
-      console.log("res", data);
+      console.log(data);
+      const parser = new DOMParser();
+
+      const temp_doc = parser.parseFromString(data, "text/html");
+      const el = temp_doc.querySelector('script[type="application/ld+json"]');
+
+      /* TODO: Handle cases where there is no JSON-LD
+         For now, skip over the JSON-LD parsing portion and return */
+      if (el === null) return;
+
+      // Search for the Recipe @type and parse it
+      const json = JSON.parse(el?.innerHTML as string);
+      const metaData = json["@graph"].map((item: any) => {
+        if (item["@type"] === "Recipe") {
+          console.log(item);
+          return item;
+        }
+      });
+      setData(metaData);
+      console.log("res", data.length);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

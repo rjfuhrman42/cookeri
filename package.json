@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/jsonld": "^1.5.13",
     "cors": "^2.8.5",
+    "jsonld": "^8.3.2",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18"
