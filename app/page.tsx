@@ -2,10 +2,11 @@
 
 import ImportBar from "@/components/ImportBar";
 import { useState } from "react";
+import { Recipe } from "schema-dts";
 
 export default function Home() {
   const [url, setUrl] = useState("");
-  const [data, setData] = useState("");
+  const [data, setData] = useState<Recipe | undefined>();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
