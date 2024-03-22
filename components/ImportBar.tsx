@@ -52,10 +52,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
         }
       })[0];
 
-      console.log("recipeData", recipeData.recipeIngredient);
-
       setData(recipeData);
-      console.log("res", data.length);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
