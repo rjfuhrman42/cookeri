@@ -65,7 +65,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className="bg-white p-2 w-[40rem] text-black"
+          className="border p-2 w-[40rem] text-black"
         />
         <button onClick={() => importData()} className="bg-green-400 px-4 py-2">
           IMPORT
