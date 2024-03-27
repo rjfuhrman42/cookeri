@@ -1,6 +1,11 @@
 import Image from "next/image";
 import React from "react";
 import { Recipe, HowToStep, HowToSection } from "schema-dts";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 type Props = {
   recipe: Recipe | undefined;
@@ -8,10 +13,11 @@ type Props = {
 
 /*
 
-    Todos for later:
+    Todos:
     [] Handle when text contains character references like &#39; and &amp;
+    [] Don't show properties that are not provided (Author, Prep, Cook, etc.)
 
-  */
+*/
 
 function RecipeViewer({ recipe }: Props) {
   const {
@@ -40,7 +46,9 @@ function RecipeViewer({ recipe }: Props) {
 
   const authorDetails = author as { name: string } | undefined;
 
-  console.log(Date.parse(prepTime as string));
+  const prep = dayjs.duration(prepTime as string).humanize();
+  const cook = dayjs.duration(cookTime as string).humanize();
+  const total = dayjs.duration(totalTime as string).humanize();
 
   return (
     <>
@@ -50,10 +58,12 @@ function RecipeViewer({ recipe }: Props) {
           <div className="flex flex-row h-[400px]">
             <div className="bg-cookeri-green-light p-8 flex-1">
               <div className="pb-12">
-                <h3 className="">Author: {authorDetails?.name}</h3>
-                <h3 className="">Prep: {prepTime}</h3>
-                <h3 className="">Cook: {cookTime}</h3>
-                <h3 className="">Total: {totalTime}</h3>
+                {authorDetails?.name && (
+                  <h3 className="">Author: {authorDetails?.name}</h3>
+                )}
+                <h3 className="">Prep: {prep}</h3>
+                <h3 className="">Cook: {cook}</h3>
+                <h3 className="">Total: {total}</h3>
               </div>
               <p>{description?.toString()}</p>
             </div>

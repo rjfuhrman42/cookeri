@@ -11,7 +11,7 @@ type Props = {
 function ImportBar({ url, setUrl, setData }: Props) {
   /*
 
-    Notes for later:
+    Todos:
     [] Handle when calls to sites are blocked by firewall
     [] Handle when sites do not use JSON-LD or follow expected pattern
 
