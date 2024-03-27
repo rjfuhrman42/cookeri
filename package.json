@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/jsonld": "^1.5.13",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
     "jsonld": "^8.3.2",
     "next": "14.1.0",
     "react": "^18",
