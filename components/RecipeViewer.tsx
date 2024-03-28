@@ -47,9 +47,22 @@ function RecipeViewer({ recipe }: Props) {
 
   const authorDetails = author as { name: string } | undefined;
 
-  const prep = dayjs.duration(prepTime as string).humanize();
-  const cook = dayjs.duration(cookTime as string).humanize();
-  const total = dayjs.duration(totalTime as string).humanize();
+  const prep = getNeatDuration(prepTime as string);
+  const cook = getNeatDuration(cookTime as string);
+  const total = getNeatDuration(totalTime as string);
+
+  function getNeatDuration(duration: string) {
+    const durationObj = dayjs.duration(duration);
+
+    const hoursTotal = durationObj.asHours();
+    const hours = Math.floor(hoursTotal);
+    const minutes = Math.round((hoursTotal - hours) * 60);
+
+    const hoursString = hours > 0 ? `${hours} hr` : "";
+    const minutesString = minutes > 0 ? `${minutes} min` : "";
+
+    return `${hoursString} ${minutesString}`;
+  }
 
   return (
     <>
