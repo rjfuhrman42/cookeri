@@ -1,6 +1,8 @@
 import { Recipe } from "schema-dts";
 
 import React from "react";
+import { Button } from "@nextui-org/button";
+import { ImportIcon } from "./icons";
 
 type Props = {
   url: string;
@@ -14,6 +16,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     Todos:
     [] Handle when calls to sites are blocked by firewall
     [] Handle when sites do not use JSON-LD or follow expected pattern
+    [] Better error handling (define what this means)
 
   */
 
@@ -22,7 +25,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
       const data = await res.text();
-      // console.log(data);
+
       const parser = new DOMParser();
 
       const temp_doc = parser.parseFromString(data, "text/html");
@@ -59,19 +62,23 @@ function ImportBar({ url, setUrl, setData }: Props) {
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-4 z-10 max-w-5xl w-full items-center justify-center font-mono text-sm">
-        <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="border p-2 w-[40rem] text-black"
-        />
-        <button onClick={() => importData()} className="bg-green-400 px-4 py-2">
-          IMPORT
-        </button>
-      </div>
-    </>
+    <div className="w-full flex flex-col gap-4 z-10 items-center justify-center font-mono text-sm">
+      <input
+        type="text"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        className="w-full border p-2 text-black"
+      />
+      <Button
+        className="font-league-spartan text-lg text-white w-full px-4"
+        onClick={() => importData()}
+        size="md"
+        color="success"
+        endContent={<ImportIcon stroke="white" />}
+      >
+        Import
+      </Button>
+    </div>
   );
 }
 
