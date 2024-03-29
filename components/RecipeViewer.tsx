@@ -67,9 +67,9 @@ function RecipeViewer({ recipe }: Props) {
   return (
     <>
       {recipe ? (
-        <div className="flex flex-col gap-y-12 pt-20 w-full lg:max-w-[875px]">
+        <div className="flex flex-col gap-y-12 pt-20 w-full lg:max-w-[1000px]">
           <h1 className="text-3xl font-bold text-center">{name?.toString()}</h1>
-          <div className="flex flex-col md:flex-row h-[400px]">
+          <div className="flex flex-col sm:flex-row h-[500px]">
             <div className="bg-cookeri-green-light p-8 flex-1">
               <div className="flex flex-col pb-8 gap-y-2">
                 {authorDetails?.name && (
@@ -106,12 +106,12 @@ function RecipeViewer({ recipe }: Props) {
               </div>
             )}
           </div>
-          <div className="flex flex-col md:flex-row gap-x-8">
+          <div className="flex flex-col sm:flex-row gap-x-8">
             <div className="flex flex-col flex-1">
               <h2 className="text-2xl my-4 font-bold">Ingredients</h2>
               <ul>
                 {ingredients?.map((ingredient, index) => (
-                  <li className="py-2" key={index}>
+                  <li className="py-2 md:pr-24" key={index}>
                     {ingredient}
                   </li>
                 ))}

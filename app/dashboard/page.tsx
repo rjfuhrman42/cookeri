@@ -10,7 +10,7 @@ export default function DashBoard() {
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-4 md:p-24">
+    <main className="flex min-h-screen flex-col items-center justify-start p-4 xl:p-24">
       <ImportBar url={url} setUrl={setUrl} setData={setCurrentRecipe} />
       <RecipeViewer recipe={currentRecipe} />
     </main>
