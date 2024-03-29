@@ -1,8 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Gluten, League_Spartan } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const gluten = Gluten({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-gluten",
+});
+
+const league_spartan = League_Spartan({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-league-spartan",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={`${gluten.variable} ${league_spartan.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
