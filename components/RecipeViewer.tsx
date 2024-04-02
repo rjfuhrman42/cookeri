@@ -63,7 +63,7 @@ function RecipeViewer({ recipe }: Props) {
   }
 
   return (
-    <div className="h-full overflow-scroll w-full">
+    <div className="h-full w-full overflow-scroll bg-white">
       {recipe ? (
         <div className="flex items-center justify-center">
           <article className="flex flex-col gap-y-12 py-20 w-full lg:max-w-[1000px]">

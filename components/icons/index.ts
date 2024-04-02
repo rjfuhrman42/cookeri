@@ -1,1 +1,6 @@
 export { default as ImportIcon } from './Import'
+export { default as ArrowLeftIcon } from './ArrowLeft'
+export { default as CloseCircleIcon } from './CloseCircle'
+export { default as MaximizeIcon } from './Maximize'
+export { default as EditIcon } from './Edit'
+export { default as SaveIcon } from './Save'

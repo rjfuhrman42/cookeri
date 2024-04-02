@@ -3,6 +3,7 @@ import { Recipe } from "schema-dts";
 import React from "react";
 import { Button } from "@nextui-org/button";
 import { ImportIcon } from "./icons";
+import { Input } from "@nextui-org/input";
 
 type Props = {
   url: string;
@@ -62,22 +63,33 @@ function ImportBar({ url, setUrl, setData }: Props) {
   }
 
   return (
-    <div className="w-full flex flex-col gap-4 z-10 items-center justify-center font-mono text-sm">
-      <input
-        type="text"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        className="w-full border p-2 text-black"
-      />
-      <Button
-        className="font-league-spartan text-lg text-white w-full px-4"
-        onClick={() => importData()}
-        size="md"
-        color="success"
-        endContent={<ImportIcon stroke="white" />}
-      >
-        Import
-      </Button>
+    <div className="w-full flex flex-col gap-8 z-10 items-center justify-center text-sm">
+      <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
+        <label
+          htmlFor="recipe-import"
+          className="font-league-spartan text-lg text-left w-full pl-2"
+        >
+          Import recipe from a website:
+        </label>
+        <Input
+          type="url"
+          value={url}
+          color="default"
+          size="lg"
+          onChange={(e) => setUrl(e.target.value)}
+          className="w-full"
+          name="recipe-import"
+        />
+        <Button
+          className="font-league-spartan text-lg text-white w-full px-4"
+          onClick={() => importData()}
+          size="md"
+          color="success"
+          endContent={<ImportIcon stroke="white" />}
+        >
+          Import
+        </Button>
+      </div>
     </div>
   );
 }
