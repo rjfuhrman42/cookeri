@@ -1,16 +1,29 @@
 import { Button } from "@nextui-org/button";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { EditIcon, SaveIcon } from "./icons";
+
 import { Input } from "@nextui-org/input";
+
+import { Recipe } from "schema-dts";
 
 interface Props {
   children: React.ReactNode;
+  recipe?: Recipe | undefined;
+  setData: (data: Recipe) => void;
 }
 
-function SideBar({ children }: Props) {
+function SideBar({ children, recipe, setData }: Props) {
+  const [title, setTitle] = useState(recipe?.name?.toString());
+
+  useEffect(() => {
+    if (recipe?.name?.toString()) {
+      setTitle(recipe?.name?.toString());
+    }
+  }, [recipe]);
+
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col h-lvh gap-y-4 w-[350px] 2xl:w-[450px] p-6 2xl:p-8">
+      <div className="flex flex-col h-lvh gap-y-8 w-[350px] 2xl:w-[450px] p-6 2xl:p-8">
         <h1 className="font-gluten mb-8 text-6xl text-center font-bold text-cookeri-green">
           Cookeri
         </h1>
@@ -24,13 +37,31 @@ function SideBar({ children }: Props) {
           </label>
           <Input
             type="text"
-            value={""}
+            value={title}
             color="default"
             size="lg"
-            onChange={() => {}}
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
             className="w-full"
             name="recipe-title"
           />
+          <Button
+            className="font-league-spartan text-lg text-white w-full px-4"
+            onClick={() => {
+              setData({ ...recipe, name: title });
+            }}
+            size="md"
+            color="success"
+            endContent={<SaveIcon stroke="white" />}
+          >
+            Update title
+          </Button>
+        </div>
+        <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
+          <p className="font-league-spartan text-lg text-left w-full pl-2">
+            Recipe details:
+          </p>
           <Button
             className="font-league-spartan text-lg text-white w-full px-4"
             onClick={() => {}}
