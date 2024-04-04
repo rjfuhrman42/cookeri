@@ -27,6 +27,7 @@ function RecipeViewer({ recipe }: Props) {
     prepTime,
     cookTime,
     totalTime,
+    recipeYield,
     recipeIngredient,
     recipeInstructions,
     image,
@@ -44,6 +45,8 @@ function RecipeViewer({ recipe }: Props) {
   const images = image as string[];
 
   const authorDetails = author as { name: string } | undefined;
+
+  const servings = recipeYield as string[];
 
   const prep = getNeatDuration(prepTime as string);
   const cook = getNeatDuration(cookTime as string);
@@ -93,6 +96,12 @@ function RecipeViewer({ recipe }: Props) {
                     <p className="font-bold mr-1">Total: </p>
                     <p>{total}</p>
                   </div>
+                  {recipeYield && (
+                    <div className="flex flex-row">
+                      <p className="font-bold mr-1">Serves: </p>
+                      <p>{servings[0]} people</p>
+                    </div>
+                  )}
                 </div>
                 <p>{description?.toString()}</p>
               </div>

@@ -6,15 +6,17 @@ import RecipeViewer from "@/components/RecipeViewer";
 import SideBar from "@/components/SideBar";
 import { Button } from "@nextui-org/button";
 import { useState } from "react";
-import { Recipe } from "schema-dts";
+import { Recipe as RecipeJsonLd } from "schema-dts";
 
 export default function DashBoard() {
   const [url, setUrl] = useState("");
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const [currentRecipe, setCurrentRecipe] = useState<
+    RecipeJsonLd | undefined
+  >();
 
   return (
     <main className="flex h-screen w-screen overflow-hidden flex-row items-start justify-start">
-      <SideBar>
+      <SideBar recipe={currentRecipe} setData={setCurrentRecipe}>
         <ImportBar url={url} setUrl={setUrl} setData={setCurrentRecipe} />
       </SideBar>
       <section className=" relative flex flex-col h-full w-full p-0 overflow-hidden">
