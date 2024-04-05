@@ -35,6 +35,14 @@ h6 {
   @apply font-league-spartan;
 }
 
+h1 {
+  @apply text-4xl;
+}
+
+button {
+  @apply font-league-spartan;
+}
+
 p,
 li {
   @apply font-league-spartan text-lg;
