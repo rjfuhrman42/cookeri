@@ -6,20 +6,23 @@ import CloseCircle from "./icons/CloseCircle";
 import { TickCircleIcon } from "./icons";
 
 interface Props {
-  recipe: RecipeJsonLd;
-  onSave: (data: RecipeJsonLd) => void;
+  ingredients: string[];
+  onSave: (data: string[]) => void;
   onCancel: () => void;
 }
 
-export default function IngredientsEditor({ recipe, onSave, onCancel }: Props) {
+export default function IngredientsEditor({
+  ingredients,
+  onSave,
+  onCancel,
+}: Props) {
   function parseRecipeData() {
-    const ingredients = recipe.recipeIngredient as string[];
     return ingredients.join("\n");
   }
 
   function saveRecipeData(data: string) {
     const updatedIngredients = data.trim().split("\n");
-    onSave({ ...recipe, recipeIngredient: updatedIngredients });
+    onSave(updatedIngredients);
   }
 
   return (

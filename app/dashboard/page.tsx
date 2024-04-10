@@ -10,7 +10,7 @@ import RecipeViewer from "@/components/RecipeViewer";
 import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
-import StepsEditor from "@/components/StepsEditor";
+import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
 
 export default function DashBoard() {
   const [url, setUrl] = useState("");
@@ -21,16 +21,18 @@ export default function DashBoard() {
     RecipeJsonLd | undefined
   >();
 
-  if (editorState === "recipeIngredient" && currentRecipe) {
+  if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
     return (
       <main className="flex h-screen w-screen overflow-hidden flex-row items-start justify-start">
         <IngredientsEditor
-          recipe={currentRecipe}
-          onSave={(data: RecipeJsonLd) => {
-            setCurrentRecipe(data);
+          ingredients={currentRecipe.recipeIngredient as string[]}
+          onCancel={() => setEditorState("")}
+          onSave={(data: string[]) => {
+            setCurrentRecipe((prev) => {
+              return { ...prev, recipeIngredient: data, "@type": "Recipe" };
+            });
             setEditorState("");
           }}
-          onCancel={() => setEditorState("")}
         />
       </main>
     );
@@ -38,13 +40,14 @@ export default function DashBoard() {
     return (
       <main className="flex h-screen w-screen overflow-hidden flex-row items-start justify-start">
         <StepsEditor
-          type={editorState}
-          recipe={currentRecipe}
-          onSave={(data: RecipeJsonLd) => {
-            setCurrentRecipe(data);
+          steps={currentRecipe.recipeInstructions as RecipeSteps}
+          onCancel={() => setEditorState("")}
+          onSave={(data: RecipeSteps) => {
+            setCurrentRecipe((prev) => {
+              return { ...prev, recipeInstructions: data, "@type": "Recipe" };
+            });
             setEditorState("");
           }}
-          onCancel={() => setEditorState("")}
         />
       </main>
     );
