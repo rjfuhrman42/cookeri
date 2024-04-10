@@ -150,7 +150,7 @@ function RecipeViewer({ recipe }: Props) {
               <div className="flex flex-col flex-1">
                 <h2 className="text-2xl my-4 font-bold">Steps</h2>
                 {howToSteps && (
-                  <ol className="list-decimal ml-4" type="1">
+                  <ul className="list-decimal ml-4">
                     {howToSteps?.map((step, index) => {
                       return (
                         <li className="py-2" key={index}>
@@ -158,7 +158,7 @@ function RecipeViewer({ recipe }: Props) {
                         </li>
                       );
                     })}
-                  </ol>
+                  </ul>
                 )}
                 {howToSections?.map((section, index) => {
                   const itemArray = section.itemListElement as HowToStep[];

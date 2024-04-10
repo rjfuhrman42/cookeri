@@ -1,62 +1,31 @@
 "use client";
 
 import { Button } from "@nextui-org/button";
-import { HowToStep, Recipe as RecipeJsonLd } from "schema-dts";
+import { Recipe as RecipeJsonLd } from "schema-dts";
 import CloseCircle from "./icons/CloseCircle";
 import { TickCircleIcon } from "./icons";
 
 interface Props {
-  type: "recipeIngredient" | "recipeInstructions";
   recipe: RecipeJsonLd;
   onSave: (data: RecipeJsonLd) => void;
   onCancel: () => void;
 }
 
-export default function RecipeEditor({
-  type,
-  recipe,
-  onSave,
-  onCancel,
-}: Props) {
-  const displayText = type === "recipeIngredient" ? "ingredients" : "steps";
-
+export default function IngredientsEditor({ recipe, onSave, onCancel }: Props) {
   function parseRecipeData() {
-    if (type === "recipeInstructions") {
-      const howToSteps = recipe[type] as HowToStep[];
-
-      const steps = howToSteps
-        .map((step) => {
-          return step.text;
-        })
-        .join("\n\n");
-
-      return steps;
-    } else {
-      const ingredients = recipe[type] as string[];
-      return ingredients.join("\n");
-    }
+    const ingredients = recipe.recipeIngredient as string[];
+    return ingredients.join("\n");
   }
 
   function saveRecipeData(data: string) {
-    if (type === "recipeInstructions") {
-      const updatedSteps = data
-        .trim()
-        .split("\n\n")
-        .map((step) => {
-          return { "@type": "HowToStep", text: step } as HowToStep;
-        });
-
-      onSave({ ...recipe, [type]: updatedSteps });
-    } else {
-      const updatedIngredients = data.trim().split("\n");
-      onSave({ ...recipe, [type]: updatedIngredients });
-    }
+    const updatedIngredients = data.trim().split("\n");
+    onSave({ ...recipe, recipeIngredient: updatedIngredients });
   }
 
   return (
     <div className="relative flex flex-col items-center py-16 px-8 w-full h-screen">
       <div className="flex flex-row justify-between container max-w-[625px] gap-x-4">
-        <h1>Edit {displayText}</h1>
+        <h1>Edit Ingredients</h1>
         <Button
           className="text-lg text-white px-4"
           onClick={() => {
