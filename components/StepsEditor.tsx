@@ -1,7 +1,7 @@
 "use client";
 
-import { Button, ButtonGroup } from "@nextui-org/button";
-import { HowToSection, HowToStep, Recipe as RecipeJsonLd } from "schema-dts";
+import { Button } from "@nextui-org/button";
+import { HowToSection, HowToStep } from "schema-dts";
 import CloseCircle from "./icons/CloseCircle";
 import { TickCircleIcon } from "./icons";
 import { useEffect, useMemo, useState } from "react";
@@ -53,27 +53,36 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
     [selectedKeys]
   );
 
-  function saveRecipeData(data: string) {
+  function saveRecipeData() {
+    if (!stepsData) return;
     const updatedInstructions = [];
 
     for (let [key, value] of Object.entries(stepsData)) {
       if (key === "Steps") {
-        const inst = value.split("\n\n").map((step) => {
-          return { "@type": "HowToStep", text: step.trim() } as HowToStep;
-        });
+        const inst = value
+          .trim()
+          .split("\n\n")
+          .filter((step) => step !== "")
+          .map((step) => {
+            return { "@type": "HowToStep", text: step.trim() } as HowToStep;
+          });
         updatedInstructions.push(...inst);
       } else {
         const section = {
           "@type": "HowToSection",
           name: key,
-          itemListElement: value.split("\n\n").map((step) => {
-            return { "@type": "HowToStep", text: step.trim() };
-          }),
+          itemListElement: value
+            .trim()
+            .split("\n\n")
+            .filter((step) => step !== "")
+            .map((step) => {
+              return { "@type": "HowToStep", text: step.trim() };
+            }),
         } as HowToSection;
         updatedInstructions.push(section);
       }
     }
-    console.log(updatedInstructions);
+
     onSave(updatedInstructions as RecipeSteps);
   }
 
@@ -84,9 +93,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
         <Button
           className="text-lg text-white px-4"
           onClick={() => {
-            const data = document.querySelector("textarea")?.value;
-            if (!data) return;
-            saveRecipeData(data);
+            saveRecipeData();
           }}
           size="md"
           color="success"
@@ -142,7 +149,6 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
               };
             });
           }}
-          defaultValue={""}
         ></textarea>
       </div>
     </div>

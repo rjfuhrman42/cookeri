@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@nextui-org/button";
-import { Recipe as RecipeJsonLd } from "schema-dts";
 import CloseCircle from "./icons/CloseCircle";
 import { TickCircleIcon } from "./icons";
 
