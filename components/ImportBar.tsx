@@ -5,11 +5,11 @@ import { Button } from "@nextui-org/button";
 import { ImportIcon } from "./icons";
 import { Input } from "@nextui-org/input";
 
-type Props = {
+interface Props {
   url: string;
   setUrl: (url: string) => void;
   setData: (data: Recipe) => void;
-};
+}
 
 function ImportBar({ url, setUrl, setData }: Props) {
   /*
@@ -44,8 +44,9 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
       // If no @graph attribute, then the data is JSON-LD, but not in the format we expect
       // For now, just log the error and return
-      if (!json["@graph"]) {
-        console.log("No recipe data found in json-ld graph!", json);
+
+      if (!json["@graph"] && json[0]) {
+        setData(json[0]);
         return;
       }
 

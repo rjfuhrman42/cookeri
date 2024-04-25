@@ -1,15 +1,15 @@
 import Image from "next/image";
 import React from "react";
-import { Recipe, HowToStep, HowToSection } from "schema-dts";
+import { Recipe, HowToStep, HowToSection, ImageObject } from "schema-dts";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-type Props = {
+interface Props {
   recipe: Recipe | undefined;
-};
+}
 
 /*
 
@@ -42,7 +42,8 @@ function RecipeViewer({ recipe }: Props) {
   const howToSections = instructions?.filter(
     (step) => step["@type"] === "HowToSection"
   );
-  const images = image as string[];
+  const images = Array.isArray(image) && image[0];
+  const anImage = image as ImageObject;
 
   const authorDetails = author as { name: string } | undefined;
 
@@ -105,16 +106,35 @@ function RecipeViewer({ recipe }: Props) {
                 </div>
                 <p>{description?.toString()}</p>
               </div>
-              {images && (
-                <div className="relative flex-1 bg-red-500 overflow-hidden">
+              {/* 
+              -------------------------------------------------------------------
+                Not sure how to handle when images come in different forms
+                If any image bugs pop up, this might be the first place to look
+              */}
+              {images ? (
+                <div className="relative flex-1 overflow-hidden">
                   <Image
-                    src={images[0]}
+                    src={images}
                     fill
                     alt={name?.toString() || "Recipe Image Not Provided"}
                     className="object-cover object-center"
                   />
                 </div>
+              ) : anImage ? (
+                <div className="relative flex-1 overflow-hidden">
+                  <Image
+                    src={anImage.url?.toString() || ""}
+                    fill
+                    alt={name?.toString() || "Recipe Image Not Provided"}
+                    className="object-cover object-center"
+                  />
+                </div>
+              ) : (
+                <></>
               )}
+              {/* 
+                -------------------------------------------------------------------
+              */}
             </div>
             <div className="flex flex-col sm:flex-row gap-x-8">
               <div className="flex flex-col flex-1">
@@ -130,7 +150,7 @@ function RecipeViewer({ recipe }: Props) {
               <div className="flex flex-col flex-1">
                 <h2 className="text-2xl my-4 font-bold">Steps</h2>
                 {howToSteps && (
-                  <ol className="list-decimal ml-4" type="1">
+                  <ul className="list-decimal ml-4">
                     {howToSteps?.map((step, index) => {
                       return (
                         <li className="py-2" key={index}>
@@ -138,7 +158,7 @@ function RecipeViewer({ recipe }: Props) {
                         </li>
                       );
                     })}
-                  </ol>
+                  </ul>
                 )}
                 {howToSections?.map((section, index) => {
                   const itemArray = section.itemListElement as HowToStep[];
