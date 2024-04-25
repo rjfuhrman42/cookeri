@@ -128,7 +128,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
           disallowEmptySelection
           selectionMode="single"
           selectedKeys={selectedKeys}
-          onSelectionChange={setSelectedKeys}
+          onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
         >
           {Object.keys(stepsData).map((key) => {
             return (
