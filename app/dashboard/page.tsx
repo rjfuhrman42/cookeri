@@ -23,7 +23,7 @@ export default function DashBoard() {
 
   if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
     return (
-      <main className="flex h-screen w-screen overflow-hidden flex-row items-start justify-start">
+      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <IngredientsEditor
           ingredients={currentRecipe.recipeIngredient as string[]}
           onCancel={() => setEditorState("")}
@@ -38,7 +38,7 @@ export default function DashBoard() {
     );
   } else if (editorState === "recipeInstructions" && currentRecipe) {
     return (
-      <main className="flex h-screen w-screen overflow-hidden flex-row items-start justify-start">
+      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <StepsEditor
           steps={currentRecipe.recipeInstructions as RecipeSteps}
           onCancel={() => setEditorState("")}
@@ -53,7 +53,7 @@ export default function DashBoard() {
     );
   } else
     return (
-      <main className="flex h-screen w-screen overflow-hidden flex-row items-start justify-start">
+      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <SideBar>
           <ImportBar url={url} setUrl={setUrl} setData={setCurrentRecipe} />
           {currentRecipe && (

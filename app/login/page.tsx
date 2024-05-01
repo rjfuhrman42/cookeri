@@ -1,4 +1,6 @@
+import { GoogleIcon } from "@/components/icons";
 import { createClient } from "@/utils/supabase/server";
+import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -35,19 +37,23 @@ function LoginPage() {
         Cookeri
       </h1>
       <div className="p-8 h-[400px] w-[500px] rounded-lg bg-white">
-        <h2 className="font-bold">Login</h2>
-        <form action={signIn}>
-          <button
+        <form action={signIn} className="flex justify-center">
+          <Button
+            endContent={<GoogleIcon />}
+            size="lg"
+            fullWidth
             type="submit"
-            className="bg-cookeri-green text-white p-2 rounded-lg"
+            color="success"
+            className="text-white p-2 rounded-lg"
           >
             Sign in with Google
-          </button>
+          </Button>
         </form>
       </div>
       <p>
         Don&apos;t have an account? <Link href="/signup">Sign up here.</Link>
       </p>
+      <Link href="/">Back to home page</Link>
     </div>
   );
 }

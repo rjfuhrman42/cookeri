@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -13,12 +12,7 @@ export default async function Layout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (user) redirect("/dashboard");
 
-  return (
-    <div className="flex flex-col h-screen">
-      <Navbar isUserLoggedIn={user !== null} maxWidth="full" />
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }
