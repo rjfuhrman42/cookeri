@@ -184,7 +184,7 @@ function RecipeViewer({ recipe }: Props) {
           </article>
         </div>
       ) : (
-        <div className="flex items-center justify-center pt-20 w-full h-screen">
+        <div className="flex items-center justify-center pt-20 w-full">
           <p>
             No recipe right now! Import a recipe and it will show up here...
           </p>
