@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Recipe as RecipeJsonLd } from "schema-dts";
+import { useEffect, useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import ImportBar from "@/components/ImportBar";
@@ -11,15 +10,39 @@ import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
+import { createClient } from "@/utils/supabase/client";
+
+export type Recipe = {
+  name: string;
+  description: string;
+  prepTime: string;
+  cookTime: string;
+  totalTime: string;
+  recipeYield: string;
+  recipeIngredient: string[];
+  recipeInstructions: RecipeSteps;
+  image: string;
+};
 
 export default function DashBoard() {
   const [url, setUrl] = useState("");
   const [editorState, setEditorState] = useState<
     "recipeIngredient" | "recipeInstructions" | ""
   >("");
-  const [currentRecipe, setCurrentRecipe] = useState<
-    RecipeJsonLd | undefined
-  >();
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null);
+
+  const supabase = createClient();
+
+  // async function fetchRecipe() {
+  //   const { data, error } = await supabase.from("recipe").select("*");
+  //   console.log("fetched data", data);
+  // }
+
+  // useEffect(() => {
+  //   fetchRecipe();
+  // });
+
+  useEffect(() => console.log(currentRecipe), [currentRecipe]);
 
   if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
     return (
@@ -28,8 +51,8 @@ export default function DashBoard() {
           ingredients={currentRecipe.recipeIngredient as string[]}
           onCancel={() => setEditorState("")}
           onSave={(data: string[]) => {
-            setCurrentRecipe((prev) => {
-              return { ...prev, recipeIngredient: data, "@type": "Recipe" };
+            setCurrentRecipe(() => {
+              return { ...currentRecipe, recipeIngredient: data };
             });
             setEditorState("");
           }}
@@ -43,8 +66,8 @@ export default function DashBoard() {
           steps={currentRecipe.recipeInstructions as RecipeSteps}
           onCancel={() => setEditorState("")}
           onSave={(data: RecipeSteps) => {
-            setCurrentRecipe((prev) => {
-              return { ...prev, recipeInstructions: data, "@type": "Recipe" };
+            setCurrentRecipe(() => {
+              return { ...currentRecipe, recipeInstructions: data };
             });
             setEditorState("");
           }}
@@ -71,11 +94,10 @@ export default function DashBoard() {
                   color="default"
                   size="lg"
                   onChange={(e) => {
-                    setCurrentRecipe((prev) => {
+                    setCurrentRecipe(() => {
                       return {
-                        ...prev,
+                        ...currentRecipe,
                         name: e.target.value,
-                        "@type": "Recipe",
                       };
                     });
                   }}

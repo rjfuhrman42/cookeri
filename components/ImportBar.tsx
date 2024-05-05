@@ -1,14 +1,16 @@
 import { Recipe } from "schema-dts";
+import { Recipe as SimpleRecipe } from "../app/dashboard/page";
 
 import React from "react";
 import { Button } from "@nextui-org/button";
 import { ImportIcon } from "./icons";
 import { Input } from "@nextui-org/input";
+import { RecipeSteps } from "./StepsEditor";
 
 interface Props {
   url: string;
   setUrl: (url: string) => void;
-  setData: (data: Recipe) => void;
+  setData: (data: SimpleRecipe) => void;
 }
 
 function ImportBar({ url, setUrl, setData }: Props) {
@@ -57,7 +59,19 @@ function ImportBar({ url, setUrl, setData }: Props) {
         }
       })[0];
 
-      setData(recipeData);
+      const processedRecipeData: SimpleRecipe = {
+        name: recipeData.name as string,
+        description: recipeData.description as string,
+        prepTime: recipeData.prepTime as string,
+        cookTime: recipeData.cookTime as string,
+        totalTime: recipeData.totalTime as string,
+        recipeYield: recipeData.recipeYield as string,
+        recipeIngredient: recipeData.recipeIngredient as string[],
+        recipeInstructions: recipeData.recipeInstructions as RecipeSteps,
+        image: recipeData.image as string,
+      };
+
+      setData(processedRecipeData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
