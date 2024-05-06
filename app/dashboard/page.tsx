@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import SideBar from "@/components/SideBar";
-import ImportBar from "@/components/ImportBar";
+import ImportBar, { RecipeSection } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
@@ -20,16 +20,19 @@ export type Recipe = {
   totalTime: string;
   recipeYield: string;
   recipeIngredient: string[];
-  recipeInstructions: RecipeSteps;
+  recipeInstructions: RecipeSection[];
   image: string;
+  author: string;
 };
+
+export type RecipeStep = {};
 
 export default function DashBoard() {
   const [url, setUrl] = useState("");
   const [editorState, setEditorState] = useState<
     "recipeIngredient" | "recipeInstructions" | ""
   >("");
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null);
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
 
   const supabase = createClient();
 

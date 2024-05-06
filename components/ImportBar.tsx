@@ -13,6 +13,11 @@ interface Props {
   setData: (data: SimpleRecipe) => void;
 }
 
+export type RecipeSection = {
+  name: string;
+  steps: string[];
+};
+
 function ImportBar({ url, setUrl, setData }: Props) {
   /*
 
@@ -59,6 +64,34 @@ function ImportBar({ url, setUrl, setData }: Props) {
         }
       })[0];
 
+      const instructions = recipeData.recipeInstructions as RecipeSteps;
+
+      // Check for an initial steps section - edge case OR when a recipe has no subsections
+      const howToSteps = instructions?.filter((step) => {
+        return step["@type"] === "HowToStep";
+      });
+
+      const processedInstructions: RecipeSection[] =
+        howToSteps.length > 0
+          ? [
+              {
+                name: "default",
+                steps: howToSteps.map((step) => step.text as string),
+              },
+            ]
+          : [];
+
+      instructions.forEach((step) => {
+        if (step["@type"] === "HowToSection") {
+          processedInstructions.push({
+            name: step.name as string,
+            steps: [...(step.itemListElement as string[])],
+          });
+        }
+      });
+
+      console.log("inst", processedInstructions);
+
       const processedRecipeData: SimpleRecipe = {
         name: recipeData.name as string,
         description: recipeData.description as string,
@@ -67,8 +100,9 @@ function ImportBar({ url, setUrl, setData }: Props) {
         totalTime: recipeData.totalTime as string,
         recipeYield: recipeData.recipeYield as string,
         recipeIngredient: recipeData.recipeIngredient as string[],
-        recipeInstructions: recipeData.recipeInstructions as RecipeSteps,
+        recipeInstructions: processedInstructions,
         image: recipeData.image as string,
+        author: recipeData.author as string,
       };
 
       setData(processedRecipeData);
