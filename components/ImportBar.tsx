@@ -1,4 +1,4 @@
-import { Recipe } from "schema-dts";
+import { HowToStep, Recipe } from "schema-dts";
 import { Recipe as SimpleRecipe } from "../app/dashboard/page";
 
 import React from "react";
@@ -13,7 +13,7 @@ interface Props {
   setData: (data: SimpleRecipe) => void;
 }
 
-export type RecipeSection = {
+export type RecipeInstructions = {
   name: string;
   steps: string[];
 };
@@ -71,7 +71,8 @@ function ImportBar({ url, setUrl, setData }: Props) {
         return step["@type"] === "HowToStep";
       });
 
-      const processedInstructions: RecipeSection[] =
+      // Add an initial section, if it exists
+      const processedInstructions: RecipeInstructions[] =
         howToSteps.length > 0
           ? [
               {
@@ -81,16 +82,16 @@ function ImportBar({ url, setUrl, setData }: Props) {
             ]
           : [];
 
+      // Add the subsections
       instructions.forEach((step) => {
         if (step["@type"] === "HowToSection") {
+          const howToSteps = step.itemListElement as HowToStep[];
           processedInstructions.push({
             name: step.name as string,
-            steps: [...(step.itemListElement as string[])],
+            steps: howToSteps.map((step) => step.text as string),
           });
         }
       });
-
-      console.log("inst", processedInstructions);
 
       const processedRecipeData: SimpleRecipe = {
         name: recipeData.name as string,

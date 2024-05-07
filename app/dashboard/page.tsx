@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import SideBar from "@/components/SideBar";
-import ImportBar, { RecipeSection } from "@/components/ImportBar";
+import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
@@ -20,12 +20,10 @@ export type Recipe = {
   totalTime: string;
   recipeYield: string;
   recipeIngredient: string[];
-  recipeInstructions: RecipeSection[];
+  recipeInstructions: RecipeInstructions[];
   image: string;
   author: string;
 };
-
-export type RecipeStep = {};
 
 export default function DashBoard() {
   const [url, setUrl] = useState("");
@@ -66,9 +64,9 @@ export default function DashBoard() {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <StepsEditor
-          steps={currentRecipe.recipeInstructions as RecipeSteps}
+          steps={currentRecipe.recipeInstructions}
           onCancel={() => setEditorState("")}
-          onSave={(data: RecipeSteps) => {
+          onSave={(data: RecipeInstructions[]) => {
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeInstructions: data };
             });

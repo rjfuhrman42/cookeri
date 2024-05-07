@@ -6,12 +6,13 @@ import CloseCircle from "./icons/CloseCircle";
 import { TickCircleIcon } from "./icons";
 import { useEffect, useMemo, useState } from "react";
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { RecipeInstructions } from "./ImportBar";
 
 export type RecipeSteps = HowToStep[] | HowToSection[];
 
 interface Props {
-  steps: RecipeSteps;
-  onSave: (data: RecipeSteps) => void;
+  steps: RecipeInstructions[];
+  onSave: (data: RecipeInstructions[]) => void;
   onCancel: () => void;
 }
 
@@ -26,22 +27,19 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
 
   useEffect(() => {
     const data: { [key: string]: string } = {};
-    const parseRecipeData = (data: HowToStep[]): string => {
+    const parseRecipeData = (data: string[]): string => {
       if (!data) return "";
       const arr = data.map((step) => {
-        return String(step.text);
+        console.log("step", step);
+        return String(step);
       });
-
+      console.log("here", arr);
       return arr.join("\n\n");
     };
 
     steps.forEach((step) => {
-      if (step["@type"] === "HowToSection") {
-        const section = parseRecipeData(step.itemListElement as HowToStep[]);
-        data[`${step.name}`] = section;
-      } else {
-        data["Steps"] = parseRecipeData(steps as HowToStep[]);
-      }
+      const section = parseRecipeData(step.steps);
+      data[`${step.name}`] = section;
     });
 
     setStepsData(data);
@@ -58,32 +56,19 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
     const updatedInstructions = [];
 
     for (let [key, value] of Object.entries(stepsData)) {
-      if (key === "Steps") {
-        const inst = value
+      const section = {
+        name: key,
+        steps: value
           .trim()
           .split("\n\n")
           .filter((step) => step !== "")
-          .map((step) => {
-            return { "@type": "HowToStep", text: step.trim() } as HowToStep;
-          });
-        updatedInstructions.push(...inst);
-      } else {
-        const section = {
-          "@type": "HowToSection",
-          name: key,
-          itemListElement: value
-            .trim()
-            .split("\n\n")
-            .filter((step) => step !== "")
-            .map((step) => {
-              return { "@type": "HowToStep", text: step.trim() };
-            }),
-        } as HowToSection;
-        updatedInstructions.push(section);
-      }
+          .map((step) => step.trim()),
+      } as RecipeInstructions;
+
+      updatedInstructions.push(section);
     }
 
-    onSave(updatedInstructions as RecipeSteps);
+    onSave(updatedInstructions as RecipeInstructions[]);
   }
 
   return (
