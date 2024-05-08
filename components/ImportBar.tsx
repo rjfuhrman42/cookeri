@@ -1,4 +1,4 @@
-import { HowToStep, Recipe } from "schema-dts";
+import { HowToStep, ImageObject, Recipe } from "schema-dts";
 import { Recipe as SimpleRecipe } from "../app/dashboard/page";
 
 import React from "react";
@@ -49,20 +49,16 @@ function ImportBar({ url, setUrl, setData }: Props) {
       // Search for the Recipe @type and parse it
       const json = JSON.parse(json_ld_element?.innerHTML);
 
-      // If no @graph attribute, then the data is JSON-LD, but not in the format we expect
-      // For now, just log the error and return
-
-      if (!json["@graph"] && json[0]) {
-        setData(json[0]);
-        return;
-      }
-
       // Filter out the Recipe data from the graph
-      const recipeData: Recipe = json["@graph"].filter((item: any) => {
-        if (item["@type"] === "Recipe") {
-          return item;
-        }
-      })[0];
+      // If there is no graph, then the recipe is the first item in the array
+      const recipeData: Recipe =
+        !json["@graph"] && json[0]
+          ? json[0]
+          : json["@graph"].filter((item: any) => {
+              if (item["@type"] === "Recipe") {
+                return item;
+              }
+            })[0];
 
       const instructions = recipeData.recipeInstructions as RecipeSteps;
 
@@ -93,16 +89,28 @@ function ImportBar({ url, setUrl, setData }: Props) {
         }
       });
 
+      const yieldArray = new Array(recipeData.recipeYield)[0] as string[];
+      const recipeYield = yieldArray[0];
+
+      const recipeImage = recipeData.image as
+        | { "@type": ImageObject; height: number; url: string; width: number }
+        | string[];
+
+      // Images come as an array of several images, or just one image object with a URL property
+      const imageUrl: string = Array.isArray(recipeImage)
+        ? recipeImage[0]
+        : recipeImage.url;
+
       const processedRecipeData: SimpleRecipe = {
         name: recipeData.name as string,
         description: recipeData.description as string,
         prepTime: recipeData.prepTime as string,
         cookTime: recipeData.cookTime as string,
         totalTime: recipeData.totalTime as string,
-        recipeYield: recipeData.recipeYield as string,
+        recipeYield,
         recipeIngredient: recipeData.recipeIngredient as string[],
         recipeInstructions: processedInstructions,
-        image: recipeData.image as string,
+        image: imageUrl,
         author: recipeData.author as string,
       };
 

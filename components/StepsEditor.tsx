@@ -30,10 +30,9 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
     const parseRecipeData = (data: string[]): string => {
       if (!data) return "";
       const arr = data.map((step) => {
-        console.log("step", step);
         return String(step);
       });
-      console.log("here", arr);
+
       return arr.join("\n\n");
     };
 

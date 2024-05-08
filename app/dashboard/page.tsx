@@ -43,8 +43,6 @@ export default function DashBoard() {
   //   fetchRecipe();
   // });
 
-  useEffect(() => console.log(currentRecipe), [currentRecipe]);
-
   if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">

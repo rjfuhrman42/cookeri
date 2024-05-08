@@ -5,6 +5,7 @@ import { Recipe } from "@/app/dashboard/page";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
@@ -28,27 +29,14 @@ function RecipeViewer({ recipe }: Props) {
     prepTime,
     cookTime,
     totalTime,
-    recipeYield,
-    recipeIngredient,
-    recipeInstructions,
-    image,
+    recipeYield: servings,
+    recipeIngredient: ingredients,
+    recipeInstructions: instructions,
+    image: imageUrl,
     author,
   } = recipe || {};
 
-  const ingredients = recipeIngredient as string[];
-  const instructions = recipeInstructions as HowToStep[] | HowToSection[];
-  const howToSteps = instructions?.filter(
-    (step) => step["@type"] === "HowToStep"
-  );
-  const howToSections = instructions?.filter(
-    (step) => step["@type"] === "HowToSection"
-  );
-  const images = Array.isArray(image) && image[0];
-  const anImage = image as ImageObject;
-
   const authorDetails = author as { name: string } | undefined;
-
-  const servings = recipeYield as string[];
 
   const prep = getNeatDuration(prepTime as string);
   const cook = getNeatDuration(cookTime as string);
@@ -98,10 +86,10 @@ function RecipeViewer({ recipe }: Props) {
                     <p className="font-bold mr-1">Total: </p>
                     <p>{total}</p>
                   </div>
-                  {recipeYield && (
+                  {servings && (
                     <div className="flex flex-row">
-                      <p className="font-bold mr-1">Serves: </p>
-                      <p>{servings[0]} people</p>
+                      <p className="font-bold mr-1">Makes: </p>
+                      <p>{servings} servings</p>
                     </div>
                   )}
                 </div>
@@ -112,19 +100,10 @@ function RecipeViewer({ recipe }: Props) {
                 Not sure how to handle when images come in different forms
                 If any image bugs pop up, this might be the first place to look
               */}
-              {images ? (
+              {imageUrl ? (
                 <div className="relative flex-1 overflow-hidden">
                   <Image
-                    src={images}
-                    fill
-                    alt={name?.toString() || "Recipe Image Not Provided"}
-                    className="object-cover object-center"
-                  />
-                </div>
-              ) : anImage ? (
-                <div className="relative flex-1 overflow-hidden">
-                  <Image
-                    src={anImage.url?.toString() || ""}
+                    src={imageUrl}
                     fill
                     alt={name?.toString() || "Recipe Image Not Provided"}
                     className="object-cover object-center"
@@ -150,29 +129,21 @@ function RecipeViewer({ recipe }: Props) {
               </div>
               <div className="flex flex-col flex-1">
                 <h2 className="text-2xl my-4 font-bold">Steps</h2>
-                {howToSteps && (
-                  <ul className="list-decimal ml-4">
-                    {howToSteps?.map((step, index) => {
-                      return (
-                        <li className="py-2" key={index}>
-                          {String(step.text)}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-                {howToSections?.map((section, index) => {
-                  const itemArray = section.itemListElement as HowToStep[];
+                {instructions?.map((section, index) => {
                   return (
                     <div key={index}>
-                      <h3 className="text-lg my-4 font-medium">
-                        {String(section.name)}
-                      </h3>
+                      {section.name === "default" ? (
+                        <></>
+                      ) : (
+                        <h3 className="text-lg my-4 font-medium">
+                          {section.name}
+                        </h3>
+                      )}
                       <ol className="list-decimal ml-4" type="1">
-                        {itemArray.map((item, index) => {
+                        {section.steps.map((step, index) => {
                           return (
                             <li className="py-2" key={index}>
-                              {String(item.text)}
+                              {step}
                             </li>
                           );
                         })}
