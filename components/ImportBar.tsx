@@ -1,5 +1,5 @@
 import { HowToStep, ImageObject, Recipe } from "schema-dts";
-import { Recipe as SimpleRecipe } from "../app/dashboard/page";
+import { Recipe as SimpleRecipe } from "../app/importrecipe/page";
 
 import React from "react";
 import { Button } from "@nextui-org/button";

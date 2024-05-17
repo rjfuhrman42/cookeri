@@ -11,6 +11,7 @@ import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
+import { UserResponse } from "@supabase/supabase-js";
 
 export type Recipe = {
   name: string;
@@ -25,11 +26,15 @@ export type Recipe = {
   author: string;
 };
 
-export default function DashBoard() {
+type editorStateType =
+  | "recipeIngredient"
+  | "recipeInstructions"
+  | "myRecipes"
+  | "importRecipe";
+
+export default function ImportRecipe() {
   const [url, setUrl] = useState("");
-  const [editorState, setEditorState] = useState<
-    "recipeIngredient" | "recipeInstructions" | ""
-  >("");
+  const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
 
   const supabase = createClient();
@@ -43,17 +48,65 @@ export default function DashBoard() {
   //   fetchRecipe();
   // });
 
+  async function handleSaveRecipe() {
+    if (!currentRecipe) return;
+
+    const userData: UserResponse = await supabase.auth.getUser();
+    if (!userData?.data?.user) return;
+
+    const payload = {
+      name: currentRecipe.name,
+      description: currentRecipe.description,
+      prep_time: currentRecipe.prepTime,
+      cook_time: currentRecipe.cookTime,
+      total_time: currentRecipe.totalTime,
+      recipe_yield: currentRecipe.recipeYield,
+      recipe_ingredients: currentRecipe.recipeIngredient,
+      image: currentRecipe.image,
+      author: currentRecipe.author,
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from("recipe")
+        .insert({ ...payload, user_id: userData.data.user.id })
+        .select();
+
+      if (error) {
+        console.error("error saving recipe", error.message);
+        return;
+      }
+
+      if (!data) return;
+
+      const { error: stepsError } = await supabase
+        .from("recipe_instructions")
+        .insert(
+          currentRecipe.recipeInstructions.map((step) => ({
+            ...step,
+            recipe_id: data?.[0].id,
+          }))
+        );
+      if (stepsError) {
+        console.error("error saving steps", stepsError.message);
+        return;
+      }
+    } catch (error) {
+      console.error("error", error);
+    }
+  }
+
   if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <IngredientsEditor
           ingredients={currentRecipe.recipeIngredient as string[]}
-          onCancel={() => setEditorState("")}
+          onCancel={() => setEditorState("myRecipes")}
           onSave={(data: string[]) => {
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeIngredient: data };
             });
-            setEditorState("");
+            setEditorState("myRecipes");
           }}
         />
       </main>
@@ -63,12 +116,12 @@ export default function DashBoard() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <StepsEditor
           steps={currentRecipe.recipeInstructions}
-          onCancel={() => setEditorState("")}
+          onCancel={() => setEditorState("myRecipes")}
           onSave={(data: RecipeInstructions[]) => {
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeInstructions: data };
             });
-            setEditorState("");
+            setEditorState("myRecipes");
           }}
         />
       </main>
@@ -129,7 +182,7 @@ export default function DashBoard() {
               </div>
               <Button
                 className="mt-auto font-league-spartan text-lg text-white w-full px-4"
-                onClick={() => {}}
+                onClick={() => handleSaveRecipe()}
                 size="lg"
                 color="success"
                 endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}

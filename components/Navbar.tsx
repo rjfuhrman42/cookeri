@@ -30,14 +30,14 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
       </div>
       {isUserLoggedIn ? (
         <NavbarContent justify="end">
-          {pathname === "/dashboard" ? (
+          {pathname === "/myrecipes" ? (
             <></>
           ) : (
             <NavbarItem>
               <Button
                 as={Link}
                 color="primary"
-                href="/dashboard"
+                href="/myrecipes"
                 variant="ghost"
               >
                 Go to dashboard
