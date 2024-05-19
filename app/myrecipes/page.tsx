@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
@@ -39,6 +39,33 @@ export default function MyRecipes() {
   const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
   const [recipes, setRecipes] = useState<any[] | undefined>();
+  const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
+
+  const selectedValue = useMemo(
+    () => Array.from(selectedKeys).join(", "),
+    [selectedKeys]
+  );
+
+  useEffect(() => {
+    if (!recipes) return;
+
+    const index = Number.parseInt(selectedValue);
+    const recipe = recipes[index];
+    if (!recipe) return;
+    console.log(recipe);
+    setCurrentRecipe({
+      name: recipe.name,
+      description: recipe.description,
+      prepTime: recipe.prep_time,
+      cookTime: recipe.cook_time,
+      totalTime: recipe?.total_time,
+      recipeYield: recipe.recipe_yield,
+      recipeIngredient: recipe.recipe_ingredients,
+      recipeInstructions: [{ name: "default", steps: ["hel"] }],
+      image: recipe.image,
+      author: recipe.author,
+    });
+  }, [selectedValue, recipes]);
 
   const supabase = createClient();
 
@@ -145,9 +172,8 @@ export default function MyRecipes() {
               variant="flat"
               disallowEmptySelection
               selectionMode="single"
-              onSelectionChange={(keys) => {
-                console.log(keys);
-              }}
+              selectedKeys={selectedKeys}
+              onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
             >
               {recipes.map((recipe, index) => {
                 return (

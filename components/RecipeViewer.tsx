@@ -43,6 +43,8 @@ function RecipeViewer({ recipe }: Props) {
   const total = getNeatDuration(totalTime as string);
 
   function getNeatDuration(duration: string) {
+    if (!duration) return "";
+
     const durationObj = dayjs.duration(duration);
 
     const hoursTotal = durationObj.asHours();
