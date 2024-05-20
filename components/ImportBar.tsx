@@ -23,13 +23,15 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
     Todos:
     [] Handle when calls to sites are blocked by firewall
-    [] Handle when sites do not use JSON-LD or follow expected pattern
+    [] Handle when sites do not use JSON-LD 
     [] Better error handling (define what this means)
+    [X]  Handle when sites do not follow expected pattern
 
   */
 
   async function importData() {
     if (url.length <= 0) return;
+
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
       const data = await res.text();

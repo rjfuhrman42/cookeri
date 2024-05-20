@@ -6,7 +6,12 @@ import SideBar from "@/components/SideBar";
 import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
-import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
+import {
+  CloseCircleIcon,
+  EditIcon,
+  MaximizeIcon,
+  SaveIcon,
+} from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
@@ -32,10 +37,9 @@ type editorStateType =
   | "recipeIngredient"
   | "recipeInstructions"
   | "myRecipes"
-  | "importRecipe";
+  | "editRecipe";
 
 export default function MyRecipes() {
-  const [url, setUrl] = useState("");
   const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
   const [recipes, setRecipes] = useState<any[] | undefined>();
@@ -51,27 +55,45 @@ export default function MyRecipes() {
 
     const index = Number.parseInt(selectedValue);
     const recipe = recipes[index];
+
     if (!recipe) return;
-    console.log(recipe);
-    setCurrentRecipe({
-      name: recipe.name,
-      description: recipe.description,
-      prepTime: recipe.prep_time,
-      cookTime: recipe.cook_time,
-      totalTime: recipe?.total_time,
-      recipeYield: recipe.recipe_yield,
-      recipeIngredient: recipe.recipe_ingredients,
-      recipeInstructions: [{ name: "default", steps: ["hel"] }],
-      image: recipe.image,
-      author: recipe.author,
-    });
+
+    supabase
+      .from("recipe_instructions")
+      .select()
+      .eq("recipe_id", recipe.id)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("error fetching recipe instructions", error.message);
+          return;
+        }
+
+        if (!data) return;
+
+        const recipeInstructions = data.map((step: RecipeInstructions) => {
+          return { name: step.name, steps: step.steps };
+        });
+
+        setCurrentRecipe({
+          name: recipe.name,
+          description: recipe.description,
+          prepTime: recipe.prep_time,
+          cookTime: recipe.cook_time,
+          totalTime: recipe?.total_time,
+          recipeYield: recipe.recipe_yield,
+          recipeIngredient: recipe.recipe_ingredients,
+          recipeInstructions,
+          image: recipe.image,
+          author: recipe.author,
+        });
+      });
   }, [selectedValue, recipes]);
 
   const supabase = createClient();
 
   async function fetchRecipe() {
     const { data, error } = await supabase.from("recipe").select("*");
-    console.log("fetched data", data);
+
     if (data) {
       setRecipes(data);
     }
@@ -164,29 +186,43 @@ export default function MyRecipes() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <SideBar>
           {/* <ImportBar url={url} setUrl={setUrl} setData={setCurrentRecipe} /> */}
-          <h1>My recipes</h1>
 
-          {recipes ? (
-            <Listbox
-              aria-label="Single selection example"
-              variant="flat"
-              disallowEmptySelection
-              selectionMode="single"
-              selectedKeys={selectedKeys}
-              onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
-            >
-              {recipes.map((recipe, index) => {
-                return (
-                  <ListboxItem className="bg-white" key={index}>
-                    {recipe.name}
-                  </ListboxItem>
-                );
-              })}
-            </Listbox>
+          {recipes && editorState === "myRecipes" ? (
+            <>
+              <h1>My recipes</h1>
+              <Listbox
+                aria-label="Single selection example"
+                variant="flat"
+                disallowEmptySelection
+                selectionMode="single"
+                selectedKeys={selectedKeys}
+                onSelectionChange={(keys) =>
+                  setSelectedKeys(keys as Set<string>)
+                }
+              >
+                {recipes.map((recipe, index) => {
+                  return (
+                    <ListboxItem className="bg-white" key={index}>
+                      {recipe.name}
+                    </ListboxItem>
+                  );
+                })}
+              </Listbox>
+            </>
           ) : (
             <></>
           )}
-          {currentRecipe && (
+          {editorState === "myRecipes" && currentRecipe ? (
+            <Button
+              color="primary"
+              onClick={() => setEditorState("editRecipe")}
+            >
+              Edit current recipe
+            </Button>
+          ) : (
+            <></>
+          )}
+          {currentRecipe && editorState === "editRecipe" && (
             <>
               <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
                 <label
@@ -243,6 +279,15 @@ export default function MyRecipes() {
                 endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
               >
                 Save recipe
+              </Button>
+              <Button
+                className="mt-auto font-league-spartan text-lg text-white w-full px-4"
+                onClick={() => setEditorState("myRecipes")}
+                size="lg"
+                color="danger"
+                endContent={<CloseCircleIcon stroke="white" />}
+              >
+                Discard changes
               </Button>
             </>
           )}
