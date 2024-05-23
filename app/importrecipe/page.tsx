@@ -39,20 +39,12 @@ export default function ImportRecipe() {
 
   const supabase = createClient();
 
-  // async function fetchRecipe() {
-  //   const { data, error } = await supabase.from("recipe").select("*");
-  //   console.log("fetched data", data);
-  // }
-
-  // useEffect(() => {
-  //   fetchRecipe();
-  // });
-
   async function handleSaveRecipe() {
     if (!currentRecipe) return;
 
     const userData: UserResponse = await supabase.auth.getUser();
     if (!userData?.data?.user) return;
+    console.log(currentRecipe);
 
     const payload = {
       name: currentRecipe.name,
