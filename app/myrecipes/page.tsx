@@ -50,6 +50,24 @@ export default function MyRecipes() {
     [selectedKeys]
   );
 
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase
+      .from("recipe")
+      .select("*")
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("error fetching recipes", error.message);
+          return;
+        }
+
+        if (data) {
+          setRecipes(data);
+        }
+      });
+  }, [supabase]);
+
   useEffect(() => {
     if (!recipes) return;
 
@@ -87,21 +105,7 @@ export default function MyRecipes() {
           author: recipe.author,
         });
       });
-  }, [selectedValue, recipes]);
-
-  const supabase = createClient();
-
-  async function fetchRecipe() {
-    const { data, error } = await supabase.from("recipe").select("*");
-
-    if (data) {
-      setRecipes(data);
-    }
-  }
-
-  useEffect(() => {
-    fetchRecipe();
-  }, []);
+  }, [selectedValue, recipes, supabase]);
 
   async function handleSaveRecipe() {
     if (!currentRecipe) return;
@@ -185,36 +189,37 @@ export default function MyRecipes() {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <SideBar>
-          {/* <ImportBar url={url} setUrl={setUrl} setData={setCurrentRecipe} /> */}
-
           {recipes && editorState === "myRecipes" ? (
             <>
               <h1>My recipes</h1>
-              <Listbox
-                aria-label="Single selection example"
-                variant="flat"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={selectedKeys}
-                onSelectionChange={(keys) =>
-                  setSelectedKeys(keys as Set<string>)
-                }
-              >
-                {recipes.map((recipe, index) => {
-                  return (
-                    <ListboxItem className="bg-white" key={index}>
-                      {recipe.name}
-                    </ListboxItem>
-                  );
-                })}
-              </Listbox>
+              <div className="bg-white flex-1 border-1 border-gray-500 w-full rounded-lg">
+                <Listbox
+                  aria-label="Single selection example"
+                  disallowEmptySelection
+                  selectionMode="single"
+                  selectedKeys={selectedKeys}
+                  onSelectionChange={(keys) =>
+                    setSelectedKeys(keys as Set<string>)
+                  }
+                >
+                  {recipes.map((recipe, index) => {
+                    return (
+                      <ListboxItem key={index} variant="shadow">
+                        {recipe.name}
+                      </ListboxItem>
+                    );
+                  })}
+                </Listbox>
+              </div>
             </>
           ) : (
             <></>
           )}
-          {editorState === "myRecipes" && currentRecipe ? (
+          {editorState === "myRecipes" ? (
             <Button
               color="primary"
+              isDisabled={!currentRecipe}
+              size="lg"
               onClick={() => setEditorState("editRecipe")}
             >
               Edit current recipe
