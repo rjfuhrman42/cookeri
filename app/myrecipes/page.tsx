@@ -189,27 +189,31 @@ export default function MyRecipes() {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <SideBar>
-          {recipes && editorState === "myRecipes" ? (
+          {editorState === "myRecipes" ? (
             <>
               <h1>My recipes</h1>
               <div className="bg-white flex-1 border-1 border-gray-500 w-full rounded-lg">
-                <Listbox
-                  aria-label="Single selection example"
-                  disallowEmptySelection
-                  selectionMode="single"
-                  selectedKeys={selectedKeys}
-                  onSelectionChange={(keys) =>
-                    setSelectedKeys(keys as Set<string>)
-                  }
-                >
-                  {recipes.map((recipe, index) => {
-                    return (
-                      <ListboxItem key={index} variant="shadow">
-                        {recipe.name}
-                      </ListboxItem>
-                    );
-                  })}
-                </Listbox>
+                {recipes ? (
+                  <Listbox
+                    aria-label="Single selection example"
+                    disallowEmptySelection
+                    selectionMode="single"
+                    selectedKeys={selectedKeys}
+                    onSelectionChange={(keys) =>
+                      setSelectedKeys(keys as Set<string>)
+                    }
+                  >
+                    {recipes.map((recipe, index) => {
+                      return (
+                        <ListboxItem key={index} variant="shadow">
+                          {recipe.name}
+                        </ListboxItem>
+                      );
+                    })}
+                  </Listbox>
+                ) : (
+                  <></>
+                )}
               </div>
             </>
           ) : (
