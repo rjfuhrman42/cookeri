@@ -10,7 +10,7 @@ export async function GET(request: Request) {
         const supabase = createClient();
 
         await supabase.auth.exchangeCodeForSession(code);
-        redirect(`${requestURL.origin}/dashboard`);
+        redirect(`${requestURL.origin}/myrecipes`);
     }
     return console.error("No credential found");
 
