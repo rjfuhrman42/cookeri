@@ -299,9 +299,9 @@ export default function MyRecipes() {
                   Edit steps
                 </Button>
               </div>
-              <div className="mt-auto flex gap-1">
+              <div className="mt-auto flex w-full justify-between between gap-1">
                 <Button
-                  className="font-league-spartan text-lg text-white px-4"
+                  className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
                   onClick={() => handleUpdateRecipe()}
                   size="lg"
                   color="success"
@@ -310,7 +310,7 @@ export default function MyRecipes() {
                   Save changes
                 </Button>
                 <Button
-                  className="font-league-spartan text-lg text-white px-4"
+                  className="font-league-spartan text-lg text-white px-4 w-2/8 2xl:w-1/2"
                   onClick={() => {
                     setCurrentRecipe(initialRecipe);
                     setEditorState("myRecipes");
