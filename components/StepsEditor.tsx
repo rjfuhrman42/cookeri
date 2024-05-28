@@ -62,6 +62,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
           .split("\n\n")
           .filter((step) => step !== "")
           .map((step) => step.trim()),
+        id: steps.find((step) => step.name === key)?.id,
       } as RecipeInstructions;
 
       updatedInstructions.push(section);

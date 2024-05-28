@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
@@ -9,9 +9,10 @@ import RecipeViewer from "@/components/RecipeViewer";
 import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
-import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
+import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 export type Recipe = {
   name: string;
@@ -36,6 +37,7 @@ export default function ImportRecipe() {
   const [url, setUrl] = useState("");
   const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const router = useRouter();
 
   const supabase = createClient();
 
@@ -83,6 +85,8 @@ export default function ImportRecipe() {
         console.error("error saving steps", stepsError.message);
         return;
       }
+      // If the save was successful, redirect to the user's recipes page
+      router.push("/myrecipes");
     } catch (error) {
       console.error("error", error);
     }

@@ -60,7 +60,7 @@ function RecipeViewer({ recipe }: Props) {
   return (
     <div className="h-full w-full overflow-scroll bg-white">
       {recipe ? (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center px-0 md:px-10">
           <article className="flex flex-col gap-y-12 py-20 w-full lg:max-w-[1000px]">
             <h1 className="text-3xl font-bold text-center">
               {name?.toString()}

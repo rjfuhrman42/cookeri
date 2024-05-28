@@ -31,6 +31,7 @@ export type Recipe = {
   recipeInstructions: RecipeInstructions[];
   image: string;
   author: string;
+  id?: number;
 };
 
 type editorStateType =
@@ -42,6 +43,7 @@ type editorStateType =
 export default function MyRecipes() {
   const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
   const [recipes, setRecipes] = useState<any[] | undefined>();
   const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
 
@@ -52,6 +54,7 @@ export default function MyRecipes() {
 
   const supabase = createClient();
 
+  /* ------- Fetch recipes ------- */
   useEffect(() => {
     supabase
       .from("recipe")
@@ -68,6 +71,7 @@ export default function MyRecipes() {
       });
   }, [supabase]);
 
+  /* ------- Fetch recipe instructions ------- */
   useEffect(() => {
     if (!recipes) return;
 
@@ -89,10 +93,10 @@ export default function MyRecipes() {
         if (!data) return;
 
         const recipeInstructions = data.map((step: RecipeInstructions) => {
-          return { name: step.name, steps: step.steps };
+          return { name: step.name, steps: step.steps, id: step.id };
         });
 
-        setCurrentRecipe({
+        const parsedRecipe = {
           name: recipe.name,
           description: recipe.description,
           prepTime: recipe.prep_time,
@@ -103,12 +107,19 @@ export default function MyRecipes() {
           recipeInstructions,
           image: recipe.image,
           author: recipe.author,
-        });
+          id: recipe.id,
+        };
+
+        setCurrentRecipe(parsedRecipe);
+
+        // Save the initial recipe to compare changes
+        // Use this to revert changes if needed
+        setInitialRecipe(parsedRecipe);
       });
   }, [selectedValue, recipes, supabase]);
 
-  async function handleSaveRecipe() {
-    if (!currentRecipe) return;
+  async function handleUpdateRecipe() {
+    if (!currentRecipe || !currentRecipe.id) return;
 
     const userData: UserResponse = await supabase.auth.getUser();
     if (!userData?.data?.user) return;
@@ -128,28 +139,36 @@ export default function MyRecipes() {
     try {
       const { data, error } = await supabase
         .from("recipe")
-        .insert({ ...payload, user_id: userData.data.user.id })
+        .update({ ...payload })
+        .eq("id", currentRecipe.id)
         .select();
 
       if (error) {
         console.error("error saving recipe", error.message);
         return;
       }
-
+      console.log("successful update on recipe", data);
       if (!data) return;
 
+      // TODO: don't update steps if steps haven't changed
       const { error: stepsError } = await supabase
         .from("recipe_instructions")
-        .insert(
-          currentRecipe.recipeInstructions.map((step) => ({
-            ...step,
-            recipe_id: data?.[0].id,
-          }))
-        );
+        .upsert(
+          currentRecipe.recipeInstructions.map((step) => {
+            console.log(step);
+            return {
+              ...step,
+              recipe_id: currentRecipe.id,
+              id: step.id,
+            };
+          })
+        )
+        .select();
       if (stepsError) {
         console.error("error saving steps", stepsError.message);
         return;
       }
+      setEditorState("myRecipes");
     } catch (error) {
       console.error("error", error);
     }
@@ -160,12 +179,12 @@ export default function MyRecipes() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <IngredientsEditor
           ingredients={currentRecipe.recipeIngredient as string[]}
-          onCancel={() => setEditorState("myRecipes")}
+          onCancel={() => setEditorState("editRecipe")}
           onSave={(data: string[]) => {
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeIngredient: data };
             });
-            setEditorState("myRecipes");
+            setEditorState("editRecipe");
           }}
         />
       </main>
@@ -175,12 +194,12 @@ export default function MyRecipes() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <StepsEditor
           steps={currentRecipe.recipeInstructions}
-          onCancel={() => setEditorState("myRecipes")}
+          onCancel={() => setEditorState("editRecipe")}
           onSave={(data: RecipeInstructions[]) => {
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeInstructions: data };
             });
-            setEditorState("myRecipes");
+            setEditorState("editRecipe");
           }}
         />
       </main>
@@ -189,27 +208,31 @@ export default function MyRecipes() {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <SideBar>
-          {recipes && editorState === "myRecipes" ? (
+          {editorState === "myRecipes" ? (
             <>
               <h1>My recipes</h1>
               <div className="bg-white flex-1 border-1 border-gray-500 w-full rounded-lg">
-                <Listbox
-                  aria-label="Single selection example"
-                  disallowEmptySelection
-                  selectionMode="single"
-                  selectedKeys={selectedKeys}
-                  onSelectionChange={(keys) =>
-                    setSelectedKeys(keys as Set<string>)
-                  }
-                >
-                  {recipes.map((recipe, index) => {
-                    return (
-                      <ListboxItem key={index} variant="shadow">
-                        {recipe.name}
-                      </ListboxItem>
-                    );
-                  })}
-                </Listbox>
+                {recipes ? (
+                  <Listbox
+                    aria-label="Single selection example"
+                    disallowEmptySelection
+                    selectionMode="single"
+                    selectedKeys={selectedKeys}
+                    onSelectionChange={(keys) =>
+                      setSelectedKeys(keys as Set<string>)
+                    }
+                  >
+                    {recipes.map((recipe, index) => {
+                      return (
+                        <ListboxItem key={index} variant="shadow">
+                          {recipe.name}
+                        </ListboxItem>
+                      );
+                    })}
+                  </Listbox>
+                ) : (
+                  <></>
+                )}
               </div>
             </>
           ) : (
@@ -276,35 +299,42 @@ export default function MyRecipes() {
                   Edit steps
                 </Button>
               </div>
-              <Button
-                className="mt-auto font-league-spartan text-lg text-white w-full px-4"
-                onClick={() => handleSaveRecipe()}
-                size="lg"
-                color="success"
-                endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
-              >
-                Save recipe
-              </Button>
-              <Button
-                className="mt-auto font-league-spartan text-lg text-white w-full px-4"
-                onClick={() => setEditorState("myRecipes")}
-                size="lg"
-                color="danger"
-                endContent={<CloseCircleIcon stroke="white" />}
-              >
-                Discard changes
-              </Button>
+              <div className="mt-auto flex w-full justify-between between gap-1">
+                <Button
+                  className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
+                  onClick={() => handleUpdateRecipe()}
+                  size="lg"
+                  color="success"
+                  endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
+                >
+                  Save changes
+                </Button>
+                <Button
+                  className="font-league-spartan text-lg text-white px-4 w-2/8 2xl:w-1/2"
+                  onClick={() => {
+                    setCurrentRecipe(initialRecipe);
+                    setEditorState("myRecipes");
+                  }}
+                  size="lg"
+                  color="danger"
+                  endContent={<CloseCircleIcon stroke="white" />}
+                >
+                  Discard
+                </Button>
+              </div>
             </>
           )}
-          <Button
-            className="mt-auto font-league-spartan text-lg text-white w-full px-4"
-            as={Link}
-            color="success"
-            size="lg"
-            href="/importrecipe"
-          >
-            Add a new recipe
-          </Button>
+          {editorState === "myRecipes" && (
+            <Button
+              className="mt-auto font-league-spartan text-lg text-white w-full px-4"
+              as={Link}
+              color="success"
+              size="lg"
+              href="/importrecipe"
+            >
+              Add a new recipe
+            </Button>
+          )}
         </SideBar>
         <section className=" relative flex flex-col h-full w-full p-0 overflow-hidden">
           <Button

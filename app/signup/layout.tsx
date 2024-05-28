@@ -12,7 +12,7 @@ export default async function Layout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) redirect("/dashboard");
+  if (user) redirect("/myrecipes");
 
   return <>{children}</>;
 }
