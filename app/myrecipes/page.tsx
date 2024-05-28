@@ -43,6 +43,7 @@ type editorStateType =
 export default function MyRecipes() {
   const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
   const [recipes, setRecipes] = useState<any[] | undefined>();
   const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
 
@@ -95,7 +96,7 @@ export default function MyRecipes() {
           return { name: step.name, steps: step.steps, id: step.id };
         });
 
-        setCurrentRecipe({
+        const parsedRecipe = {
           name: recipe.name,
           description: recipe.description,
           prepTime: recipe.prep_time,
@@ -107,7 +108,13 @@ export default function MyRecipes() {
           image: recipe.image,
           author: recipe.author,
           id: recipe.id,
-        });
+        };
+
+        setCurrentRecipe(parsedRecipe);
+
+        // Save the initial recipe to compare changes
+        // Use this to revert changes if needed
+        setInitialRecipe(parsedRecipe);
       });
   }, [selectedValue, recipes, supabase]);
 
@@ -304,7 +311,10 @@ export default function MyRecipes() {
                 </Button>
                 <Button
                   className="font-league-spartan text-lg text-white px-4"
-                  onClick={() => setEditorState("myRecipes")}
+                  onClick={() => {
+                    setCurrentRecipe(initialRecipe);
+                    setEditorState("myRecipes");
+                  }}
                   size="lg"
                   color="danger"
                   endContent={<CloseCircleIcon stroke="white" />}
