@@ -147,7 +147,7 @@ export default function MyRecipes() {
         console.error("error saving recipe", error.message);
         return;
       }
-      console.log("successful update on recipe", data);
+
       if (!data) return;
 
       // TODO: don't update steps if steps haven't changed
@@ -155,7 +155,6 @@ export default function MyRecipes() {
         .from("recipe_instructions")
         .upsert(
           currentRecipe.recipeInstructions.map((step) => {
-            console.log(step);
             return {
               ...step,
               recipe_id: currentRecipe.id,
@@ -240,6 +239,7 @@ export default function MyRecipes() {
           )}
           {editorState === "myRecipes" ? (
             <Button
+              className="text-lg"
               color="primary"
               isDisabled={!currentRecipe}
               size="lg"

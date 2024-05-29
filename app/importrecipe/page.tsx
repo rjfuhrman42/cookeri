@@ -46,7 +46,6 @@ export default function ImportRecipe() {
 
     const userData: UserResponse = await supabase.auth.getUser();
     if (!userData?.data?.user) return;
-    console.log(currentRecipe);
 
     const payload = {
       name: currentRecipe.name,
