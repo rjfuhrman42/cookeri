@@ -22,7 +22,10 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
   const pathname = usePathname();
 
   return (
-    <NextNavbar maxWidth={maxWidth}>
+    <NextNavbar
+      maxWidth={maxWidth}
+      className="bg-cookeri-green-light border border-b-black"
+    >
       <div className="ml-3.5">
         <NavbarBrand>
           <h1 className="font-gluten font-bold text-cookeri-green">Cookeri</h1>
@@ -38,7 +41,8 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
                 as={Link}
                 color="primary"
                 href="/myrecipes"
-                variant="ghost"
+                radius="none"
+                variant="solid"
               >
                 Go to dashboard
               </Button>
@@ -53,7 +57,8 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
               }}
               color="danger"
               href="#"
-              variant="flat"
+              radius="none"
+              variant="solid"
             >
               Log out
             </Button>

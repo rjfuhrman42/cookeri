@@ -109,7 +109,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
         <Listbox
           className="w-1/4"
           aria-label="Single selection example"
-          variant="flat"
+          variant="solid"
           disallowEmptySelection
           selectionMode="single"
           selectedKeys={selectedKeys}

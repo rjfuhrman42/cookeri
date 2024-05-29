@@ -209,8 +209,8 @@ export default function MyRecipes() {
         <SideBar>
           {editorState === "myRecipes" ? (
             <>
-              <h1>My recipes</h1>
-              <div className="bg-white flex-1 border-1 border-gray-500 w-full rounded-lg">
+              <h1 className="font-bold pl-4">My recipes</h1>
+              <div className="bg-white flex-1 w-full max-h-[450px]">
                 {recipes ? (
                   <Listbox
                     aria-label="Single selection example"
@@ -223,7 +223,11 @@ export default function MyRecipes() {
                   >
                     {recipes.map((recipe, index) => {
                       return (
-                        <ListboxItem key={index} variant="shadow">
+                        <ListboxItem
+                          key={index}
+                          variant="solid"
+                          className="rounded-none"
+                        >
                           {recipe.name}
                         </ListboxItem>
                       );
@@ -237,19 +241,7 @@ export default function MyRecipes() {
           ) : (
             <></>
           )}
-          {editorState === "myRecipes" ? (
-            <Button
-              className="text-lg"
-              color="primary"
-              isDisabled={!currentRecipe}
-              size="lg"
-              onClick={() => setEditorState("editRecipe")}
-            >
-              Edit current recipe
-            </Button>
-          ) : (
-            <></>
-          )}
+
           {currentRecipe && editorState === "editRecipe" && (
             <>
               <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
@@ -285,6 +277,8 @@ export default function MyRecipes() {
                   onClick={() => setEditorState("recipeIngredient")}
                   size="lg"
                   color="success"
+                  radius="none"
+                  variant="solid"
                   endContent={<EditIcon fill="white" />}
                 >
                   Edit ingredients
@@ -294,6 +288,8 @@ export default function MyRecipes() {
                   onClick={() => setEditorState("recipeInstructions")}
                   size="lg"
                   color="success"
+                  radius="none"
+                  variant="solid"
                   endContent={<EditIcon fill="white" />}
                 >
                   Edit steps
@@ -305,6 +301,8 @@ export default function MyRecipes() {
                   onClick={() => handleUpdateRecipe()}
                   size="lg"
                   color="success"
+                  radius="none"
+                  variant="solid"
                   endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
                 >
                   Save changes
@@ -317,6 +315,8 @@ export default function MyRecipes() {
                   }}
                   size="lg"
                   color="danger"
+                  radius="none"
+                  variant="solid"
                   endContent={<CloseCircleIcon stroke="white" />}
                 >
                   Discard
@@ -325,15 +325,30 @@ export default function MyRecipes() {
             </>
           )}
           {editorState === "myRecipes" && (
-            <Button
-              className="mt-auto font-league-spartan text-lg text-white w-full px-4"
-              as={Link}
-              color="success"
-              size="lg"
-              href="/importrecipe"
-            >
-              Add a new recipe
-            </Button>
+            <div className="mt-auto flex flex-col gap-y-4">
+              <Button
+                className="font-league-spartan text-lg text-white w-full px-4"
+                color="primary"
+                isDisabled={!currentRecipe}
+                size="lg"
+                radius="none"
+                variant="solid"
+                onClick={() => setEditorState("editRecipe")}
+              >
+                Edit current recipe
+              </Button>
+              <Button
+                className="font-league-spartan text-lg text-white w-full px-4"
+                as={Link}
+                color="success"
+                size="lg"
+                radius="none"
+                variant="solid"
+                href="/importrecipe"
+              >
+                Add a new recipe
+              </Button>
+            </div>
           )}
         </SideBar>
         <section className=" relative flex flex-col h-full w-full p-0 overflow-hidden">
