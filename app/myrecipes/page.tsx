@@ -92,9 +92,15 @@ export default function MyRecipes() {
 
         if (!data) return;
 
-        const recipeInstructions = data.map((step: RecipeInstructions) => {
-          return { name: step.name, steps: step.steps, id: step.id };
-        });
+        const recipeInstructions = data
+          .map((step: RecipeInstructions) => {
+            return { name: step.name, steps: step.steps, id: step.id };
+          })
+          .sort((cur, next) => {
+            // Sort by ID - maybe add an order column in the future
+            // Not sure if ID will always represent the order
+            return cur.id - next.id;
+          });
 
         const parsedRecipe = {
           name: recipe.name,

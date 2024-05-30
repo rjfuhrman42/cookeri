@@ -16,7 +16,7 @@ interface Props {
 export type RecipeInstructions = {
   name: string;
   steps: string[];
-  id?: number;
+  id: number;
 };
 
 function ImportBar({ url, setUrl, setData }: Props) {
