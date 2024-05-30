@@ -99,7 +99,10 @@ export default function MyRecipes() {
           .sort((cur, next) => {
             // Sort by ID - maybe add an order column in the future
             // Not sure if ID will always represent the order
-            return cur.id - next.id;
+            if (cur.id && next.id) {
+              return cur.id - next.id;
+            }
+            return 0;
           });
 
         const parsedRecipe = {
