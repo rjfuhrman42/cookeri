@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import SideBar from "@/components/SideBar";
-import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
+import { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import {

@@ -31,7 +31,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col gap-y-8 items-center pt-36">
+    <div className="bg-cookeri-green-light h-screen w-full flex flex-col gap-y-8 items-center pt-36">
       <p>Welcome to</p>
       <h1 className="font-gluten font-bold text-6xl text-cookeri-green">
         Cookeri
