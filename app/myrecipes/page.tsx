@@ -56,6 +56,7 @@ export default function MyRecipes() {
 
   /* ------- Fetch recipes ------- */
   useEffect(() => {
+    if (editorState !== "myRecipes") return;
     supabase
       .from("recipe")
       .select("*")
@@ -64,12 +65,11 @@ export default function MyRecipes() {
           console.error("error fetching recipes", error.message);
           return;
         }
-
         if (data) {
           setRecipes(data);
         }
       });
-  }, [supabase]);
+  }, [supabase, editorState]);
 
   /* ------- Fetch recipe instructions ------- */
   useEffect(() => {
