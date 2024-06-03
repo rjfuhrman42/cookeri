@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React from "react";
-import { HowToStep, HowToSection, ImageObject } from "schema-dts";
 import { Recipe } from "@/app/importrecipe/page";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";

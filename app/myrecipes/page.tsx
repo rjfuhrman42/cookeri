@@ -14,7 +14,7 @@ import {
 } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
-import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
+import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 import { Link } from "@nextui-org/link";
@@ -97,6 +97,7 @@ export default function MyRecipes() {
             return { name: step.name, steps: step.steps, id: step.id };
           })
           .sort((cur, next) => {
+            if (!cur.id || !next.id) return 0;
             // Sort by ID - maybe add an order column in the future
             // Not sure if ID will always represent the order
             if (cur.id && next.id) {
@@ -176,6 +177,26 @@ export default function MyRecipes() {
         console.error("error saving steps", stepsError.message);
         return;
       }
+      setEditorState("myRecipes");
+    } catch (error) {
+      console.error("error", error);
+    }
+  }
+
+  async function handleDeleteRecipe(recipeId: number) {
+    try {
+      const { error } = await supabase
+        .from("recipe")
+        .delete()
+        .eq("id", recipeId)
+        .select();
+
+      if (error) {
+        console.error("error deleting recipe", error.message);
+        return;
+      }
+
+      setCurrentRecipe(undefined);
       setEditorState("myRecipes");
     } catch (error) {
       console.error("error", error);
@@ -302,6 +323,19 @@ export default function MyRecipes() {
                   endContent={<EditIcon fill="white" />}
                 >
                   Edit steps
+                </Button>
+                <Button
+                  className="font-league-spartan text-lg text-white w-full px-4"
+                  onClick={() => {
+                    handleDeleteRecipe(currentRecipe.id as number);
+                  }}
+                  size="md"
+                  color="danger"
+                  radius="none"
+                  variant="solid"
+                  endContent={<CloseCircleIcon stroke="white" />}
+                >
+                  Delete recipe
                 </Button>
               </div>
               <div className="mt-auto flex w-full justify-between between gap-1">

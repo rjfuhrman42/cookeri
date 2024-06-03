@@ -54,7 +54,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
     if (!stepsData) return;
     const updatedInstructions = [];
 
-    for (let [key, value] of Object.entries(stepsData)) {
+    for (const [key, value] of Object.entries(stepsData)) {
       const section = {
         name: key,
         steps: value
