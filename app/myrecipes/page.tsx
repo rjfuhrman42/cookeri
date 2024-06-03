@@ -14,7 +14,7 @@ import {
 } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
-import StepsEditor, { RecipeSteps } from "@/components/StepsEditor";
+import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 import { Link } from "@nextui-org/link";
@@ -97,6 +97,7 @@ export default function MyRecipes() {
             return { name: step.name, steps: step.steps, id: step.id };
           })
           .sort((cur, next) => {
+            if (!cur.id || !next.id) return 0;
             // Sort by ID - maybe add an order column in the future
             // Not sure if ID will always represent the order
             return cur.id - next.id;
