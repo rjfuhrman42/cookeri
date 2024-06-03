@@ -179,6 +179,26 @@ export default function MyRecipes() {
     }
   }
 
+  async function handleDeleteRecipe(recipeId: number) {
+    try {
+      const { error } = await supabase
+        .from("recipe")
+        .delete()
+        .eq("id", recipeId)
+        .select();
+
+      if (error) {
+        console.error("error deleting recipe", error.message);
+        return;
+      }
+
+      setCurrentRecipe(undefined);
+      setEditorState("myRecipes");
+    } catch (error) {
+      console.error("error", error);
+    }
+  }
+
   if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
@@ -299,6 +319,19 @@ export default function MyRecipes() {
                   endContent={<EditIcon fill="white" />}
                 >
                   Edit steps
+                </Button>
+                <Button
+                  className="font-league-spartan text-lg text-white w-full px-4"
+                  onClick={() => {
+                    handleDeleteRecipe(currentRecipe.id as number);
+                  }}
+                  size="md"
+                  color="danger"
+                  radius="none"
+                  variant="solid"
+                  endContent={<CloseCircleIcon stroke="white" />}
+                >
+                  Delete recipe
                 </Button>
               </div>
               <div className="mt-auto flex w-full justify-between between gap-1">
