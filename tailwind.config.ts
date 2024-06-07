@@ -8,12 +8,16 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@nextui-org/theme/dist/components/(button|input|link|listbox|navbar).js",
+    "./node_modules/@nextui-org/theme/dist/components/tooltip.js",
   ],
   theme: {
     extend: {
       colors: {
-        "cookeri-green": "#17C964",
-        "cookeri-green-light": "rgba(23, 201, 100, 0.19)",
+        "cookeri-green": "#02D084",
+        "cookeri-green-light": "rgba(179, 241, 218, 0.42)",
+        "light-black": "#252627",
+        "light-grey": "#EBECF0",
+        "glass-white": "rgba(255, 255, 255, 0.09)"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
