@@ -72,15 +72,64 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
   }
 
   return (
-    <div className="relative flex flex-col items-center pt-8 pb-16 px-8 w-full h-screen">
+    <div className="relative flex flex-col items-center pt-8 pb-16 px-8 w-full h-screen bg-light-grey">
       <h1 className="pt-4 pb-12 font-bold">Edit Instructions</h1>
       <div className="flex flex-row justify-end container w-[825px] gap-x-4">
         <Button
-          className="text-lg text-white px-4"
+          className="absolute top-5 right-5 text-lg text-white px-4"
+          onClick={() => onCancel()}
+          size="lg"
+          color="danger"
+          radius="sm"
+          endContent={
+            <div className="pb-0.5">
+              <CloseCircle fill="white" stroke="red" />
+            </div>
+          }
+        >
+          Discard
+        </Button>
+      </div>
+
+      <div className="pt-4 flex flex-col h-full w-[825px] container relative">
+        <div className="flex flex-row">
+          <Listbox
+            className="w-1/4"
+            aria-label="Single selection example"
+            variant="solid"
+            disallowEmptySelection
+            selectionMode="single"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
+          >
+            {Object.keys(stepsData).map((key) => {
+              return (
+                <ListboxItem className="bg-white" key={key}>
+                  {key}
+                </ListboxItem>
+              );
+            })}
+          </Listbox>
+          <textarea
+            className="h-[550px] container w-7/8 p-4 my-8 mt-1"
+            value={stepsData[selectedValue]}
+            onChange={(e) => {
+              setStepsData((prev) => {
+                return {
+                  ...prev,
+                  [selectedValue]: e.target.value,
+                };
+              });
+            }}
+          ></textarea>
+        </div>
+        <Button
+          className="text-lg text-white px-4 w-full"
           onClick={() => {
             saveRecipeData();
           }}
           size="md"
+          radius="sm"
           color="success"
           endContent={
             <div className="pb-0.5">
@@ -90,51 +139,6 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
         >
           Save edits
         </Button>
-        <Button
-          className="text-lg text-white px-4"
-          onClick={() => onCancel()}
-          size="md"
-          color="danger"
-          endContent={
-            <div className="pb-0.5">
-              <CloseCircle fill="white" stroke="red" />
-            </div>
-          }
-        >
-          Cancel
-        </Button>
-      </div>
-
-      <div className="pt-4 flex flex-row justify-end h-full w-[825px] container">
-        <Listbox
-          className="w-1/4"
-          aria-label="Single selection example"
-          variant="solid"
-          disallowEmptySelection
-          selectionMode="single"
-          selectedKeys={selectedKeys}
-          onSelectionChange={(keys) => setSelectedKeys(keys as Set<string>)}
-        >
-          {Object.keys(stepsData).map((key) => {
-            return (
-              <ListboxItem className="bg-white" key={key}>
-                {key}
-              </ListboxItem>
-            );
-          })}
-        </Listbox>
-        <textarea
-          className="h-full container w-7/8 p-4 mt-1"
-          value={stepsData[selectedValue]}
-          onChange={(e) => {
-            setStepsData((prev) => {
-              return {
-                ...prev,
-                [selectedValue]: e.target.value,
-              };
-            });
-          }}
-        ></textarea>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import {
+  BookSquareIcon,
   CloseCircleIcon,
   EditIcon,
   MaximizeIcon,
@@ -19,6 +20,7 @@ import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 import { Link } from "@nextui-org/link";
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Tooltip } from "@nextui-org/tooltip";
 
 export type Recipe = {
   name: string;
@@ -46,6 +48,7 @@ export default function MyRecipes() {
   const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
   const [recipes, setRecipes] = useState<any[] | undefined>();
   const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
+  const [sidebarShown, setSidebarShown] = useState(true);
 
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", "),
@@ -91,7 +94,8 @@ export default function MyRecipes() {
         }
 
         if (!data) return;
-
+        /* <a href="https://storyset.com/online">Online illustrations by Storyset</a> */
+        // <a href="https://storyset.com/book">Book illustrations by Storyset</a>
         const recipeInstructions = data
           .map((step: RecipeInstructions) => {
             return { name: step.name, steps: step.steps, id: step.id };
@@ -236,172 +240,204 @@ export default function MyRecipes() {
   } else
     return (
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
-        <SideBar>
-          {editorState === "myRecipes" ? (
-            <>
-              <h1 className="font-bold pl-4">My recipes</h1>
-              <div className="bg-white flex-1 w-full max-h-[450px]">
-                {recipes ? (
-                  <Listbox
-                    aria-label="Single selection example"
-                    disallowEmptySelection
-                    selectionMode="single"
-                    selectedKeys={selectedKeys}
-                    onSelectionChange={(keys) =>
-                      setSelectedKeys(keys as Set<string>)
+        {sidebarShown ? (
+          <SideBar>
+            {editorState === "myRecipes" ? (
+              <>
+                <div className="flex items-center">
+                  <BookSquareIcon className="mb-1.5" stroke="white" />
+                  <h1 className="font-bold pl-4 text-white text-3xl">
+                    My recipes
+                  </h1>
+                </div>
+                <div className="bg-light-black text-white flex-1 w-full max-h-[450px]">
+                  {recipes ? (
+                    <Listbox
+                      aria-label="Single selection example"
+                      disallowEmptySelection
+                      selectionMode="single"
+                      selectedKeys={selectedKeys}
+                      onSelectionChange={(keys) =>
+                        setSelectedKeys(keys as Set<string>)
+                      }
+                    >
+                      {recipes.map((recipe, index) => {
+                        return selectedValue === index.toString() ? (
+                          <ListboxItem
+                            key={index}
+                            variant="solid"
+                            className="text-center !text-white !bg-glass-white"
+                          >
+                            <p className="py-2 px-3 text-white !text-lg">
+                              {recipe.name}
+                            </p>
+                          </ListboxItem>
+                        ) : (
+                          <ListboxItem
+                            variant="bordered"
+                            key={index}
+                            className="text-left"
+                          >
+                            <p className="py-2 px-3 !text-lg">{recipe.name}</p>
+                          </ListboxItem>
+                        );
+                      })}
+                    </Listbox>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+
+            {currentRecipe && editorState === "editRecipe" && (
+              <>
+                <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
+                  <label
+                    htmlFor="recipe-title"
+                    className="font-league-spartan text-lg text-left w-full pl-2"
+                  >
+                    Recipe title:
+                  </label>
+                  <Input
+                    type="text"
+                    value={currentRecipe?.name?.toString()}
+                    color="default"
+                    radius="sm"
+                    size="lg"
+                    onChange={(e) => {
+                      setCurrentRecipe(() => {
+                        return {
+                          ...currentRecipe,
+                          name: e.target.value,
+                        };
+                      });
+                    }}
+                    className="w-full"
+                    name="recipe-title"
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
+                  <p className="font-league-spartan text-lg text-left w-full pl-2">
+                    Recipe details:
+                  </p>
+                  <Button
+                    className="font-league-spartan text-lg text-white w-full px-4"
+                    onClick={() => setEditorState("recipeIngredient")}
+                    size="lg"
+                    color="primary"
+                    radius="sm"
+                    variant="solid"
+                    endContent={<EditIcon fill="white" />}
+                  >
+                    Edit ingredients
+                  </Button>
+                  <Button
+                    className="font-league-spartan text-lg text-white w-full px-4"
+                    onClick={() => setEditorState("recipeInstructions")}
+                    size="lg"
+                    color="primary"
+                    radius="sm"
+                    variant="solid"
+                    endContent={<EditIcon fill="white" />}
+                  >
+                    Edit steps
+                  </Button>
+                  <Button
+                    className="font-league-spartan text-lg text-white w-full px-4"
+                    onClick={() => {
+                      handleDeleteRecipe(currentRecipe.id as number);
+                    }}
+                    size="md"
+                    color="danger"
+                    radius="sm"
+                    variant="solid"
+                    endContent={<CloseCircleIcon stroke="white" />}
+                  >
+                    Delete recipe
+                  </Button>
+                </div>
+                <div className="mt-auto flex w-full justify-between between gap-1">
+                  <Button
+                    className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
+                    onClick={() => handleUpdateRecipe()}
+                    size="lg"
+                    color="success"
+                    radius="sm"
+                    variant="solid"
+                    endContent={
+                      <SaveIcon stroke="rgb(34 197 94)" fill="white" />
                     }
                   >
-                    {recipes.map((recipe, index) => {
-                      return (
-                        <ListboxItem
-                          key={index}
-                          variant="solid"
-                          className="rounded-none"
-                        >
-                          {recipe.name}
-                        </ListboxItem>
-                      );
-                    })}
-                  </Listbox>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
+                    Save changes
+                  </Button>
+                  <Button
+                    className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
+                    onClick={() => {
+                      setCurrentRecipe(initialRecipe);
+                      setEditorState("myRecipes");
+                    }}
+                    size="lg"
+                    color="danger"
+                    radius="sm"
+                    variant="flat"
+                    endContent={<CloseCircleIcon stroke="red" />}
+                  >
+                    Discard
+                  </Button>
+                </div>
+              </>
+            )}
+            {editorState === "myRecipes" && (
+              <div className="mt-auto flex flex-col gap-y-4">
+                <Button
+                  className="font-league-spartan text-lg text-white w-full px-4"
+                  color="primary"
+                  isDisabled={!currentRecipe}
+                  size="lg"
+                  radius="none"
+                  variant="solid"
+                  onClick={() => setEditorState("editRecipe")}
+                >
+                  Edit current recipe
+                </Button>
 
-          {currentRecipe && editorState === "editRecipe" && (
-            <>
-              <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
-                <label
-                  htmlFor="recipe-title"
-                  className="font-league-spartan text-lg text-left w-full pl-2"
-                >
-                  Recipe title:
-                </label>
-                <Input
-                  type="text"
-                  value={currentRecipe?.name?.toString()}
-                  color="default"
-                  size="lg"
-                  onChange={(e) => {
-                    setCurrentRecipe(() => {
-                      return {
-                        ...currentRecipe,
-                        name: e.target.value,
-                      };
-                    });
-                  }}
-                  className="w-full"
-                  name="recipe-title"
-                />
-              </div>
-              <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
-                <p className="font-league-spartan text-lg text-left w-full pl-2">
-                  Recipe details:
-                </p>
                 <Button
                   className="font-league-spartan text-lg text-white w-full px-4"
-                  onClick={() => setEditorState("recipeIngredient")}
-                  size="lg"
+                  as={Link}
                   color="success"
-                  radius="none"
-                  variant="solid"
-                  endContent={<EditIcon fill="white" />}
-                >
-                  Edit ingredients
-                </Button>
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  onClick={() => setEditorState("recipeInstructions")}
                   size="lg"
-                  color="success"
                   radius="none"
                   variant="solid"
-                  endContent={<EditIcon fill="white" />}
+                  href="/importrecipe"
                 >
-                  Edit steps
-                </Button>
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  onClick={() => {
-                    handleDeleteRecipe(currentRecipe.id as number);
-                  }}
-                  size="md"
-                  color="danger"
-                  radius="none"
-                  variant="solid"
-                  endContent={<CloseCircleIcon stroke="white" />}
-                >
-                  Delete recipe
+                  Add a new recipe
                 </Button>
               </div>
-              <div className="mt-auto flex w-full justify-between between gap-1">
-                <Button
-                  className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
-                  onClick={() => handleUpdateRecipe()}
-                  size="lg"
-                  color="success"
-                  radius="none"
-                  variant="solid"
-                  endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
-                >
-                  Save changes
-                </Button>
-                <Button
-                  className="font-league-spartan text-lg text-white px-4 w-2/8 2xl:w-1/2"
-                  onClick={() => {
-                    setCurrentRecipe(initialRecipe);
-                    setEditorState("myRecipes");
-                  }}
-                  size="lg"
-                  color="danger"
-                  radius="none"
-                  variant="solid"
-                  endContent={<CloseCircleIcon stroke="white" />}
-                >
-                  Discard
-                </Button>
-              </div>
-            </>
-          )}
-          {editorState === "myRecipes" && (
-            <div className="mt-auto flex flex-col gap-y-4">
+            )}
+          </SideBar>
+        ) : (
+          <></>
+        )}
+        <section className="relative flex flex-col h-full w-full p-0 overflow-hidden">
+          <div className="absolute flex flex-col items-start top-0 h-12 w-full">
+            <Tooltip
+              content="Full screen"
+              className="px-4 bg-white"
+              placement="right"
+            >
               <Button
-                className="font-league-spartan text-lg text-white w-full px-4"
-                color="primary"
-                isDisabled={!currentRecipe}
-                size="lg"
+                isIconOnly
+                onPress={() => setSidebarShown(!sidebarShown)}
+                className="text-base"
+                endContent={<MaximizeIcon stroke="black" />}
                 radius="none"
-                variant="solid"
-                onClick={() => setEditorState("editRecipe")}
-              >
-                Edit current recipe
-              </Button>
-              <Button
-                className="font-league-spartan text-lg text-white w-full px-4"
-                as={Link}
-                color="success"
                 size="lg"
-                radius="none"
-                variant="solid"
-                href="/importrecipe"
-              >
-                Add a new recipe
-              </Button>
-            </div>
-          )}
-        </SideBar>
-        <section className=" relative flex flex-col h-full w-full p-0 overflow-hidden">
-          <Button
-            isIconOnly
-            className="absolute top-2 left-2 text-white text-base"
-            endContent={<MaximizeIcon stroke="white" />}
-            size="lg"
-            color="primary"
-          />
+              />
+            </Tooltip>
+          </div>
           <RecipeViewer recipe={currentRecipe} />
         </section>
       </main>

@@ -16,6 +16,7 @@
     "@nextui-org/navbar": "^2.0.30",
     "@nextui-org/system": "^2.0.15",
     "@nextui-org/theme": "^2.1.18",
+    "@nextui-org/tooltip": "^2.0.35",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.42.7",
     "@types/jsonld": "^1.5.13",

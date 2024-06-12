@@ -140,6 +140,7 @@ export default function ImportRecipe() {
                   value={currentRecipe?.name?.toString()}
                   color="default"
                   size="lg"
+                  radius="sm"
                   onChange={(e) => {
                     setCurrentRecipe(() => {
                       return {
@@ -160,7 +161,8 @@ export default function ImportRecipe() {
                   className="font-league-spartan text-lg text-white w-full px-4"
                   onClick={() => setEditorState("recipeIngredient")}
                   size="lg"
-                  color="success"
+                  color="primary"
+                  radius="sm"
                   endContent={<EditIcon fill="white" />}
                 >
                   Edit ingredients
@@ -169,7 +171,8 @@ export default function ImportRecipe() {
                   className="font-league-spartan text-lg text-white w-full px-4"
                   onClick={() => setEditorState("recipeInstructions")}
                   size="lg"
-                  color="success"
+                  color="primary"
+                  radius="sm"
                   endContent={<EditIcon fill="white" />}
                 >
                   Edit steps
@@ -180,6 +183,7 @@ export default function ImportRecipe() {
                 onClick={() => handleSaveRecipe()}
                 size="lg"
                 color="success"
+                radius="sm"
                 endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
               >
                 Save recipe
@@ -193,6 +197,7 @@ export default function ImportRecipe() {
             className="absolute top-2 left-2 text-white text-base"
             endContent={<MaximizeIcon stroke="white" />}
             size="lg"
+            radius="sm"
             color="primary"
           />
           <RecipeViewer recipe={currentRecipe} />

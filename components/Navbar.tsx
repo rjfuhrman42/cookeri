@@ -22,13 +22,10 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
   const pathname = usePathname();
 
   return (
-    <NextNavbar
-      maxWidth={maxWidth}
-      className="bg-cookeri-green-light border border-b-black"
-    >
+    <NextNavbar maxWidth={maxWidth} className="bg-cookeri-green">
       <div className="ml-3.5">
         <NavbarBrand>
-          <h1 className="font-gluten font-bold text-cookeri-green">Cookeri</h1>
+          <h1 className="font-gluten font-bold text-white">Cookeri</h1>
         </NavbarBrand>
       </div>
       {isUserLoggedIn ? (

@@ -57,14 +57,14 @@ function RecipeViewer({ recipe }: Props) {
   }
 
   return (
-    <div className="h-full w-full overflow-scroll bg-white">
+    <div className="h-full w-full overflow-scroll bg-light-grey">
       {recipe ? (
         <div className="flex items-center justify-center px-0 md:px-10">
           <article className="flex flex-col gap-y-12 py-20 w-full lg:max-w-[1000px]">
             <h1 className="text-3xl font-bold text-center">
               {name?.toString()}
             </h1>
-            <div className="flex flex-col sm:flex-row h-[500px]">
+            <div className="flex flex-col sm:flex-row min-h-[400px]">
               <div className="bg-cookeri-green-light p-8 flex-1">
                 <div className="flex flex-col pb-8 gap-y-2">
                   {authorDetails?.name && (
