@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import { RecipeInstructions } from "@/components/ImportBar";
@@ -19,8 +19,8 @@ import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 import { Link } from "@nextui-org/link";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import { Tooltip } from "@nextui-org/tooltip";
+import RecipesList from "@/components/RecipesList";
 
 export type Recipe = {
   name: string;
@@ -47,13 +47,8 @@ export default function MyRecipes() {
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
   const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
   const [recipes, setRecipes] = useState<any[] | undefined>();
-  const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
-  const [sidebarShown, setSidebarShown] = useState(true);
 
-  const selectedValue = useMemo(
-    () => Array.from(selectedKeys).join(", "),
-    [selectedKeys]
-  );
+  const [sidebarShown, setSidebarShown] = useState(true);
 
   const supabase = createClient();
 
@@ -75,12 +70,13 @@ export default function MyRecipes() {
   }, [supabase, editorState]);
 
   /* ------- Fetch recipe instructions ------- */
-  useEffect(() => {
+
+  function fetchRecipeData(selectedValue: string) {
     if (!recipes) return;
 
     const index = Number.parseInt(selectedValue);
     const recipe = recipes[index];
-
+    console.log("fetch!", recipe);
     if (!recipe) return;
 
     supabase
@@ -123,14 +119,14 @@ export default function MyRecipes() {
           author: recipe.author,
           id: recipe.id,
         };
-
+        console.log("parsedRecipe", parsedRecipe);
         setCurrentRecipe(parsedRecipe);
 
         // Save the initial recipe to compare changes
         // Use this to revert changes if needed
         setInitialRecipe(parsedRecipe);
       });
-  }, [selectedValue, recipes, supabase]);
+  }
 
   async function handleUpdateRecipe() {
     if (!currentRecipe || !currentRecipe.id) return;
@@ -252,37 +248,10 @@ export default function MyRecipes() {
                 </div>
                 <div className="bg-light-black text-white flex-1 w-full max-h-[450px]">
                   {recipes ? (
-                    <Listbox
-                      aria-label="Single selection example"
-                      disallowEmptySelection
-                      selectionMode="single"
-                      selectedKeys={selectedKeys}
-                      onSelectionChange={(keys) =>
-                        setSelectedKeys(keys as Set<string>)
-                      }
-                    >
-                      {recipes.map((recipe, index) => {
-                        return selectedValue === index.toString() ? (
-                          <ListboxItem
-                            key={index}
-                            variant="solid"
-                            className="text-center !text-white !bg-glass-white"
-                          >
-                            <p className="py-2 px-3 text-white !text-lg">
-                              {recipe.name}
-                            </p>
-                          </ListboxItem>
-                        ) : (
-                          <ListboxItem
-                            variant="bordered"
-                            key={index}
-                            className="text-left"
-                          >
-                            <p className="py-2 px-3 !text-lg">{recipe.name}</p>
-                          </ListboxItem>
-                        );
-                      })}
-                    </Listbox>
+                    <RecipesList
+                      recipes={recipes}
+                      onRecipeChange={(value) => fetchRecipeData(value)}
+                    />
                   ) : (
                     <></>
                   )}

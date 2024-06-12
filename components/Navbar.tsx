@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/navbar";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
+import { BookSquareIcon, ImportIcon } from "./icons";
 
 type Props = {
   isUserLoggedIn: boolean;
@@ -22,30 +23,43 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
   const pathname = usePathname();
 
   return (
-    <NextNavbar maxWidth={maxWidth} className="bg-cookeri-green">
+    <NextNavbar maxWidth={maxWidth} className="bg-black">
       <div className="ml-3.5">
         <NavbarBrand>
-          <h1 className="font-gluten font-bold text-white">Cookeri</h1>
+          <h1 className="font-gluten font-bold text-cookeri-green">Cookeri</h1>
         </NavbarBrand>
       </div>
       {isUserLoggedIn ? (
         <NavbarContent justify="end">
-          {pathname === "/myrecipes" ? (
-            <></>
-          ) : (
-            <NavbarItem>
-              <Button
-                as={Link}
-                color="primary"
-                href="/myrecipes"
-                radius="none"
-                variant="solid"
-              >
-                Go to dashboard
-              </Button>
-            </NavbarItem>
-          )}
-
+          <NavbarItem>
+            <Button
+              className="text-white"
+              as={Link}
+              href="/myrecipes"
+              radius="sm"
+              variant={pathname === "/myrecipes" ? "bordered" : "light"}
+              size="lg"
+              endContent={
+                <BookSquareIcon height={15} width={15} stroke="white" />
+              }
+            >
+              My Recipes
+            </Button>
+          </NavbarItem>
+          <NavbarItem>
+            <Button
+              className="text-white"
+              as={Link}
+              color="default"
+              href="/importrecipe"
+              radius="sm"
+              variant={pathname === "/importrecipe" ? "bordered" : "light"}
+              size="lg"
+              endContent={<ImportIcon height={15} width={15} stroke="white" />}
+            >
+              Import
+            </Button>
+          </NavbarItem>
           <NavbarItem>
             <Button
               onPress={async () => {
