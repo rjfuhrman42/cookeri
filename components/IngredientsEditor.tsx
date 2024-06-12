@@ -25,17 +25,38 @@ export default function IngredientsEditor({
   }
 
   return (
-    <div className="relative flex flex-col items-center py-16 px-8 w-full h-screen">
+    <div className="relative flex flex-col items-center py-16 px-8 w-full h-screen bg-light-grey">
       <div className="flex flex-row justify-between container max-w-[625px] gap-x-4">
-        <h1>Edit Ingredients</h1>
+        <h1 className="font-bold">Editing Ingredients</h1>
+      </div>
+      <Button
+        className="absolute top-5 right-5 text-lg text-white px-4"
+        onClick={() => onCancel()}
+        size="lg"
+        color="danger"
+        radius="sm"
+        endContent={
+          <div className="pb-0.5">
+            <CloseCircle fill="white" stroke="red" />
+          </div>
+        }
+      >
+        Discard
+      </Button>
+      <div className="w-[625px]">
+        <textarea
+          className="h-[550px] container p-4 my-8 bg-white"
+          defaultValue={parseRecipeData()}
+        ></textarea>
         <Button
-          className="text-lg text-white px-4"
+          className="text-lg text-white px-4 w-full"
           onClick={() => {
             const data = document.querySelector("textarea")?.value;
             if (!data) return;
             saveRecipeData(data);
           }}
           size="lg"
+          radius="sm"
           color="success"
           endContent={
             <div className="pb-0.5">
@@ -46,22 +67,6 @@ export default function IngredientsEditor({
           Save edits
         </Button>
       </div>
-      <Button
-        className="absolute top-5 right-5 text-lg text-white px-4"
-        isIconOnly
-        onClick={() => onCancel()}
-        size="lg"
-        color="danger"
-        endContent={
-          <div className="pb-0.5">
-            <CloseCircle fill="white" stroke="red" />
-          </div>
-        }
-      />
-      <textarea
-        className="h-full container max-w-[625px] p-4 mt-4"
-        defaultValue={parseRecipeData()}
-      ></textarea>
     </div>
   );
 }

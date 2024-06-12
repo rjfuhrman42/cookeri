@@ -305,6 +305,7 @@ export default function MyRecipes() {
                     type="text"
                     value={currentRecipe?.name?.toString()}
                     color="default"
+                    radius="sm"
                     size="lg"
                     onChange={(e) => {
                       setCurrentRecipe(() => {
@@ -326,8 +327,8 @@ export default function MyRecipes() {
                     className="font-league-spartan text-lg text-white w-full px-4"
                     onClick={() => setEditorState("recipeIngredient")}
                     size="lg"
-                    color="success"
-                    radius="none"
+                    color="primary"
+                    radius="sm"
                     variant="solid"
                     endContent={<EditIcon fill="white" />}
                   >
@@ -337,8 +338,8 @@ export default function MyRecipes() {
                     className="font-league-spartan text-lg text-white w-full px-4"
                     onClick={() => setEditorState("recipeInstructions")}
                     size="lg"
-                    color="success"
-                    radius="none"
+                    color="primary"
+                    radius="sm"
                     variant="solid"
                     endContent={<EditIcon fill="white" />}
                   >
@@ -351,7 +352,7 @@ export default function MyRecipes() {
                     }}
                     size="md"
                     color="danger"
-                    radius="none"
+                    radius="sm"
                     variant="solid"
                     endContent={<CloseCircleIcon stroke="white" />}
                   >
@@ -364,7 +365,7 @@ export default function MyRecipes() {
                     onClick={() => handleUpdateRecipe()}
                     size="lg"
                     color="success"
-                    radius="none"
+                    radius="sm"
                     variant="solid"
                     endContent={
                       <SaveIcon stroke="rgb(34 197 94)" fill="white" />
@@ -373,16 +374,16 @@ export default function MyRecipes() {
                     Save changes
                   </Button>
                   <Button
-                    className="font-league-spartan text-lg text-white px-4 w-2/8 2xl:w-1/2"
+                    className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
                     onClick={() => {
                       setCurrentRecipe(initialRecipe);
                       setEditorState("myRecipes");
                     }}
                     size="lg"
                     color="danger"
-                    radius="none"
-                    variant="solid"
-                    endContent={<CloseCircleIcon stroke="white" />}
+                    radius="sm"
+                    variant="flat"
+                    endContent={<CloseCircleIcon stroke="red" />}
                   >
                     Discard
                   </Button>

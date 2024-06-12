@@ -137,6 +137,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
           value={url}
           color="default"
           size="lg"
+          radius="sm"
           onChange={(e) => setUrl(e.target.value)}
           className="w-full"
           name="recipe-import"
@@ -145,7 +146,8 @@ function ImportBar({ url, setUrl, setData }: Props) {
           className="font-league-spartan text-lg text-white w-full px-4"
           onClick={() => importData()}
           size="md"
-          color="success"
+          color="primary"
+          radius="sm"
           endContent={<ImportIcon stroke="white" />}
         >
           Import
