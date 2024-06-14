@@ -6,7 +6,7 @@ import SideBar from "@/components/SideBar";
 import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
-import { EditIcon, MaximizeIcon, SaveIcon } from "@/components/icons";
+import { EditIcon, SaveIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor from "@/components/StepsEditor";
@@ -192,15 +192,10 @@ export default function ImportRecipe() {
           )}
         </SideBar>
         <section className=" relative flex flex-col h-full w-full p-0 overflow-hidden">
-          <Button
-            isIconOnly
-            className="absolute top-2 left-2 text-white text-base"
-            endContent={<MaximizeIcon stroke="white" />}
-            size="lg"
-            radius="sm"
-            color="primary"
+          <RecipeViewer
+            recipe={currentRecipe}
+            emptyText="No recipe right now! Import a recipe and it will show up here..."
           />
-          <RecipeViewer recipe={currentRecipe} />
         </section>
       </main>
     );

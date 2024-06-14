@@ -10,6 +10,7 @@ dayjs.extend(relativeTime);
 
 interface Props {
   recipe: Recipe | undefined;
+  emptyText?: string;
 }
 
 /*
@@ -21,7 +22,7 @@ interface Props {
 
 */
 
-function RecipeViewer({ recipe }: Props) {
+function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
   const {
     name,
     description,
@@ -157,10 +158,8 @@ function RecipeViewer({ recipe }: Props) {
           </article>
         </div>
       ) : (
-        <div className="flex items-center justify-center pt-20 w-full">
-          <p>
-            No recipe right now! Import a recipe and it will show up here...
-          </p>
+        <div className="flex items-center justify-center h-full w-full">
+          <p className="text-2xl">{emptyText}</p>
         </div>
       )}
     </div>
