@@ -15,15 +15,18 @@ import { BookSquareIcon, ImportIcon } from "./icons";
 type Props = {
   isUserLoggedIn: boolean;
   maxWidth?: "full" | "sm" | "md" | "lg" | "xl" | "2xl" | undefined;
+  color?: "black" | "white" | "cookeri-green" | "cookeri-green-light";
 };
 
-function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
+function Navbar({ isUserLoggedIn, maxWidth = "xl", color = "black" }: Props) {
   const supabase = createClient();
   const router = useRouter();
   const pathname = usePathname();
 
+  const bgColor = `bg-${color}`;
+
   return (
-    <NextNavbar maxWidth={maxWidth} className="bg-black">
+    <NextNavbar maxWidth={maxWidth} className={bgColor} height="4.5em">
       <div className="ml-3.5">
         <NavbarBrand>
           <h1 className="font-gluten font-bold text-cookeri-green">Cookeri</h1>
@@ -78,10 +81,27 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl" }: Props) {
       ) : (
         <NavbarContent justify="end">
           <NavbarItem className="hidden lg:flex">
-            <Link href="/login">Login</Link>
+            <Button
+              as={Link}
+              color="success"
+              radius="sm"
+              size="lg"
+              href="/login"
+              variant="light"
+            >
+              Sign in
+            </Button>
           </NavbarItem>
           <NavbarItem>
-            <Button as={Link} color="primary" href="/signup" variant="flat">
+            <Button
+              as={Link}
+              color="success"
+              radius="sm"
+              size="lg"
+              href="/signup"
+              variant="ghost"
+              className="hover:!text-white"
+            >
               Sign Up
             </Button>
           </NavbarItem>
