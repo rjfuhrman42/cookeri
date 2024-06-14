@@ -9,6 +9,7 @@ import { Button } from "@nextui-org/button";
 import Image from "next/image";
 
 import Cookbook from "../public/cookbook.svg";
+import { Link } from "@nextui-org/link";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -26,26 +27,27 @@ export default function Home() {
         <Navbar isUserLoggedIn={user !== null} color="cookeri-green-light" />
         <div className="flex flex-col items-center w-screen">
           <div className="w-full flex justify-center">
-            <div className="flex flex-row items-center justify-between px-12 w-[1280px] h-[1080px]">
-              <div className="flex flex-col w-5/12 gap-y-16 gap-x-4">
-                <h1 className="font-bold text-5xl">
+            <div className="relative flex flex-col items-center justify-between px-12 w-[1280px] py-28 md:py-40 md:flex-row">
+              <div className="flex flex-col gap-y-12 md:gap-y-16 gap-x-4 lg:w-5/12">
+                <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl lg:w-full">
                   Collect your favorite recipes from the web.
                 </h1>
-                <p className="container text-xl">
+                <p className="text-base sm:text-xl">
                   Paste the url, import, save, then cook.<br></br>
                   All of your favorite recipes from the web, in one place.
                 </p>
-
                 <Button
+                  as={Link}
+                  href="/login"
                   size="lg"
                   color="success"
                   radius="sm"
-                  className="text-white py-8 px-8 w-min font-semibold"
+                  className="text-white py-8 px-8 w-min font-semibold font-league-spartan"
                 >
                   Create an account
                 </Button>
               </div>
-              <div className="">
+              <div className="mt-8">
                 <Image src={Cookbook} alt="cookbook" width={650} height={650} />
               </div>
             </div>

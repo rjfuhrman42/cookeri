@@ -26,7 +26,7 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl", color = "black" }: Props) {
   const bgColor = `bg-${color}`;
 
   return (
-    <NextNavbar maxWidth={maxWidth} className={bgColor}>
+    <NextNavbar maxWidth={maxWidth} className={bgColor} height="4.5em">
       <div className="ml-3.5">
         <NavbarBrand>
           <h1 className="font-gluten font-bold text-cookeri-green">Cookeri</h1>
