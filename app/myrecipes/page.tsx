@@ -7,6 +7,7 @@ import { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import {
+  ArrowRightIcon,
   BookSquareIcon,
   CloseCircleIcon,
   EditIcon,
@@ -366,7 +367,7 @@ export default function MyRecipes() {
                   color="primary"
                   isDisabled={!currentRecipe}
                   size="lg"
-                  radius="none"
+                  radius="sm"
                   variant="solid"
                   onClick={() => setEditorState("editRecipe")}
                 >
@@ -376,9 +377,9 @@ export default function MyRecipes() {
                 <Button
                   className="font-league-spartan text-lg text-white w-full px-4"
                   as={Link}
-                  color="success"
+                  color="secondary"
                   size="lg"
-                  radius="none"
+                  radius="sm"
                   variant="solid"
                   href="/importrecipe"
                 >
@@ -392,22 +393,38 @@ export default function MyRecipes() {
         )}
         <section className="relative flex flex-col h-full w-full p-0 overflow-hidden">
           <div className="absolute flex flex-col items-start top-0 h-12 w-full">
-            <Tooltip
-              content="Full screen"
-              className="px-4 bg-white"
-              placement="right"
-            >
+            {sidebarShown ? (
+              <Tooltip
+                content="Full screen"
+                className="px-4 bg-white"
+                placement="right"
+              >
+                <Button
+                  isIconOnly
+                  onPress={() => setSidebarShown(!sidebarShown)}
+                  color="primary"
+                  endContent={<MaximizeIcon stroke="white" />}
+                  radius="none"
+                  size="lg"
+                />
+              </Tooltip>
+            ) : (
               <Button
-                isIconOnly
                 onPress={() => setSidebarShown(!sidebarShown)}
                 className="text-base"
-                endContent={<MaximizeIcon stroke="black" />}
+                color="primary"
+                endContent={<ArrowRightIcon stroke="white" fill="white" />}
                 radius="none"
                 size="lg"
-              />
-            </Tooltip>
+              >
+                Show sidebar
+              </Button>
+            )}
           </div>
-          <RecipeViewer recipe={currentRecipe} />
+          <RecipeViewer
+            recipe={currentRecipe}
+            emptyText="No recipe loaded. Choose a recipe and it will show up here!"
+          />
         </section>
       </main>
     );

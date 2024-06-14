@@ -1,4 +1,5 @@
 export { default as ArrowLeftIcon } from './ArrowLeft'
+export { default as ArrowRightIcon } from './ArrowRight'
 export { default as BookSquareIcon } from './BookSquare'
 export { default as CloseCircleIcon } from './CloseCircle'
 export { default as EditIcon } from './Edit'
