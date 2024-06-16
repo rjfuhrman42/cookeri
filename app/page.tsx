@@ -47,8 +47,14 @@ export default function Home() {
                   Create an account
                 </Button>
               </div>
-              <div className="mt-8">
+              <div className="mt-8 relative">
                 <Image src={Cookbook} alt="cookbook" width={650} height={650} />
+                <a
+                  href="https://storyset.com/book"
+                  className="block italic text-xs text-gray-400 w-full text-right"
+                >
+                  Book illustrations by Storyset
+                </a>
               </div>
             </div>
           </div>
