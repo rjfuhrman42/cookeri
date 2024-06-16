@@ -27,7 +27,7 @@ export default function Home() {
         <Navbar isUserLoggedIn={user !== null} color="cookeri-green-light" />
         <div className="flex flex-col items-center w-screen">
           <div className="w-full flex justify-center">
-            <div className="relative flex flex-col items-center justify-between px-12 w-[1280px] py-28 md:py-40 md:flex-row">
+            <div className="relative flex flex-col items-center justify-between px-12 pt-16 w-[1280px] h-screen max-h-[1280px] md:flex-row">
               <div className="flex flex-col gap-y-12 md:gap-y-16 gap-x-4 lg:w-5/12">
                 <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl lg:w-full">
                   Collect your favorite recipes from the web.
@@ -48,7 +48,7 @@ export default function Home() {
                 </Button>
               </div>
               <div className="mt-8 relative">
-                <Image src={Cookbook} alt="cookbook" width={650} height={650} />
+                <Image src={Cookbook} alt="cookbook" width={600} height={600} />
                 <a
                   href="https://storyset.com/book"
                   className="block italic text-xs text-gray-400 w-full text-right"
