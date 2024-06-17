@@ -16,9 +16,15 @@ type Props = {
   isUserLoggedIn: boolean;
   maxWidth?: "full" | "sm" | "md" | "lg" | "xl" | "2xl" | undefined;
   color?: "black" | "white" | "cookeri-green" | "cookeri-green-light";
+  fixed?: boolean;
 };
 
-function Navbar({ isUserLoggedIn, maxWidth = "xl", color = "black" }: Props) {
+function Navbar({
+  isUserLoggedIn,
+  maxWidth = "xl",
+  color = "black",
+  fixed = false,
+}: Props) {
   const supabase = createClient();
   const router = useRouter();
   const pathname = usePathname();
@@ -28,7 +34,7 @@ function Navbar({ isUserLoggedIn, maxWidth = "xl", color = "black" }: Props) {
   return (
     <NextNavbar
       maxWidth={maxWidth}
-      className={`${bgColor} fixed`}
+      className={`${bgColor} ${fixed ? "fixed" : ""}`}
       height="4.5em"
     >
       <div className="ml-3.5">

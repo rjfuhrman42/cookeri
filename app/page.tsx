@@ -24,7 +24,11 @@ export default function Home() {
   return (
     <NextUIProvider>
       <main className="flex flex-col items-center justify-start">
-        <Navbar isUserLoggedIn={user !== null} color="cookeri-green-light" />
+        <Navbar
+          isUserLoggedIn={user !== null}
+          color="cookeri-green-light"
+          fixed
+        />
         <div className="flex flex-col items-center w-screen">
           <div className="w-full flex justify-center">
             <div className="relative flex flex-col items-center justify-between px-12 pt-16 w-[1280px] h-screen max-h-[1280px] md:flex-row">
