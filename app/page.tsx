@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Image from "next/image";
+import Import from "../public/import.gif";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -27,27 +29,38 @@ export default function Home() {
         />
         <div className="flex flex-col items-center w-screen">
           <Hero />
-          <section className="w-full flex flex-col justify-center bg-cookeri-green-light">
-            <div>
-              <h2>Import</h2>
-              <p>
-                Find you favorite recipe on the web. Copy and paste the URL into
-                Cookeri’s import bar, press the button.
-              </p>
-            </div>
-            <div>
-              <h2>Import</h2>
-              <p>
-                Find you favorite recipe on the web. Copy and paste the URL into
-                Cookeri’s import bar, press the button.
-              </p>
-            </div>
-            <div>
-              <h2>Import</h2>
-              <p>
-                Find you favorite recipe on the web. Copy and paste the URL into
-                Cookeri’s import bar, press the button.
-              </p>
+          <section className="w-full flex flex-col items-center py-24 bg-cookeri-green-light">
+            <div className="bg-red-200 px-12 gap-y-36 container flex flex-col">
+              <div className="flex flex-row-reverse justify-around">
+                <div className="w-[300px]">
+                  <h2 className="font-bold text-4xl">Import</h2>
+                  <p className="text-xl">
+                    Find you favorite recipe on the web. Copy and paste the URL
+                    into Cookeri’s import bar, press the button.
+                  </p>
+                </div>
+                <Image src={Import} alt="cookbook" width={400} height={400} />
+              </div>
+              <div className="flex flex-row justify-around">
+                <div className="">
+                  <h2 className="font-bold text-4xl">Import</h2>
+                  <p>
+                    Find you favorite recipe on the web. Copy and paste the URL
+                    into Cookeri’s import bar, press the button.
+                  </p>
+                </div>
+                <Image src={Import} alt="cookbook" width={400} height={400} />
+              </div>
+              <div className="flex flex-row-reverse justify-around">
+                <div className="w-1/2">
+                  <h2 className="font-bold text-4xl">Import</h2>
+                  <p>
+                    Find you favorite recipe on the web. Copy and paste the URL
+                    into Cookeri’s import bar, press the button.
+                  </p>
+                </div>
+                <Image src={Import} alt="cookbook" width={400} height={400} />
+              </div>
             </div>
           </section>
         </div>
