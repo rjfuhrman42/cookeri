@@ -17,6 +17,7 @@ const config: Config = {
         "cookeri-green-light": "rgba(179, 241, 218, 0.42)",
         "light-black": "#252627",
         "light-grey": "#EBECF0",
+        "lighter-grey": "#a3a3a3",
         "glass-white": "rgba(255, 255, 255, 0.09)"
       },
       backgroundImage: {
