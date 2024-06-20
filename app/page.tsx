@@ -10,6 +10,10 @@ import Hero from "@/components/Hero";
 import Import from "../public/import.gif";
 import Edit from "../public/edit.gif";
 import FeatureBlock from "@/components/FeatureBlock";
+import Footer from "@/components/Footer";
+import ViewAndCook from "../public/view-and-cook.png";
+
+import Image from "next/image";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -42,42 +46,28 @@ export default function Home() {
               />
             </div>
           </section>
-          <footer className="bg-light-black h-[300px] w-screen flex flex-col items-center py-8">
-            <div className="container flex flex-col items-center justify-between h-full">
-              <h1 className="text-cookeri-green text-4xl font-gluten font-bold">
-                Cookeri
-              </h1>
-              <div className="flex gap-x-4">
-                <a
-                  href="mailto:hey@reidfuhrman.com"
-                  className="uppercase text-sm font-league-spartan text-lighter-grey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Contact
-                </a>
-                <a
-                  href="/privacy-policy.pdf"
-                  className="uppercase text-sm font-league-spartan text-lighter-grey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Privacy Policy
-                </a>
-              </div>
-              <p className="font-league-spartan text-base text-lighter-grey">
-                © {`${new Date(Date.now()).getUTCFullYear()} `}Made with 💚 by{" "}
-                <a
-                  href="https://cliki.in/lxnhe5asne"
-                  className="font-league-spartan text-base text-cookeri-green "
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Reid Fuhrman
-                </a>
+          <section className="w-full bg-glass-white flex flex-col gap-16 lg:flex-row items-center justify-between py-48 lg:h-screen">
+            <div className="lg:h-screen lg:w-5/12 relative flex flex-col justify-center items-end">
+              <h2 className="font-bold text-5xl mb-8 w-[325px]">
+                Save, View ...and Cook!
+              </h2>
+              <p className="text-xl w-[350px]">
+                Visit your recipe collection and select your newly saved recipe.
+                View it in an eye-friendly format inspired by cookbooks. After
+                that you’re ready to cook.
               </p>
             </div>
-          </footer>
+            <div className="lg:h-screen lg:w-7/12 flex justify-start items-center bg-cook-collage bg-cover bg-center">
+              <Image
+                className="ml-8 drop-shadow-2xl rounded-lg"
+                src={ViewAndCook}
+                width={550}
+                height={450}
+                alt="cookbook"
+              />
+            </div>
+          </section>
+          <Footer />
         </div>
       </main>
     </NextUIProvider>
