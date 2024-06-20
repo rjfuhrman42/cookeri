@@ -45,7 +45,7 @@ export default function IngredientsEditor({
       </Button>
       <div className="w-[625px]">
         <textarea
-          className="h-[550px] container p-4 my-8 bg-white"
+          className="h-[400px] container p-4 my-8 bg-white"
           defaultValue={parseRecipeData()}
         ></textarea>
         <Button
