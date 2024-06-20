@@ -8,7 +8,7 @@ import { Link } from "@nextui-org/link";
 function Hero() {
   return (
     <section className="w-full flex justify-center">
-      <div className="relative flex flex-col items-center justify-between px-12 pt-16 w-[1280px] h-screen max-h-[1280px] md:flex-row">
+      <div className="relative flex flex-col items-center justify-between px-12 py-12 w-[1280px] md:h-screen md:max-h-[1280px] md:flex-row">
         <div className="flex flex-col gap-y-12 md:gap-y-16 gap-x-4 lg:w-5/12">
           <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl lg:w-full">
             Collect your favorite recipes from the web.
