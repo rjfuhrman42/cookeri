@@ -1,7 +1,7 @@
 import { GoogleIcon } from "@/components/icons";
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
+import { Input } from "@nextui-org/input";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -31,29 +31,57 @@ function LoginPage() {
   };
 
   return (
-    <div className="bg-cookeri-green-light h-screen w-full flex flex-col gap-y-8 items-center pt-36">
-      <p>Welcome to</p>
-      <h1 className="font-gluten font-bold text-6xl text-cookeri-green">
-        Cookeri
-      </h1>
-      <div className="p-8 h-[400px] w-[500px] rounded-lg bg-white">
-        <form action={signIn} className="flex justify-center">
+    <div className="bg-cookeri-green-light bg-cook-collage bg-no-repeat bg-cover bg-center h-screen w-full flex flex-col gap-y-8 items-center justify-center px-4">
+      <div className="flex flex-col gap-y-8 p-8 w-full sm:w-[500px] rounded-lg bg-white">
+        <h1 className="font-gluten font-bold text-5xl mb-8 text-cookeri-green">
+          Cookeri
+        </h1>
+        <h2 className="font-medium text-xl">Log in or sign up</h2>
+        <form
+          action={signIn}
+          className="flex flex-col justify-center items-center gap-y-4"
+        >
           <Button
-            endContent={<GoogleIcon />}
+            startContent={
+              <div className="mr-auto">
+                <GoogleIcon />
+              </div>
+            }
             size="lg"
             fullWidth
             type="submit"
-            color="success"
-            className="text-white p-2 rounded-lg"
+            variant="flat"
+            className="text-black rounded-md"
           >
-            Sign in with Google
+            <p className="mr-auto font-sans text-base">Continue with Google</p>
+          </Button>
+
+          <p className="separator relative text-center pt-4 w-full text-gray-600">
+            or
+          </p>
+        </form>
+        <form className="flex flex-col justify-center items-center gap-y-4">
+          <Input
+            type="email"
+            label="Email"
+            size="lg"
+            radius="sm"
+            variant="flat"
+            labelPlacement="outside"
+            placeholder="jane@example.com"
+          />
+          <Button
+            type="submit"
+            size="lg"
+            variant="solid"
+            color="success"
+            className="text-white text-md font-medium p-2 rounded-md"
+            fullWidth
+          >
+            Sign up
           </Button>
         </form>
       </div>
-      <p>
-        Don&apos;t have an account? <Link href="/signup">Sign up here.</Link>
-      </p>
-      <Link href="/">Back to home page</Link>
     </div>
   );
 }

@@ -54,7 +54,7 @@ export default function Home() {
               <p className="text-xl w-[350px]">
                 Visit your recipe collection and select your newly saved recipe.
                 View it in an eye-friendly format inspired by cookbooks. After
-                that you’re ready to cook.
+                that you&apos;re ready to cook.
               </p>
             </div>
             <div className="w-full lg:h-screen h-[700px] lg:bg-auto lg:w-7/12 flex flex-col justify-center items-center bg-cook-collage bg-center">
