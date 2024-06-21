@@ -46,7 +46,7 @@ export default function Home() {
               />
             </div>
           </section>
-          <section className="w-full bg-glass-white flex flex-col gap-16 lg:flex-row items-center justify-between py-48 lg:h-screen">
+          <section className="w-full py-36 bg-glass-white flex flex-col gap-16 lg:flex-row items-center justify-between lg:py-48 lg:h-screen">
             <div className="lg:h-screen lg:w-5/12 relative flex flex-col justify-center items-end">
               <h2 className="font-bold text-5xl mb-8 w-[325px]">
                 Save, View ...and Cook!
@@ -57,14 +57,19 @@ export default function Home() {
                 that you’re ready to cook.
               </p>
             </div>
-            <div className="lg:h-screen lg:w-7/12 flex justify-start items-center bg-cook-collage bg-cover bg-center">
+            <div className="w-full lg:h-screen h-[700px] lg:bg-auto lg:w-7/12 flex flex-col justify-center items-center bg-cook-collage bg-center">
               <Image
-                className="ml-8 drop-shadow-2xl rounded-lg"
+                className="drop-shadow-2xl rounded-2xl px-4"
                 src={ViewAndCook}
-                width={550}
-                height={450}
                 alt="cookbook"
+                width={600}
               />
+              <a
+                href="https://storyset.com/online"
+                className="italic text-xs text-gray-400 mt-4"
+              >
+                Online illustrations by Storyset
+              </a>
             </div>
           </section>
           <Footer />
