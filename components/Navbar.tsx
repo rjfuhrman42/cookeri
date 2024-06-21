@@ -108,7 +108,7 @@ function Navbar({
               color="success"
               radius="sm"
               size="lg"
-              href="/signup"
+              href="/login"
               variant="ghost"
               className="hover:!text-white"
             >
