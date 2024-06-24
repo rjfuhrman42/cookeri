@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { Recipe } from "@/app/importrecipe/page";
+import { Recipe } from "@/app/myrecipes/page";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
