@@ -13,19 +13,7 @@ import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-
-export type Recipe = {
-  name: string;
-  description: string;
-  prepTime: string;
-  cookTime: string;
-  totalTime: string;
-  recipeYield: string;
-  recipeIngredient: string[];
-  recipeInstructions: RecipeInstructions[];
-  image: string;
-  author: string;
-};
+import { Recipe } from "../myrecipes/page";
 
 type editorStateType =
   | "recipeIngredient"
@@ -48,6 +36,7 @@ export default function ImportRecipe() {
     if (!userData?.data?.user) return;
 
     const payload = {
+      url: currentRecipe.url,
       name: currentRecipe.name,
       description: currentRecipe.description,
       prep_time: currentRecipe.prepTime,
@@ -58,6 +47,8 @@ export default function ImportRecipe() {
       image: currentRecipe.image,
       author: currentRecipe.author,
     };
+
+    console.log("payload", payload);
 
     try {
       const { data, error } = await supabase

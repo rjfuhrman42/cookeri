@@ -4,6 +4,7 @@ import { Recipe } from "@/app/importrecipe/page";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Link from "next/link";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -24,6 +25,7 @@ interface Props {
 
 function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
   const {
+    url,
     name,
     description,
     prepTime,
@@ -66,7 +68,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
               {name?.toString()}
             </h1>
             <div className="flex flex-col sm:flex-row min-h-[400px]">
-              <div className="bg-cookeri-green-light p-8 flex-1">
+              <div className="bg-cookeri-green-light flex-1 p-8 flex flex-col">
                 <div className="flex flex-col pb-8 gap-y-2">
                   {authorDetails?.name && (
                     <div className="flex flex-row">
@@ -95,7 +97,20 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                     </div>
                   )}
                 </div>
-                <p>{description?.toString()}</p>
+                <p className="mb-auto">{description?.toString()}</p>
+                {url && (
+                  <div className="flex flex-row">
+                    <h4 className="font-bold mr-1">URL: </h4>
+                    <Link
+                      className="text-sm italic underline hover:text-blue-700"
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {url ?? ""}
+                    </Link>
+                  </div>
+                )}
               </div>
               {/* 
               -------------------------------------------------------------------
