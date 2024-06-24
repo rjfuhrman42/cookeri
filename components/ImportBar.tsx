@@ -1,5 +1,5 @@
 import { HowToStep, ImageObject, Recipe } from "schema-dts";
-import { Recipe as SimpleRecipe } from "../app/importrecipe/page";
+import { Recipe as SimpleRecipe } from "../app/myrecipes/page";
 
 import React from "react";
 import { Button } from "@nextui-org/button";
@@ -105,6 +105,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
         : recipeImage.url;
 
       const processedRecipeData: SimpleRecipe = {
+        url,
         name: recipeData.name as string,
         description: recipeData.description as string,
         prepTime: recipeData.prepTime as string,

@@ -24,6 +24,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import RecipesList from "@/components/RecipesList";
 
 export type Recipe = {
+  url?: string;
   name: string;
   description: string;
   prepTime: string;
@@ -108,6 +109,7 @@ export default function MyRecipes() {
           });
 
         const parsedRecipe = {
+          url: recipe?.url,
           name: recipe.name,
           description: recipe.description,
           prepTime: recipe.prep_time,
@@ -247,7 +249,7 @@ export default function MyRecipes() {
                     My recipes
                   </h1>
                 </div>
-                <div className="bg-light-black text-white flex-1 w-full max-h-[450px]">
+                <div className="bg-light-black text-white flex-1 w-full max-h-[450px] overflow-scroll">
                   {recipes ? (
                     <RecipesList
                       recipes={recipes}
@@ -398,6 +400,7 @@ export default function MyRecipes() {
                 content="Full screen"
                 className="px-4 bg-white"
                 placement="right"
+                radius="sm"
               >
                 <Button
                   isIconOnly
