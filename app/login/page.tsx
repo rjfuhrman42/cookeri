@@ -1,34 +1,21 @@
+"use client";
 import { GoogleIcon } from "@/components/icons";
-import { createClient } from "@/utils/supabase/server";
+import {
+  signInWithEmail,
+  signInWithGoogle,
+  verifyCode,
+} from "@/utils/supabase/login";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { useState } from "react";
+
 import React from "react";
 
 function LoginPage() {
-  const signIn = async () => {
-    "use server";
-    const supabase = createClient();
-    const origin = headers().get("origin");
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
-        },
-        redirectTo: `${origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      console.error(error);
-      return;
-    } else {
-      return redirect(data.url);
-    }
-  };
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [isInvalid, setIsInvalid] = useState(false);
 
   return (
     <div className="bg-cookeri-green-light bg-cook-collage bg-no-repeat bg-cover bg-center h-screen w-full flex flex-col gap-y-8 items-center justify-center px-4">
@@ -38,7 +25,7 @@ function LoginPage() {
         </h1>
         <h2 className="font-medium text-xl">Log in or sign up</h2>
         <form
-          action={signIn}
+          action={signInWithGoogle}
           className="flex flex-col justify-center items-center gap-y-4"
         >
           <Button
@@ -60,16 +47,53 @@ function LoginPage() {
             or
           </p>
         </form>
-        <form className="flex flex-col justify-center items-center gap-y-4">
+        <form
+          action={() => {
+            if (!email) {
+              setIsInvalid(true);
+              return;
+            }
+            if (codeSent) {
+              verifyCode(email, code);
+            }
+
+            signInWithEmail(email);
+            setCodeSent(true);
+          }}
+          className="flex flex-col justify-center items-center gap-y-4"
+        >
           <Input
             type="email"
             label="Email"
+            name="email"
+            value={email}
             size="lg"
             radius="sm"
             variant="flat"
+            isInvalid={isInvalid}
+            errorMessage={isInvalid ? "Please enter a valid email address" : ""}
             labelPlacement="outside"
+            onChange={(e) => {
+              if (isInvalid) setIsInvalid(false);
+              setEmail(e.target.value);
+            }}
             placeholder="jane@example.com"
           />
+          {codeSent ? (
+            <Input
+              type="text"
+              label="Verification code"
+              name="code"
+              value={code}
+              size="lg"
+              radius="sm"
+              variant="flat"
+              onChange={(e) => setCode(e.target.value)}
+              labelPlacement="outside"
+            />
+          ) : (
+            <></>
+          )}
           <Button
             type="submit"
             size="lg"
@@ -78,7 +102,7 @@ function LoginPage() {
             className="text-white text-md font-medium p-2 rounded-md"
             fullWidth
           >
-            Sign up
+            Continue with email
           </Button>
         </form>
       </div>
