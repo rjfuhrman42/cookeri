@@ -17,6 +17,21 @@ function LoginPage() {
   const [codeSent, setCodeSent] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
 
+  async function handleSignInWithEmail() {
+    if (!email) {
+      setIsInvalid(true);
+      return;
+    }
+    if (codeSent) {
+      // Verify code if its already been sent
+      verifyCode(email, code);
+    } else {
+      // Otherwise, send the code and initiate email sign in
+      signInWithEmail(email);
+      setCodeSent(true);
+    }
+  }
+
   return (
     <div className="bg-cookeri-green-light bg-cook-collage bg-no-repeat bg-cover bg-center h-screen w-full flex flex-col gap-y-8 items-center justify-center px-4">
       <div className="flex flex-col gap-y-8 p-8 w-full sm:w-[500px] rounded-lg bg-white">
@@ -48,18 +63,7 @@ function LoginPage() {
           </p>
         </form>
         <form
-          action={() => {
-            if (!email) {
-              setIsInvalid(true);
-              return;
-            }
-            if (codeSent) {
-              verifyCode(email, code);
-            }
-
-            signInWithEmail(email);
-            setCodeSent(true);
-          }}
+          action={() => handleSignInWithEmail()}
           className="flex flex-col justify-center items-center gap-y-4"
         >
           <Input

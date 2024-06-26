@@ -38,8 +38,9 @@ export const signInWithEmail = async (email: string) => {
   if (error) {
     console.error(error);
     return;
-  } else {
-    console.log("otp success", data);
+  }
+  if (!data) {
+    return;
   }
 };
 
@@ -57,6 +58,11 @@ export const verifyCode = async (email: string, code: string) => {
 
   if (error) {
     console.error(error);
+    return;
+  }
+
+  if (!session) {
+    console.error("No session found");
     return;
   }
 };
