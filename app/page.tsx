@@ -25,10 +25,15 @@ export default function Home() {
     });
   });
 
+  const isUserLoggedIn = user !== null;
+
   return (
     <NextUIProvider>
       <main className="flex flex-col items-center justify-start overflow-x-hidden">
-        <Navbar isUserLoggedIn={user !== null} color="cookeri-green-light" />
+        <Navbar
+          isUserLoggedIn={isUserLoggedIn}
+          color={isUserLoggedIn ? "black" : "cookeri-green-light"}
+        />
         <div className="flex flex-col items-center w-screen md:-mt-16">
           <Hero />
           <section className="w-full flex flex-col items-center py-48 bg-cookeri-green-light overflow-x-hidden">

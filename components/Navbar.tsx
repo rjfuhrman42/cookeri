@@ -15,7 +15,7 @@ import { BookSquareIcon, ImportIcon } from "./icons";
 type Props = {
   isUserLoggedIn: boolean;
   maxWidth?: "full" | "sm" | "md" | "lg" | "xl" | "2xl" | undefined;
-  color?: "black" | "white" | "cookeri-green" | "cookeri-green-light";
+  color?: "black" | "cookeri-green-light";
   fixed?: boolean;
 };
 
