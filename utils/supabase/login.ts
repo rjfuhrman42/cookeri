@@ -31,8 +31,7 @@ export const signInWithEmail = async (email: string) => {
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      // set this to false if you do not want the user to be automatically signed up
-      shouldCreateUser: false,
+      shouldCreateUser: true,
     },
   });
   if (error) {
