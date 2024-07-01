@@ -10,10 +10,10 @@ function Hero() {
     <section className="w-full flex justify-center">
       <div className="relative flex flex-col items-center justify-between px-12 py-12 w-[1280px] md:h-screen md:max-h-[1280px] md:flex-row">
         <div className="flex flex-col gap-y-12 md:gap-y-16 gap-x-4 lg:w-5/12">
-          <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl lg:w-full">
+          <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl lg:w-full animate-fade-in-down">
             Collect your favorite recipes from the web.
           </h1>
-          <p className="text-base sm:text-xl">
+          <p className="text-base sm:text-xl animate-fade-in-down">
             Paste the url, import, save, then cook.<br></br>
             All of your favorite recipes from the web, in one place.
           </p>
@@ -23,7 +23,7 @@ function Hero() {
             size="lg"
             color="success"
             radius="sm"
-            className="text-white py-8 px-8 w-min font-semibold font-league-spartan"
+            className="text-white py-8 px-8 w-min font-semibold font-league-spartan animate-fade-in-down"
           >
             Create an account
           </Button>

@@ -18,7 +18,7 @@ const config: Config = {
         "light-black": "#252627",
         "light-grey": "#EBECF0",
         "lighter-grey": "#a3a3a3",
-        "glass-white": "rgba(255, 255, 255, 0.09)"
+        "glass-white": "rgba(255, 255, 255, 0.09)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -27,8 +27,13 @@ const config: Config = {
         "cook-collage": "url('/cook-collage.svg')",
       },
       fontFamily: {
-        gluten: ['var(--font-gluten)'],
-        "league-spartan": ['var(--font-league-spartan)'],
+        gluten: ["var(--font-gluten)"],
+        "league-spartan": ["var(--font-league-spartan)"],
+      },
+      animation: {
+        "fade-in-down": "fadeInUp 1s ease",
+        "fade-in-left": "fadeInLeft 1s ease",
+        "zoom-in": "zoomIn 1s ease",
       },
     },
   },
