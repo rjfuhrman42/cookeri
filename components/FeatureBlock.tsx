@@ -53,7 +53,7 @@ function FeatureBlock({
     >
       <div
         ref={blockRef}
-        className="opacity-0 px-8 bg-white rounded-lg border-l-8 h-full flex flex-col justify-center w-min lg:w-8/12"
+        className="feature-block px-8 bg-white rounded-lg border-l-8 h-full flex flex-col justify-center w-min lg:w-8/12"
       >
         <div className="w-[325px] py-8 lg:py-16">
           <h2 className="font-bold text-5xl mb-8">{title}</h2>

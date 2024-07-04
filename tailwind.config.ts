@@ -31,6 +31,7 @@ const config: Config = {
         "league-spartan": ["var(--font-league-spartan)"],
       },
       animation: {
+        "fade-in": "fadeIn 1s ease",
         "fade-in-down": "fadeInUp 1s ease",
         "fade-in-left": "fadeInLeft 1s ease",
         "zoom-in": "zoomIn 1s ease",

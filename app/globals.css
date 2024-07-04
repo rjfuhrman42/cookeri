@@ -75,9 +75,32 @@ li {
   opacity: 1 !important;
 }
 
+.feature-block {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion) {
+  .feature-block {
+    opacity: 1;
+  }
+  .fadeInLeft {
+    animation: none;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
