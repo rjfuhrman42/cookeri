@@ -10,7 +10,7 @@ import { RecipeSteps } from "./StepsEditor";
 interface Props {
   url: string;
   setUrl: (url: string) => void;
-  setData: (data: SimpleRecipe) => void;
+  setData: (data: SimpleRecipe | undefined) => void;
 }
 
 export type RecipeInstructions = {
@@ -32,6 +32,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
   async function importData() {
     if (url.length <= 0) return;
+    setData(undefined);
 
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
@@ -46,79 +47,95 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
       /* TODO: Handle cases where there is no JSON-LD
          For now, skip over the JSON-LD parsing portion and return */
-
-      if (json_ld_element === null) return;
+      console.log("json ld ", json_ld_element);
+      if (json_ld_element === null) {
+        return;
+      }
 
       // Search for the Recipe @type and parse it
       const json = JSON.parse(json_ld_element?.innerHTML);
 
-      // Filter out the Recipe data from the graph
-      // If there is no graph, then the recipe is the first item in the array
-      const recipeData: Recipe =
-        !json["@graph"] && json[0]
-          ? json[0]
-          : json["@graph"].filter((item: any) => {
-              if (item["@type"] === "Recipe") {
-                return item;
-              }
-            })[0];
+      // Check for the presence of a graph or an array
+      // If there is a graph, we can parse the easy way and make use of the meta data
+      // otherwise, we have to use the advanced parsing technique
+      if (json["@graph"] || json[0]) {
+        const recipeData: Recipe =
+          !json["@graph"] && json[0]
+            ? json[0]
+            : json["@graph"].filter((item: any) => {
+                if (item["@type"] === "Recipe") {
+                  return item;
+                }
+              })[0];
 
-      const instructions = recipeData.recipeInstructions as RecipeSteps;
+        console.log("recipe data", recipeData, json);
 
-      // Check for an initial steps section - edge case OR when a recipe has no subsections
-      const howToSteps = instructions?.filter((step) => {
-        return step["@type"] === "HowToStep";
-      });
+        const instructions = recipeData?.recipeInstructions as RecipeSteps;
 
-      // Add an initial section, if it exists
-      const processedInstructions: RecipeInstructions[] =
-        howToSteps.length > 0
-          ? [
-              {
-                name: "default",
-                steps: howToSteps.map((step) => step.text as string),
-              },
-            ]
-          : [];
+        // Check for an initial steps section - edge case OR when a recipe has no subsections
+        const howToSteps = instructions?.filter((step) => {
+          return step["@type"] === "HowToStep";
+        });
 
-      // Add the subsections
-      instructions.forEach((step) => {
-        if (step["@type"] === "HowToSection") {
-          const howToSteps = step.itemListElement as HowToStep[];
-          processedInstructions.push({
-            name: step.name as string,
-            steps: howToSteps.map((step) => step.text as string),
-          });
-        }
-      });
+        // Add an initial section, if it exists
+        const processedInstructions: RecipeInstructions[] =
+          howToSteps.length > 0
+            ? [
+                {
+                  name: "default",
+                  steps: howToSteps.map((step) => step.text as string),
+                },
+              ]
+            : [];
 
-      const yieldArray = new Array(recipeData.recipeYield)[0] as string[];
-      const recipeYield = yieldArray[0];
+        // Add the subsections
+        instructions.forEach((step) => {
+          if (step["@type"] === "HowToSection") {
+            const howToSteps = step.itemListElement as HowToStep[];
+            processedInstructions.push({
+              name: step.name as string,
+              steps: howToSteps.map((step) => step.text as string),
+            });
+          }
+        });
 
-      const recipeImage = recipeData.image as
-        | { "@type": ImageObject; height: number; url: string; width: number }
-        | string[];
+        const yieldArray = new Array(recipeData.recipeYield)[0] as string[];
+        const recipeYield = yieldArray[0];
 
-      // Images come as an array of several images, or just one image object with a URL property
-      const imageUrl: string = Array.isArray(recipeImage)
-        ? recipeImage[0]
-        : recipeImage.url;
+        const recipeImage = recipeData.image as
+          | { "@type": ImageObject; height: number; url: string; width: number }
+          | string[];
 
-      const processedRecipeData: SimpleRecipe = {
-        url,
-        name: recipeData.name as string,
-        description: recipeData.description as string,
-        prepTime: recipeData.prepTime as string,
-        cookTime: recipeData.cookTime as string,
-        totalTime: recipeData.totalTime as string,
-        recipeYield,
-        recipeIngredient: recipeData.recipeIngredient as string[],
-        recipeInstructions: processedInstructions,
-        image: imageUrl,
-        author: recipeData.author as string,
-      };
+        // Images come as an array of several images, or just one image object with a URL property
+        const imageUrl: string = Array.isArray(recipeImage)
+          ? recipeImage[0]
+          : recipeImage.url;
 
-      setData(processedRecipeData);
+        const processedRecipeData: SimpleRecipe = {
+          url,
+          name: recipeData.name as string,
+          description: recipeData.description as string,
+          prepTime: recipeData.prepTime as string,
+          cookTime: recipeData.cookTime as string,
+          totalTime: recipeData.totalTime as string,
+          recipeYield,
+          recipeIngredient: recipeData.recipeIngredient as string[],
+          recipeInstructions: processedInstructions,
+          image: imageUrl,
+          author: recipeData.author as string,
+        };
+
+        setData(processedRecipeData);
+      } else {
+        // Advanced parsing here ...
+
+        // Get the title
+        const el: HTMLMetaElement | null = temp_doc.querySelector(
+          'meta[property="og:title"]'
+        );
+
+        console.log("no json ld", el?.content);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
