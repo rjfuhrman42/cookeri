@@ -40,105 +40,139 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
       const parser = new DOMParser();
 
-      const temp_doc = parser.parseFromString(data, "text/html");
-      const json_ld_element = temp_doc.querySelector(
+      const recipeDocument = parser.parseFromString(data, "text/html");
+      const json_ld_element = recipeDocument.querySelector(
         'script[type="application/ld+json"]'
       );
 
-      /* TODO: Handle cases where there is no JSON-LD
-         For now, skip over the JSON-LD parsing portion and return */
-      console.log("json ld ", json_ld_element);
-      if (json_ld_element === null) {
+      /** ---- Make a manual parse function ----------------------------
+        Check for the presence of JSON-LD
+        If no JSON-LD, call manual parse to get the recipe
+        If no recipe in JSON-LD, call manual parse to get the recipe
+        Otherwise parse with JSON-LD 
+      **/
+
+      // If there is no JSON-LD, parse the recipe manually
+      if (!json_ld_element) {
+        parseRecipeDataFromHtml(data);
         return;
       }
 
       // Search for the Recipe @type and parse it
       const json = JSON.parse(json_ld_element?.innerHTML);
 
-      // Check for the presence of a graph or an array
-      // If there is a graph, we can parse the easy way and make use of the meta data
-      // otherwise, we have to use the advanced parsing technique
-      if (json["@graph"] || json[0]) {
-        const recipeData: Recipe =
-          !json["@graph"] && json[0]
-            ? json[0]
-            : json["@graph"].filter((item: any) => {
-                if (item["@type"] === "Recipe") {
-                  return item;
-                }
-              })[0];
+      const recipeMetaData: Recipe =
+        !json["@graph"] && json[0]
+          ? json[0]
+          : json["@graph"].filter((item: any) => {
+              if (item["@type"] === "Recipe") {
+                return item;
+              }
+            })[0];
 
-        console.log("recipe data", recipeData, json);
-
-        const instructions = recipeData?.recipeInstructions as RecipeSteps;
-
-        // Check for an initial steps section - edge case OR when a recipe has no subsections
-        const howToSteps = instructions?.filter((step) => {
-          return step["@type"] === "HowToStep";
-        });
-
-        // Add an initial section, if it exists
-        const processedInstructions: RecipeInstructions[] =
-          howToSteps.length > 0
-            ? [
-                {
-                  name: "default",
-                  steps: howToSteps.map((step) => step.text as string),
-                },
-              ]
-            : [];
-
-        // Add the subsections
-        instructions.forEach((step) => {
-          if (step["@type"] === "HowToSection") {
-            const howToSteps = step.itemListElement as HowToStep[];
-            processedInstructions.push({
-              name: step.name as string,
-              steps: howToSteps.map((step) => step.text as string),
-            });
-          }
-        });
-
-        const yieldArray = new Array(recipeData.recipeYield)[0] as string[];
-        const recipeYield = yieldArray[0];
-
-        const recipeImage = recipeData.image as
-          | { "@type": ImageObject; height: number; url: string; width: number }
-          | string[];
-
-        // Images come as an array of several images, or just one image object with a URL property
-        const imageUrl: string = Array.isArray(recipeImage)
-          ? recipeImage[0]
-          : recipeImage.url;
-
-        const processedRecipeData: SimpleRecipe = {
-          url,
-          name: recipeData.name as string,
-          description: recipeData.description as string,
-          prepTime: recipeData.prepTime as string,
-          cookTime: recipeData.cookTime as string,
-          totalTime: recipeData.totalTime as string,
-          recipeYield,
-          recipeIngredient: recipeData.recipeIngredient as string[],
-          recipeInstructions: processedInstructions,
-          image: imageUrl,
-          author: recipeData.author as string,
-        };
-
-        setData(processedRecipeData);
+      if (recipeMetaData) {
+        // Parse the recipe data from the JSON-LD
+        const processedRecipeData = parseRecipeDataFromJsonLd(recipeMetaData);
+        return setData(processedRecipeData);
       } else {
-        // Advanced parsing here ...
-
-        // Get the title
-        const el: HTMLMetaElement | null = temp_doc.querySelector(
-          'meta[property="og:title"]'
-        );
-
-        console.log("no json ld", el?.content);
+        // If there is JSON-LD but no recipe data is present, parse the recipe manually
+        parseRecipeDataFromHtml(recipeDocument);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+  }
+
+  function parseRecipeDataFromJsonLd(recipeMetaData: Recipe) {
+    const instructions = recipeMetaData?.recipeInstructions as RecipeSteps;
+
+    // Check for an initial steps section - edge case OR when a recipe has no subsections
+    const howToSteps = instructions?.filter((step) => {
+      return step["@type"] === "HowToStep";
+    });
+
+    // Add an initial section, if it exists
+    const processedInstructions: RecipeInstructions[] =
+      howToSteps.length > 0
+        ? [
+            {
+              name: "default",
+              steps: howToSteps.map((step) => step.text as string),
+            },
+          ]
+        : [];
+
+    // Add the subsections
+    instructions.forEach((step) => {
+      if (step["@type"] === "HowToSection") {
+        const howToSteps = step.itemListElement as HowToStep[];
+        processedInstructions.push({
+          name: step.name as string,
+          steps: howToSteps.map((step) => step.text as string),
+        });
+      }
+    });
+
+    const yieldArray = new Array(recipeMetaData.recipeYield)[0] as string[];
+    const recipeYield = yieldArray[0];
+
+    const recipeImage = recipeMetaData.image as
+      | {
+          "@type": ImageObject;
+          height: number;
+          url: string;
+          width: number;
+        }
+      | string[];
+
+    // Images come as an array of several images, or just one image object with a URL property
+    const imageUrl: string = Array.isArray(recipeImage)
+      ? recipeImage[0]
+      : recipeImage.url;
+
+    const processedRecipeData: SimpleRecipe = {
+      url,
+      name: recipeMetaData.name as string,
+      description: recipeMetaData.description as string,
+      prepTime: recipeMetaData.prepTime as string,
+      cookTime: recipeMetaData.cookTime as string,
+      totalTime: recipeMetaData.totalTime as string,
+      recipeYield,
+      recipeIngredient: recipeMetaData.recipeIngredient as string[],
+      recipeInstructions: processedInstructions,
+      image: imageUrl,
+      author: recipeMetaData.author as string,
+    };
+
+    return processedRecipeData;
+  }
+
+  function parseRecipeDataFromHtml(recipeDocument: any) {
+    // Advanced parsing here ...
+
+    // First, get the title
+    // 1. Check for the presence of an og:title title meta tag
+    // 2. Else, just use the title tag
+    const ogTitleElement: HTMLMetaElement | null = recipeDocument.querySelector(
+      'meta[property="og:title"]'
+    );
+    const title = recipeDocument.querySelector("title")?.textContent;
+    const recipeName = ogTitleElement?.content ?? title;
+    console.log("recipe name -->", recipeName);
+
+    // Get the images
+    const images = recipeDocument.querySelectorAll("img");
+    images.forEach((img: HTMLImageElement) => console.log(img.src));
+
+    const allNodes = recipeDocument.querySelectorAll("*");
+    allNodes.forEach((node: HTMLElement) => {
+      if (
+        node.textContent &&
+        node.textContent.toLowerCase().includes("serves")
+      ) {
+        console.log("text", node.textContent.toLowerCase());
+      }
+    });
   }
 
   return (
