@@ -54,7 +54,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
       // If there is no JSON-LD, parse the recipe manually
       if (!json_ld_element) {
-        parseRecipeDataFromHtml(data);
+        parseRecipeDataFromHtml(recipeDocument);
         return;
       }
 
@@ -164,13 +164,22 @@ function ImportBar({ url, setUrl, setData }: Props) {
     const images = recipeDocument.querySelectorAll("img");
     images.forEach((img: HTMLImageElement) => console.log(img.src));
 
+    let recipeYield = null;
+
     const allNodes = recipeDocument.querySelectorAll("*");
     allNodes.forEach((node: HTMLElement) => {
-      if (
-        node.textContent &&
-        node.textContent.toLowerCase().includes("serves")
-      ) {
-        console.log("text", node.textContent.toLowerCase());
+      if (!node.textContent) return;
+
+      const textContent = node.textContent.toLowerCase();
+      const result = textContent.match(
+        /(?:yields|yield|serves|servings|makes):* (.*$)/
+      );
+
+      if (result !== null && result[1] !== "") {
+        console.log("includes servings", result[1]);
+        recipeYield = result[1];
+      } else {
+        console.log("no serving information found");
       }
     });
   }
