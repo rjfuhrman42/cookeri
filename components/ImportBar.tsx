@@ -147,7 +147,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     return processedRecipeData;
   }
 
-  function parseRecipeDataFromHtml(recipeDocument: any) {
+  function parseRecipeDataFromHtml(recipeDocument: Document) {
     // Advanced parsing here ...
 
     // First, get the title
@@ -167,7 +167,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     let recipeYield = null;
 
     const allNodes = recipeDocument.querySelectorAll("*");
-    allNodes.forEach((node: HTMLElement) => {
+    allNodes.forEach((node: Element) => {
       if (!node.textContent) return;
 
       const textContent = node.textContent.toLowerCase();
@@ -176,12 +176,28 @@ function ImportBar({ url, setUrl, setData }: Props) {
       );
 
       if (result !== null && result[1] !== "") {
-        console.log("includes servings", result[1]);
         recipeYield = result[1];
       } else {
         console.log("no serving information found");
       }
     });
+
+    // for (let i = 0; i < allNodes.length; i++) {
+    //   console.log("element -->", allNodes[i].textContent);
+    // }
+
+    walkPreOrder(allNodes[0]);
+  }
+
+  function walkPreOrder(node: Element) {
+    if (!node) return;
+
+    // do something here
+    console.log("node text", node.textContent);
+
+    for (const child of node.children) {
+      walkPreOrder(child);
+    }
   }
 
   return (
