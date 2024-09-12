@@ -185,19 +185,96 @@ function ImportBar({ url, setUrl, setData }: Props) {
     // for (let i = 0; i < allNodes.length; i++) {
     //   console.log("element -->", allNodes[i].textContent);
     // }
+    const instructionScores: number[] = [];
+    const ingredientScores: number[] = [];
+    walkPreOrder(allNodes[0], instructionScores, ingredientScores);
 
-    walkPreOrder(allNodes[0]);
+    console.log(
+      "instruction scores",
+      instructionScores,
+      "ingredient scores",
+      ingredientScores
+    );
   }
 
-  function walkPreOrder(node: Element) {
+  function walkPreOrder(
+    node: Element,
+    instructionScores: number[],
+    ingredientScores: number[]
+  ) {
     if (!node) return;
+    if (!node.textContent) return;
 
-    // do something here
-    console.log("node text", node.textContent);
+    // console.log("current node", node, node.textContent);
+    const ingredientScore = scoreForIngredients(node.textContent);
+    const instructionScore = scoreForInstructions(node.textContent);
+
+    // Need to store all the nodes with their respective ingredient and instrucion scores
+    // Grab the two with the highest scores, then find their lowest common ancestor node (LCA)
+    // if (instructionScore === 4) console.log("instruction", node);
+    if (ingredientScore === 4) console.log("ingredient", node);
+    instructionScores.push(instructionScore);
+    ingredientScores.push(ingredientScore);
 
     for (const child of node.children) {
-      walkPreOrder(child);
+      walkPreOrder(child, instructionScores, ingredientScores);
     }
+  }
+
+  function scoreForInstructions(text: string) {
+    let instructionScore = 0;
+
+    const startsWithCaptialLetter = text.match(/^[A-Z]/gm) !== null;
+    const endsInPunctuation = text.match(/[\?\.!]$/g) !== null;
+    const greaterThanOneHundredCharacters = text.length && text.length >= 100;
+    const containsInstructionalWords =
+      text
+        .toLowerCase()
+        .match(/(place|cook|sprinkle|mix|heat|sautee|boil)/gm) !== null;
+
+    if (startsWithCaptialLetter) {
+      instructionScore += 1;
+    }
+    if (endsInPunctuation) {
+      instructionScore += 1;
+    }
+    if (greaterThanOneHundredCharacters) {
+      instructionScore += 1;
+    }
+    if (containsInstructionalWords) {
+      instructionScore += 1;
+    }
+
+    return instructionScore;
+  }
+
+  function scoreForIngredients(text: string) {
+    let ingredientScore = 0;
+
+    const startsWithNumber = text.match(/^[1-9]/g) !== null;
+    const lessThanOneHundredCharacters = text.length && text.length < 100;
+    const hasCommonIngredientWords =
+      text.toLowerCase().match(/(olive oil|butter|salt|oil|pepper|)/g) !== null;
+    const hasUnitWords =
+      text
+        .toLowerCase()
+        .match(/(cup|lb|oz|tbsp|tsp|teaspoon|tablespoon|pinch|grams|gms)/g) !==
+      null;
+
+    if (startsWithNumber) {
+      ingredientScore += 1;
+    }
+    if (lessThanOneHundredCharacters) {
+      ingredientScore += 1;
+    }
+    if (hasCommonIngredientWords) {
+      ingredientScore += 1;
+    }
+    if (hasUnitWords) {
+      ingredientScore += 1;
+    }
+
+    return ingredientScore;
   }
 
   return (
