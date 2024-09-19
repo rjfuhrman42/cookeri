@@ -185,52 +185,107 @@ function ImportBar({ url, setUrl, setData }: Props) {
     // for (let i = 0; i < allNodes.length; i++) {
     //   console.log("element -->", allNodes[i].textContent);
     // }
-    const instructionScores: number[] = [];
-    const ingredientScores: number[] = [];
-    walkPreOrder(allNodes[0], instructionScores, ingredientScores);
+    // const instructionScores: number[] = [];
+    // const ingredientScores: number[] = [];
+    // walkPreOrder(allNodes[0], instructionScores, ingredientScores);
 
+    let highIngredientNode: { node: undefined | Element; score: number } = {
+      node: undefined,
+      score: 0,
+    };
+
+    let highInstructionNode: { node: undefined | Element; score: number } = {
+      node: undefined,
+      score: 0,
+    };
+
+    allNodes.forEach((node) => {
+      if (!node || !node.textContent) return;
+
+      const ingredientScore = scoreForIngredients(node.textContent);
+      const instructionScore = scoreForInstructions(node.textContent);
+
+      if (ingredientScore > highIngredientNode.score) {
+        highIngredientNode = { node, score: ingredientScore };
+      }
+      if (instructionScore > highInstructionNode.score) {
+        highInstructionNode = { node: node, score: instructionScore };
+      }
+    });
+    console.log("ingredient", highIngredientNode.node?.textContent);
     console.log(
-      "instruction scores",
-      instructionScores,
-      "ingredient scores",
-      ingredientScores
+      "instruction",
+      highInstructionNode.node?.textContent,
+      highInstructionNode
     );
+
+    const lca = findLowestCommonAncestor(
+      highIngredientNode.node,
+      highInstructionNode.node
+    );
+
+    console.log("lowest ancestor", lca);
   }
 
-  function walkPreOrder(
-    node: Element,
-    instructionScores: number[],
-    ingredientScores: number[]
-  ) {
-    if (!node) return;
-    if (!node.textContent) return;
+  function findLowestCommonAncestor(node1: Element, node2: Element) {
+    if (!node1 || !node2) return null;
 
-    // console.log("current node", node, node.textContent);
-    const ingredientScore = scoreForIngredients(node.textContent);
-    const instructionScore = scoreForInstructions(node.textContent);
+    // Traverse up from node1
+    let ancestor = node1;
 
-    // Need to store all the nodes with their respective ingredient and instrucion scores
-    // Grab the two with the highest scores, then find their lowest common ancestor node (LCA)
-    // if (instructionScore === 4) console.log("instruction", node);
-    if (ingredientScore === 4) console.log("ingredient", node);
-    instructionScores.push(instructionScore);
-    ingredientScores.push(ingredientScore);
+    while (ancestor) {
+      // Check if this ancestor contains node2
+      if (ancestor.contains(node2)) {
+        return ancestor;
+      }
+      ancestor = ancestor.parentNode as Element;
+    }
 
-    for (const child of node.children) {
-      walkPreOrder(child, instructionScores, ingredientScores);
+    return null; // No common ancestor found
+  }
+
+  function walkPreOrder(root: Element, childA: Element, childB: Element) {
+    if (!root || !root.textContent) return;
+    if (
+      root.textContent === childA.textContent ||
+      root.textContent === childB.textContent
+    ) {
+      return root;
+    }
+    for (const child of root.children) {
+      walkPreOrder(child, childA, childB);
     }
   }
 
   function scoreForInstructions(text: string) {
     let instructionScore = 0;
 
-    const startsWithCaptialLetter = text.match(/^[A-Z]/gm) !== null;
+    const startsWithCaptialLetter = text.match(/^[A-Z]/g) !== null;
     const endsInPunctuation = text.match(/[\?\.!]$/g) !== null;
-    const greaterThanOneHundredCharacters = text.length && text.length >= 100;
-    const containsInstructionalWords =
-      text
-        .toLowerCase()
-        .match(/(place|cook|sprinkle|mix|heat|sautee|boil)/gm) !== null;
+    const greaterThanOneHundredCharacters =
+      text.length && text.length >= 100 && text.length <= 500;
+    const thereIsACaptialLetter = text.match(/[A-Z]/g) !== null;
+    const instructionalWords = [
+      "place",
+      "cook",
+      "sprinkle",
+      "mix",
+      "heat",
+      "sautee",
+      "boil",
+      "soak",
+      "combine",
+    ];
+
+    // If the text is within the "normal" character range, increase the score for each word it contains
+    instructionalWords.forEach((word) => {
+      if (
+        text.toLowerCase().includes(word) &&
+        greaterThanOneHundredCharacters
+      ) {
+        instructionScore += 1;
+      }
+    });
 
     if (startsWithCaptialLetter) {
       instructionScore += 1;
@@ -241,7 +296,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     if (greaterThanOneHundredCharacters) {
       instructionScore += 1;
     }
-    if (containsInstructionalWords) {
+    if (thereIsACaptialLetter) {
       instructionScore += 1;
     }
 
@@ -253,8 +308,10 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
     const startsWithNumber = text.match(/^[1-9]/g) !== null;
     const lessThanOneHundredCharacters = text.length && text.length < 100;
+    // FIX THIS, DON'T USE REGEX!
     const hasCommonIngredientWords =
       text.toLowerCase().match(/(olive oil|butter|salt|oil|pepper|)/g) !== null;
+    // FIX THIS, DON'T USE REGEX!
     const hasUnitWords =
       text
         .toLowerCase()
