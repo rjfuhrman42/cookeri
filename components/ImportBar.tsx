@@ -61,16 +61,16 @@ function ImportBar({ url, setUrl, setData }: Props) {
       // Search for the Recipe @type and parse it
       const json = JSON.parse(json_ld_element?.innerHTML);
 
-      const recipeMetaData: Recipe =
-        !json["@graph"] && json[0]
-          ? json[0]
-          : json["@graph"].filter((item: any) => {
-              if (item["@type"] === "Recipe") {
-                return item;
-              }
-            })[0];
+      if (json[0] || json["@graph"]) {
+        const recipeMetaData: Recipe =
+          !json["@graph"] && json[0]
+            ? json[0]
+            : json["@graph"].filter((item: any) => {
+                if (item["@type"] === "Recipe") {
+                  return item;
+                }
+              })[0];
 
-      if (recipeMetaData) {
         // Parse the recipe data from the JSON-LD
         const processedRecipeData = parseRecipeDataFromJsonLd(recipeMetaData);
         return setData(processedRecipeData);
@@ -182,13 +182,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
       }
     });
 
-    // for (let i = 0; i < allNodes.length; i++) {
-    //   console.log("element -->", allNodes[i].textContent);
-    // }
-    // const instructionScores: number[] = [];
-    // const ingredientScores: number[] = [];
-    // walkPreOrder(allNodes[0], instructionScores, ingredientScores);
-
     let highIngredientNode: { node: undefined | Element; score: number } = {
       node: undefined,
       score: 0,
@@ -205,14 +198,19 @@ function ImportBar({ url, setUrl, setData }: Props) {
       const ingredientScore = scoreForIngredients(node.textContent);
       const instructionScore = scoreForInstructions(node.textContent);
 
-      if (ingredientScore > highIngredientNode.score) {
+      if (ingredientScore >= highIngredientNode.score) {
         highIngredientNode = { node, score: ingredientScore };
       }
-      if (instructionScore > highInstructionNode.score) {
+      if (instructionScore >= highInstructionNode.score) {
         highInstructionNode = { node: node, score: instructionScore };
       }
     });
-    console.log("ingredient", highIngredientNode.node?.textContent);
+
+    console.log(
+      "ingredient",
+      highIngredientNode.node?.textContent,
+      highIngredientNode
+    );
     console.log(
       "instruction",
       highInstructionNode.node?.textContent,
@@ -244,18 +242,18 @@ function ImportBar({ url, setUrl, setData }: Props) {
     return null; // No common ancestor found
   }
 
-  function walkPreOrder(root: Element, childA: Element, childB: Element) {
-    if (!root || !root.textContent) return;
-    if (
-      root.textContent === childA.textContent ||
-      root.textContent === childB.textContent
-    ) {
-      return root;
-    }
-    for (const child of root.children) {
-      walkPreOrder(child, childA, childB);
-    }
-  }
+  // function walkPreOrder(root: Element, childA: Element, childB: Element) {
+  //   if (!root || !root.textContent) return;
+  //   if (
+  //     root.textContent === childA.textContent ||
+  //     root.textContent === childB.textContent
+  //   ) {
+  //     return root;
+  //   }
+  //   for (const child of root.children) {
+  //     walkPreOrder(child, childA, childB);
+  //   }
+  // }
 
   function scoreForInstructions(text: string) {
     let instructionScore = 0;
@@ -263,15 +261,16 @@ function ImportBar({ url, setUrl, setData }: Props) {
     const startsWithCaptialLetter = text.match(/^[A-Z]/g) !== null;
     const endsInPunctuation = text.match(/[\?\.!]$/g) !== null;
     const greaterThanOneHundredCharacters =
-      text.length && text.length >= 100 && text.length <= 500;
+      text.length && text.length >= 100 && text.length <= 1000;
     const thereIsACaptialLetter = text.match(/[A-Z]/g) !== null;
     const instructionalWords = [
       "place",
-      "cook",
       "sprinkle",
       "mix",
-      "heat",
       "sautee",
+      "sauté",
+      "chop",
+      "wash",
       "boil",
       "soak",
       "combine",
@@ -308,15 +307,34 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
     const startsWithNumber = text.match(/^[1-9]/g) !== null;
     const lessThanOneHundredCharacters = text.length && text.length < 100;
-    // FIX THIS, DON'T USE REGEX!
-    const hasCommonIngredientWords =
-      text.toLowerCase().match(/(olive oil|butter|salt|oil|pepper|)/g) !== null;
-    // FIX THIS, DON'T USE REGEX!
-    const hasUnitWords =
-      text
-        .toLowerCase()
-        .match(/(cup|lb|oz|tbsp|tsp|teaspoon|tablespoon|pinch|grams|gms)/g) !==
-      null;
+    // Array of words commonly found used in ingredients
+    const commonIngredientWords = [
+      "olive oil",
+      "butter",
+      "salt",
+      "oil",
+      "pepper",
+    ];
+    const commonUnitWords = [
+      "cup",
+      "lb",
+      "oz",
+      "tbsp",
+      "tsp",
+      "teaspoon",
+      "tablespoon",
+      "pinch",
+      "grams",
+      "gms",
+    ];
+
+    const hasCommonIngredientWords = commonIngredientWords.some((word) =>
+      text.toLowerCase().includes(word)
+    );
+
+    const hasCommonUnitWords = commonUnitWords.some((word) =>
+      text.toLowerCase().includes(word)
+    );
 
     if (startsWithNumber) {
       ingredientScore += 1;
@@ -327,7 +345,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     if (hasCommonIngredientWords) {
       ingredientScore += 1;
     }
-    if (hasUnitWords) {
+    if (hasCommonUnitWords) {
       ingredientScore += 1;
     }
 
