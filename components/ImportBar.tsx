@@ -61,7 +61,14 @@ function ImportBar({ url, setUrl, setData }: Props) {
       // Search for the Recipe @type and parse it
       const json = JSON.parse(json_ld_element?.innerHTML);
 
-      if (json[0] || json["@graph"]) {
+      // If the recipe data just exists as the first element on the json-ld, use that
+      // Else, if the json-ld has a @graph property, check for @type of "Recipe"
+      // This tells us whether there is recipe meta data
+      if (
+        json[0] ||
+        (json["@graph"] &&
+          json["@graph"].some((item: any) => item["@type"] === "Recipe"))
+      ) {
         const recipeMetaData: Recipe =
           !json["@graph"] && json[0]
             ? json[0]
@@ -223,6 +230,44 @@ function ImportBar({ url, setUrl, setData }: Props) {
     );
 
     console.log("lowest ancestor", lca);
+
+    if (!lca?.childNodes) return;
+
+    const finalIngredientsBlock: string[] = [];
+    const finalInstructionsBlock: string[] = [];
+    /** 
+      Traverse the nodes to see if they,
+          1. Belong in the ingredients block
+          2. Belong in the instructions block
+          3. Should be ignored
+      
+      All nodes before the first ingredient node should be ignored.
+    */
+
+    for (const child of lca.childNodes) {
+      // Ignore nodes with no text, or #text nodes which only contain "/n"
+      if (!child.textContent || child.nodeName === "#text") continue;
+
+      const ingredientScore = scoreForIngredients(child.textContent);
+      const instructionScore = scoreForInstructions(child.textContent);
+
+      // If we have entered the ingredients block and we find an instruction node,
+      // we're at the end of the ingredients block, leave the loop
+      if (instructionScore >= 4 && finalIngredientsBlock.length > 0) {
+        break;
+      }
+
+      // If we haven't entered the ingredients block and we find a likely ingredient
+      // add the node to the list, start of the ingredients block has been found
+      if (finalIngredientsBlock.length === 0 && ingredientScore >= 3) {
+        finalIngredientsBlock.push(child.textContent);
+      } else if (finalIngredientsBlock.length > 0) {
+        // We're inside the ingredients block, so we're assuming every node is an ingredient
+        finalIngredientsBlock.push(child.textContent);
+      }
+    }
+
+    console.log(finalIngredientsBlock);
   }
 
   function findLowestCommonAncestor(node1: Element, node2: Element) {
@@ -326,6 +371,10 @@ function ImportBar({ url, setUrl, setData }: Props) {
       "pinch",
       "grams",
       "gms",
+      "g",
+      "piece",
+      "to taste",
+      "sprig",
     ];
 
     const hasCommonIngredientWords = commonIngredientWords.some((word) =>
