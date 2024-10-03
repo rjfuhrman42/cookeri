@@ -224,6 +224,9 @@ function ImportBar({ url, setUrl, setData }: Props) {
       highInstructionNode
     );
 
+    // No nodes found, return
+    if (!highIngredientNode.node || !highInstructionNode.node) return;
+
     const lca = findLowestCommonAncestor(
       highIngredientNode.node,
       highInstructionNode.node
@@ -231,43 +234,79 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
     console.log("lowest ancestor", lca);
 
-    if (!lca?.childNodes) return;
+    if (!lca) return;
 
-    const finalIngredientsBlock: string[] = [];
-    const finalInstructionsBlock: string[] = [];
+    const lcaChildren = lca.querySelectorAll("*");
+
     /** 
       Traverse the nodes to see if they,
           1. Belong in the ingredients block
           2. Belong in the instructions block
           3. Should be ignored
-      
+
       All nodes before the first ingredient node should be ignored.
     */
 
-    for (const child of lca.childNodes) {
-      // Ignore nodes with no text, or #text nodes which only contain "/n"
-      if (!child.textContent || child.nodeName === "#text") continue;
+    const [finalIngredientsBlock, finalInstructionsBlock] =
+      filterLcaForIngredients(highIngredientNode.node, lcaChildren);
+
+    console.log(finalIngredientsBlock);
+    console.log(finalInstructionsBlock);
+  }
+
+  function filterLcaForIngredients(
+    highScoringNode: Element,
+    lcaChildren: NodeListOf<Element>
+  ) {
+    const ingredientsBlock: string[] = [];
+    const instructionsBlock: string[] = [];
+
+    let finishedIngredientBlock = false;
+    let instructionClassName = "";
+
+    for (const child of lcaChildren) {
+      const nodeNameDoesNotMatch = child.nodeName !== highScoringNode.nodeName;
+
+      if (!child.textContent || nodeNameDoesNotMatch) continue;
 
       const ingredientScore = scoreForIngredients(child.textContent);
       const instructionScore = scoreForInstructions(child.textContent);
+      if (finishedIngredientBlock) {
+        // Assume that instructions will all have the same class name
+        // If the next child has a different className, we've found the end of the instructions block
+        if (child.className !== instructionClassName) {
+          break;
+        }
+        instructionsBlock.push(child.textContent);
+        continue;
+      }
 
       // If we have entered the ingredients block and we find an instruction node,
       // we're at the end of the ingredients block, leave the loop
-      if (instructionScore >= 4 && finalIngredientsBlock.length > 0) {
-        break;
-      }
 
       // If we haven't entered the ingredients block and we find a likely ingredient
       // add the node to the list, start of the ingredients block has been found
-      if (finalIngredientsBlock.length === 0 && ingredientScore >= 3) {
-        finalIngredientsBlock.push(child.textContent);
-      } else if (finalIngredientsBlock.length > 0) {
+      if (ingredientsBlock.length === 0 && ingredientScore >= 3) {
+        ingredientsBlock.push(child.textContent);
+        continue;
+      }
+      if (ingredientsBlock.length > 0) {
         // We're inside the ingredients block, so we're assuming every node is an ingredient
-        finalIngredientsBlock.push(child.textContent);
+
+        if (instructionScore > ingredientScore) {
+          instructionsBlock.push(child.textContent);
+          // End of ingredients block
+          // Start of instructions block
+          finishedIngredientBlock = true;
+          instructionClassName = child.className;
+          continue;
+        }
+
+        ingredientsBlock.push(child.textContent);
       }
     }
 
-    console.log(finalIngredientsBlock);
+    return [ingredientsBlock, instructionsBlock];
   }
 
   function findLowestCommonAncestor(node1: Element, node2: Element) {
@@ -286,19 +325,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
     return null; // No common ancestor found
   }
-
-  // function walkPreOrder(root: Element, childA: Element, childB: Element) {
-  //   if (!root || !root.textContent) return;
-  //   if (
-  //     root.textContent === childA.textContent ||
-  //     root.textContent === childB.textContent
-  //   ) {
-  //     return root;
-  //   }
-  //   for (const child of root.children) {
-  //     walkPreOrder(child, childA, childB);
-  //   }
-  // }
 
   function scoreForInstructions(text: string) {
     let instructionScore = 0;
@@ -319,6 +345,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
       "boil",
       "soak",
       "combine",
+      "prepare",
     ];
 
     // If the text is within the "normal" character range, increase the score for each word it contains
@@ -359,6 +386,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
       "salt",
       "oil",
       "pepper",
+      "parsley",
     ];
     const commonUnitWords = [
       "cup",
@@ -371,10 +399,11 @@ function ImportBar({ url, setUrl, setData }: Props) {
       "pinch",
       "grams",
       "gms",
-      "g",
+      "g ",
       "piece",
       "to taste",
       "sprig",
+      "handful",
     ];
 
     const hasCommonIngredientWords = commonIngredientWords.some((word) =>
