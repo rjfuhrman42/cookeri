@@ -37,7 +37,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
     try {
       const res = await fetch(`/api/proxy?url=${url.trim()}`);
       const data = await res.text();
-
       const parser = new DOMParser();
 
       const recipeDocument = parser.parseFromString(data, "text/html");
@@ -46,16 +45,16 @@ function ImportBar({ url, setUrl, setData }: Props) {
       );
 
       /** ---- Make a manual parse function ----------------------------
-        Check for the presence of JSON-LD
-        If no JSON-LD, call manual parse to get the recipe
-        If no recipe in JSON-LD, call manual parse to get the recipe
-        Otherwise parse with JSON-LD 
-      **/
+       Check for the presence of JSON-LD
+       If no JSON-LD, call manual parse to get the recipe
+       If no recipe in JSON-LD, call manual parse to get the recipe
+       Otherwise parse with JSON-LD 
+       **/
 
       // If there is no JSON-LD, parse the recipe manually
       if (!json_ld_element) {
-        parseRecipeDataFromHtml(recipeDocument);
-        return;
+        const parsedRecipeData = parseRecipeDataFromHtml(recipeDocument);
+        return setData(parsedRecipeData);
       }
 
       // Search for the Recipe @type and parse it
@@ -82,8 +81,11 @@ function ImportBar({ url, setUrl, setData }: Props) {
         const processedRecipeData = parseRecipeDataFromJsonLd(recipeMetaData);
         return setData(processedRecipeData);
       } else {
+        console.log("here!!");
         // If there is JSON-LD but no recipe data is present, parse the recipe manually
-        parseRecipeDataFromHtml(recipeDocument);
+        const processedRecipeData = parseRecipeDataFromHtml(recipeDocument);
+        console.log("hi!", processedRecipeData);
+        return setData(processedRecipeData);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -213,26 +215,18 @@ function ImportBar({ url, setUrl, setData }: Props) {
       }
     });
 
-    console.log(
-      "ingredient",
-      highIngredientNode.node?.textContent,
-      highIngredientNode
-    );
-    console.log(
-      "instruction",
-      highInstructionNode.node?.textContent,
-      highInstructionNode
-    );
-
     // No nodes found, return
     if (!highIngredientNode.node || !highInstructionNode.node) return;
+
+    console.log(
+      highIngredientNode.node.childNodes.length > 1 &&
+        highIngredientNode.node.childNodes
+    );
 
     const lca = findLowestCommonAncestor(
       highIngredientNode.node,
       highInstructionNode.node
     );
-
-    console.log("lowest ancestor", lca);
 
     if (!lca) return;
 
@@ -243,15 +237,32 @@ function ImportBar({ url, setUrl, setData }: Props) {
           1. Belong in the ingredients block
           2. Belong in the instructions block
           3. Should be ignored
-
       All nodes before the first ingredient node should be ignored.
     */
+    console.log(highIngredientNode.node);
+    if (highIngredientNode.node.childNodes.length > 1) {
+      console.log(highIngredientNode.node);
+    }
 
     const [finalIngredientsBlock, finalInstructionsBlock] =
       filterLcaForIngredients(highIngredientNode.node, lcaChildren);
 
-    console.log(finalIngredientsBlock);
-    console.log(finalInstructionsBlock);
+    const processedRecipeData: SimpleRecipe = {
+      url,
+      name: recipeName as string,
+      description: "",
+      recipeYield: recipeYield ?? "",
+      recipeIngredient: finalIngredientsBlock,
+      recipeInstructions: [
+        {
+          name: "default",
+          steps: finalInstructionsBlock,
+        },
+      ],
+      image: images[0].src,
+    };
+
+    return processedRecipeData;
   }
 
   function filterLcaForIngredients(
@@ -286,8 +297,33 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
       // If we haven't entered the ingredients block and we find a likely ingredient
       // add the node to the list, start of the ingredients block has been found
+
       if (ingredientsBlock.length === 0 && ingredientScore >= 3) {
-        ingredientsBlock.push(child.textContent);
+        // Sometimes ingredients are written in one single HTML element (p, div, etc...), but are separated by <br>
+        // The below if statement checks if the ingredients are deeper in the tree
+        /*
+          Example: 
+          <p>
+            750 gms leg of lamb diced (on the bone)<br>
+            3 medium size onions<br>
+            2 medium size tomatoes<br>
+            ... 
+          </p>
+
+          as opposed to:
+          <div>
+            <p>750 gms leg of lamb diced (on the bone)</p>
+            <p>3 medium size onions<</p>
+            <p>2 medium size tomatoes</p>
+          </div>
+        */
+        if (child.childNodes.length > 1) {
+          child.childNodes.forEach((node) => {
+            if (node.nodeName === "#text" && node.textContent) {
+              ingredientsBlock.push(node.textContent);
+            }
+          });
+        } else ingredientsBlock.push(child.textContent);
         continue;
       }
       if (ingredientsBlock.length > 0) {
@@ -377,7 +413,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
   function scoreForIngredients(text: string) {
     let ingredientScore = 0;
 
-    const startsWithNumber = text.match(/^[1-9]/g) !== null;
+    const startsWithNumber = text.match(/^[1-9\u00BD-\u2152]/g) !== null;
     const lessThanOneHundredCharacters = text.length && text.length < 100;
     // Array of words commonly found used in ingredients
     const commonIngredientWords = [
@@ -390,6 +426,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     ];
     const commonUnitWords = [
       "cup",
+      "cups",
       "lb",
       "oz",
       "tbsp",

@@ -27,14 +27,14 @@ export type Recipe = {
   url?: string;
   name: string;
   description: string;
-  prepTime: string;
-  cookTime: string;
-  totalTime: string;
+  prepTime?: string;
+  cookTime?: string;
+  totalTime?: string;
   recipeYield: string;
   recipeIngredient: string[];
   recipeInstructions: RecipeInstructions[];
   image: string;
-  author: string;
+  author?: string;
   id?: number;
 };
 

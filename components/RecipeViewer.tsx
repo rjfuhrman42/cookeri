@@ -77,19 +77,31 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                     </div>
                   )}
                   <div className="flex flex-row gap-x-2">
-                    <div className="flex flex-row">
-                      <p className="font-bold mr-1">Prep: </p>
-                      <p>{prep}</p>
-                    </div>
-                    <div className="flex flex-row">
-                      <p className="font-bold mr-1">Cook: </p>
-                      <p>{cook}</p>
-                    </div>
+                    {prep ? (
+                      <div className="flex flex-row">
+                        <p className="font-bold mr-1">Prep: </p>
+                        <p>{prep}</p>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {cook ? (
+                      <div className="flex flex-row">
+                        <p className="font-bold mr-1">Cook: </p>
+                        <p>{cook}</p>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </div>
-                  <div className="flex flex-row">
-                    <p className="font-bold mr-1">Total: </p>
-                    <p>{total}</p>
-                  </div>
+                  {total ? (
+                    <div className="flex flex-row">
+                      <p className="font-bold mr-1">Total: </p>
+                      <p>{total}</p>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                   {servings && (
                     <div className="flex flex-row">
                       <p className="font-bold mr-1">Makes: </p>
