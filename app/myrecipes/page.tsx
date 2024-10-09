@@ -22,6 +22,7 @@ import { UserResponse } from "@supabase/supabase-js";
 import { Link } from "@nextui-org/link";
 import { Tooltip } from "@nextui-org/tooltip";
 import RecipesList from "@/components/RecipesList";
+import React from "react";
 
 export type Recipe = {
   url?: string;
@@ -78,7 +79,7 @@ export default function MyRecipes() {
 
     const index = Number.parseInt(selectedValue);
     const recipe = recipes[index];
-    console.log("fetch!", recipe);
+
     if (!recipe) return;
 
     supabase
@@ -122,7 +123,7 @@ export default function MyRecipes() {
           author: recipe.author,
           id: recipe.id,
         };
-        console.log("parsedRecipe", parsedRecipe);
+
         setCurrentRecipe(parsedRecipe);
 
         // Save the initial recipe to compare changes
@@ -241,6 +242,21 @@ export default function MyRecipes() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         {sidebarShown ? (
           <SideBar>
+            <Tooltip
+              content="Full screen"
+              className="px-4 bg-white"
+              placement="right"
+              radius="sm"
+            >
+              <Button
+                isIconOnly
+                onPress={() => setSidebarShown(!sidebarShown)}
+                color="primary"
+                endContent={<MaximizeIcon stroke="white" />}
+                radius="none"
+                size="lg"
+              />
+            </Tooltip>
             {editorState === "myRecipes" ? (
               <>
                 <div className="flex items-center">
@@ -396,21 +412,7 @@ export default function MyRecipes() {
         <section className="relative flex flex-col h-full w-full p-0 overflow-hidden">
           <div className="absolute flex flex-col items-start top-0 h-12 w-full">
             {sidebarShown ? (
-              <Tooltip
-                content="Full screen"
-                className="px-4 bg-white"
-                placement="right"
-                radius="sm"
-              >
-                <Button
-                  isIconOnly
-                  onPress={() => setSidebarShown(!sidebarShown)}
-                  color="primary"
-                  endContent={<MaximizeIcon stroke="white" />}
-                  radius="none"
-                  size="lg"
-                />
-              </Tooltip>
+              <></>
             ) : (
               <Button
                 onPress={() => setSidebarShown(!sidebarShown)}

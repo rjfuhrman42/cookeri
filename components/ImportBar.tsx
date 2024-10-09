@@ -81,10 +81,9 @@ function ImportBar({ url, setUrl, setData }: Props) {
         const processedRecipeData = parseRecipeDataFromJsonLd(recipeMetaData);
         return setData(processedRecipeData);
       } else {
-        console.log("here!!");
         // If there is JSON-LD but no recipe data is present, parse the recipe manually
         const processedRecipeData = parseRecipeDataFromHtml(recipeDocument);
-        console.log("hi!", processedRecipeData);
+
         return setData(processedRecipeData);
       }
     } catch (error) {
@@ -167,7 +166,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
     );
     const title = recipeDocument.querySelector("title")?.textContent;
     const recipeName = ogTitleElement?.content ?? title;
-    console.log("recipe name -->", recipeName);
 
     // Get the images
     const images = recipeDocument.body.querySelectorAll("img");
@@ -218,11 +216,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
     // No nodes found, return
     if (!highIngredientNode.node || !highInstructionNode.node) return;
 
-    console.log(
-      highIngredientNode.node.childNodes.length > 1 &&
-        highIngredientNode.node.childNodes
-    );
-
     const lca = findLowestCommonAncestor(
       highIngredientNode.node,
       highInstructionNode.node
@@ -239,10 +232,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
           3. Should be ignored
       All nodes before the first ingredient node should be ignored.
     */
-    console.log(highIngredientNode.node);
-    if (highIngredientNode.node.childNodes.length > 1) {
-      console.log(highIngredientNode.node);
-    }
 
     const [finalIngredientsBlock, finalInstructionsBlock] =
       filterLcaForIngredients(highIngredientNode.node, lcaChildren);

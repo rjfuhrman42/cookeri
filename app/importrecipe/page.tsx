@@ -14,6 +14,7 @@ import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { Recipe } from "../myrecipes/page";
+import React from "react";
 
 type editorStateType =
   | "recipeIngredient"
@@ -47,8 +48,6 @@ export default function ImportRecipe() {
       image: currentRecipe.image,
       author: currentRecipe.author,
     };
-
-    console.log("payload", payload);
 
     try {
       const { data, error } = await supabase
@@ -170,7 +169,7 @@ export default function ImportRecipe() {
                 </Button>
               </div>
               <Button
-                className="mt-auto font-league-spartan text-lg text-white w-full px-4"
+                className="font-league-spartan text-lg text-white w-full px-4"
                 onClick={() => handleSaveRecipe()}
                 size="lg"
                 color="success"
