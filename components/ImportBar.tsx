@@ -170,7 +170,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
     console.log("recipe name -->", recipeName);
 
     // Get the images
-    const images = recipeDocument.querySelectorAll("img");
+    const images = recipeDocument.body.querySelectorAll("img");
     images.forEach((img: HTMLImageElement) => console.log(img.src));
 
     let recipeYield = null;
@@ -184,7 +184,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
         /(?:yields|yield|serves|servings|makes):* (.*$)/
       );
 
-      if (result !== null && result[1] !== "") {
+      if (result !== null && result[1] !== "" && result[1].length < 30) {
         recipeYield = result[1];
       } else {
         console.log("no serving information found");
@@ -300,7 +300,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
 
       if (ingredientsBlock.length === 0 && ingredientScore >= 3) {
         // Sometimes ingredients are written in one single HTML element (p, div, etc...), but are separated by <br>
-        // The below if statement checks if the ingredients are deeper in the tree
         /*
           Example: 
           <p>
@@ -317,6 +316,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
             <p>2 medium size tomatoes</p>
           </div>
         */
+        // The below if statement checks for this case
         if (child.childNodes.length > 1) {
           child.childNodes.forEach((node) => {
             if (node.nodeName === "#text" && node.textContent) {

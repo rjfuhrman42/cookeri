@@ -133,6 +133,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                 <div className="relative flex-1 overflow-hidden">
                   <Image
                     src={imageUrl}
+                    unoptimized
                     fill
                     alt={name?.toString() || "Recipe Image Not Provided"}
                     className="object-cover object-center"
