@@ -265,7 +265,7 @@ export default function MyRecipes() {
                     My recipes
                   </h1>
                 </div>
-                <div className="bg-light-black text-white flex-1 w-full max-h-[450px] overflow-scroll">
+                <div className="bg-light-black text-white flex-1 w-full max-h-[250px] sm:max-h-[450px] overflow-scroll">
                   {recipes ? (
                     <RecipesList
                       recipes={recipes}
