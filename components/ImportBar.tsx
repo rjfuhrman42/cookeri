@@ -156,8 +156,6 @@ function ImportBar({ url, setUrl, setData }: Props) {
   }
 
   function parseRecipeDataFromHtml(recipeDocument: Document) {
-    // Advanced parsing here ...
-
     // First, get the title
     // 1. Check for the presence of an og:title title meta tag
     // 2. Else, just use the title tag
