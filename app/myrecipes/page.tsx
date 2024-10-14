@@ -239,17 +239,18 @@ export default function MyRecipes() {
     );
   } else
     return (
-      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
+      <main className="flex relative h-full w-screen overflow-hidden flex-row items-start justify-start">
         {sidebarShown ? (
           <SideBar>
             <Tooltip
               content="Full screen"
-              className="px-4 bg-white"
+              className="px-4 *:bg-white"
               placement="right"
               radius="sm"
             >
               <Button
                 isIconOnly
+                className="absolute -right-[48px] top-0"
                 onPress={() => setSidebarShown(!sidebarShown)}
                 color="primary"
                 endContent={<MaximizeIcon stroke="white" />}
@@ -265,7 +266,7 @@ export default function MyRecipes() {
                     My recipes
                   </h1>
                 </div>
-                <div className="bg-light-black text-white flex-1 w-full max-h-[250px] sm:max-h-[450px] overflow-scroll">
+                <div className="bg-light-black text-white w-full overflow-y-scroll max-h-[250px] md:max-h-[350px] mb-4">
                   {recipes ? (
                     <RecipesList
                       recipes={recipes}
@@ -379,7 +380,7 @@ export default function MyRecipes() {
               </>
             )}
             {editorState === "myRecipes" && (
-              <div className="mt-auto flex flex-col gap-y-4">
+              <div className="flex flex-col gap-y-4 flex-1">
                 <Button
                   className="font-league-spartan text-lg text-white w-full px-4"
                   color="primary"
@@ -409,7 +410,7 @@ export default function MyRecipes() {
         ) : (
           <></>
         )}
-        <section className="relative flex flex-col h-full w-full p-0 overflow-hidden">
+        <section className="fixed md:relative flex flex-col h-full w-full p-0 overflow-hidden">
           <div className="absolute flex flex-col items-start top-0 h-12 w-full">
             {sidebarShown ? (
               <></>
