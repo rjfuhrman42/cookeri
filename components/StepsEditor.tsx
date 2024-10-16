@@ -76,7 +76,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
       <h1 className="pt-4 pb-12 font-bold">Edit Instructions</h1>
       <div className="flex flex-row justify-end container w-[825px] gap-x-4">
         <Button
-          className="absolute top-5 right-5 text-lg text-white px-4"
+          className="hidden sm:flex absolute top-5 right-5 text-lg text-white px-4"
           onClick={() => onCancel()}
           size="lg"
           color="danger"
@@ -91,7 +91,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
         </Button>
       </div>
 
-      <div className="pt-4 flex flex-col h-full w-[825px] container relative">
+      <div className="pt-4 flex flex-col h-full max-w-[825px] container relative">
         <div className="flex flex-row">
           <Listbox
             className="w-1/4"
@@ -111,7 +111,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
             })}
           </Listbox>
           <textarea
-            className="h-[550px] container w-7/8 p-4 my-8 mt-1"
+            className="h-[300px] container w-7/8 p-4 my-8 mt-1"
             value={stepsData[selectedValue]}
             onChange={(e) => {
               setStepsData((prev) => {
@@ -124,7 +124,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
           ></textarea>
         </div>
         <Button
-          className="text-lg text-white px-4 w-full"
+          className="text-lg text-white px-4 w-full mb-2"
           onClick={() => {
             saveRecipeData();
           }}
@@ -138,6 +138,20 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
           }
         >
           Save edits
+        </Button>
+        <Button
+          className="sm:hidden text-lg text-white px-4"
+          onClick={() => onCancel()}
+          size="md"
+          color="danger"
+          radius="sm"
+          endContent={
+            <div className="pb-0.5">
+              <CloseCircle fill="white" stroke="red" />
+            </div>
+          }
+        >
+          Discard
         </Button>
       </div>
     </div>
