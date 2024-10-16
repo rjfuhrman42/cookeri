@@ -107,7 +107,7 @@ function Navbar({
               </NavbarItem>
             </NavbarContent>
           </div>
-          <NavbarMenu className="bg-light-black flex">
+          <NavbarMenu className="bg-lightest-black flex">
             <NavbarMenuItem>
               <Button
                 className="text-white"

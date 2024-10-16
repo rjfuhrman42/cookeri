@@ -25,7 +25,7 @@ export default function IngredientsEditor({
   }
 
   return (
-    <div className="relative flex flex-col items-center py-16 px-8 w-full h-screen bg-light-grey">
+    <div className="relative flex flex-col h-full items-center py-16 px-8 w-full bg-light-grey">
       <div className="flex flex-row justify-center container gap-x-4">
         <h1 className="font-bold">Editing Ingredients</h1>
       </div>
@@ -43,9 +43,9 @@ export default function IngredientsEditor({
       >
         Discard
       </Button>
-      <div className="flex flex-col justify-between container max-w-[625px]">
+      <div className="flex flex-col flex-1 justify-between container max-w-[625px]">
         <textarea
-          className="container h-[350px] p-4 my-8 bg-white"
+          className="flex-1 container p-4 my-8 bg-white"
           defaultValue={parseRecipeData()}
         ></textarea>
         <Button

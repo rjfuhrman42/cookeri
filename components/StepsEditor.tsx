@@ -72,7 +72,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
   }
 
   return (
-    <div className="relative flex flex-col items-center pt-8 pb-16 px-8 w-full h-screen bg-light-grey">
+    <div className="relative flex flex-col items-center pt-8 pb-16 px-8 w-full h-full bg-light-grey">
       <h1 className="pt-4 pb-12 font-bold">Edit Instructions</h1>
       <div className="flex flex-row justify-end container w-[825px] gap-x-4">
         <Button
@@ -92,7 +92,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
       </div>
 
       <div className="pt-4 flex flex-col h-full max-w-[825px] container relative">
-        <div className="flex flex-row">
+        <div className="flex flex-row flex-1">
           <Listbox
             className="w-1/4"
             aria-label="Single selection example"
@@ -111,7 +111,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
             })}
           </Listbox>
           <textarea
-            className="h-[300px] container w-7/8 p-4 my-8 mt-1"
+            className="flex-1 container w-7/8 p-4 my-8 mt-1"
             value={stepsData[selectedValue]}
             onChange={(e) => {
               setStepsData((prev) => {
