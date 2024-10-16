@@ -187,7 +187,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
         </div>
       ) : (
         <div className="flex items-center justify-center h-full w-full">
-          <p className="text-2xl">{emptyText}</p>
+          <p className="text-2xl px-8">{emptyText}</p>
         </div>
       )}
     </div>

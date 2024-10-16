@@ -266,7 +266,7 @@ export default function MyRecipes() {
                     My recipes
                   </h1>
                 </div>
-                <div className="bg-light-black text-white w-full overflow-y-scroll max-h-[250px] md:max-h-[350px] mb-4">
+                <div className="flex-1 bg-lighter-black text-white w-full overflow-y-scroll mb-4">
                   {recipes ? (
                     <RecipesList
                       recipes={recipes}
@@ -307,6 +307,16 @@ export default function MyRecipes() {
                     className="w-full"
                     name="recipe-title"
                   />
+                  <Button
+                    className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
+                    onPress={() => setSidebarShown(!sidebarShown)}
+                    endContent={<MaximizeIcon stroke="white" />}
+                    radius="none"
+                    variant="flat"
+                    size="lg"
+                  >
+                    View recipe
+                  </Button>
                 </div>
                 <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
                   <p className="font-league-spartan text-lg text-left w-full pl-2">
@@ -380,13 +390,13 @@ export default function MyRecipes() {
               </>
             )}
             {editorState === "myRecipes" && (
-              <div className="flex flex-col gap-y-4 flex-1">
+              <div className="flex flex-col gap-y-4">
                 <Button
                   className="font-league-spartan text-lg text-white w-full px-4"
                   color="primary"
                   isDisabled={!currentRecipe}
                   size="lg"
-                  radius="sm"
+                  radius="none"
                   variant="solid"
                   onClick={() => setEditorState("editRecipe")}
                 >
@@ -398,11 +408,21 @@ export default function MyRecipes() {
                   as={Link}
                   color="secondary"
                   size="lg"
-                  radius="sm"
+                  radius="none"
                   variant="solid"
                   href="/importrecipe"
                 >
                   Add a new recipe
+                </Button>
+                <Button
+                  className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
+                  onPress={() => setSidebarShown(!sidebarShown)}
+                  endContent={<MaximizeIcon stroke="white" />}
+                  radius="none"
+                  variant="flat"
+                  size="lg"
+                >
+                  View recipe
                 </Button>
               </div>
             )}
