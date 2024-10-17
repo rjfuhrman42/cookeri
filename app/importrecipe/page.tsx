@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
@@ -35,6 +35,11 @@ export default function ImportRecipe() {
   const router = useRouter();
 
   const supabase = createClient();
+
+  useEffect(() => {
+    if (!currentRecipe) return;
+    setSidebarShown(false);
+  }, [currentRecipe]);
 
   async function handleSaveRecipe() {
     if (!currentRecipe) return;

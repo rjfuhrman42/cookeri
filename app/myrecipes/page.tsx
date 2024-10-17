@@ -72,6 +72,11 @@ export default function MyRecipes() {
       });
   }, [supabase, editorState]);
 
+  useEffect(() => {
+    if (!currentRecipe) return;
+    setSidebarShown(false);
+  }, [currentRecipe]);
+
   /* ------- Fetch recipe instructions ------- */
 
   function fetchRecipeData(selectedValue: string) {
@@ -270,7 +275,9 @@ export default function MyRecipes() {
                   {recipes ? (
                     <RecipesList
                       recipes={recipes}
-                      onRecipeChange={(value) => fetchRecipeData(value)}
+                      onRecipeChange={(value) => {
+                        fetchRecipeData(value);
+                      }}
                     />
                   ) : (
                     <></>

@@ -173,6 +173,7 @@ function Navbar({
           <NavbarContent justify="end">
             <NavbarItem>
               <Button
+                className="flex sm:hidden"
                 as={Link}
                 color="success"
                 radius="sm"
@@ -183,7 +184,20 @@ function Navbar({
                 Sign in
               </Button>
             </NavbarItem>
-            <NavbarItem className="hidden lg:flex">
+            <NavbarItem>
+              <Button
+                className="hidden sm:flex"
+                as={Link}
+                color="success"
+                radius="sm"
+                size="lg"
+                href="/login"
+                variant="light"
+              >
+                Sign in
+              </Button>
+            </NavbarItem>
+            <NavbarItem className="hidden sm:flex">
               <Button
                 as={Link}
                 color="success"
