@@ -25,12 +25,12 @@ export default function IngredientsEditor({
   }
 
   return (
-    <div className="relative flex flex-col items-center py-16 px-8 w-full h-screen bg-light-grey">
-      <div className="flex flex-row justify-between container max-w-[625px] gap-x-4">
+    <div className="relative flex flex-col h-full items-center py-16 px-8 w-full bg-light-grey">
+      <div className="flex flex-row justify-center container gap-x-4">
         <h1 className="font-bold">Editing Ingredients</h1>
       </div>
       <Button
-        className="absolute top-5 right-5 text-lg text-white px-4"
+        className="hidden sm:flex absolute top-5 right-5 text-lg text-white px-4"
         onClick={() => onCancel()}
         size="lg"
         color="danger"
@@ -43,13 +43,13 @@ export default function IngredientsEditor({
       >
         Discard
       </Button>
-      <div className="w-[625px]">
+      <div className="flex flex-col flex-1 justify-between container max-w-[625px]">
         <textarea
-          className="h-[400px] container p-4 my-8 bg-white"
+          className="flex-1 container p-4 my-8 bg-white"
           defaultValue={parseRecipeData()}
         ></textarea>
         <Button
-          className="text-lg text-white px-4 w-full"
+          className="text-lg text-white px-4 w-full mb-4"
           onClick={() => {
             const data = document.querySelector("textarea")?.value;
             if (!data) return;
@@ -65,6 +65,20 @@ export default function IngredientsEditor({
           }
         >
           Save edits
+        </Button>
+        <Button
+          className="sm:hidden text-lg text-white px-4"
+          onClick={() => onCancel()}
+          size="lg"
+          color="danger"
+          radius="sm"
+          endContent={
+            <div className="pb-0.5">
+              <CloseCircle fill="white" stroke="red" />
+            </div>
+          }
+        >
+          Discard
         </Button>
       </div>
     </div>

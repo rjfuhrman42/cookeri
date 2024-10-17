@@ -67,7 +67,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
             <h1 className="text-3xl font-bold text-center">
               {name?.toString()}
             </h1>
-            <div className="flex flex-col sm:flex-row min-h-[400px]">
+            <div className="flex sm:flex-row min-h-[400px]">
               <div className="bg-cookeri-green-light flex-1 p-8 flex flex-col">
                 <div className="flex flex-col pb-8 gap-y-2">
                   {authorDetails?.name && (
@@ -146,7 +146,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                 -------------------------------------------------------------------
               */}
             </div>
-            <div className="flex flex-col sm:flex-row gap-x-8">
+            <div className="p-8 flex flex-col md:p-0 sm:flex-row gap-x-8">
               <div className="flex flex-col flex-1">
                 <h2 className="text-2xl my-4 font-bold">Ingredients</h2>
                 <ul>
@@ -187,7 +187,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
         </div>
       ) : (
         <div className="flex items-center justify-center h-full w-full">
-          <p className="text-2xl">{emptyText}</p>
+          <p className="text-2xl px-8">{emptyText}</p>
         </div>
       )}
     </div>

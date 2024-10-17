@@ -6,6 +6,9 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
   Navbar as NextNavbar,
 } from "@nextui-org/navbar";
 import { usePathname, useRouter } from "next/navigation";
@@ -31,91 +34,184 @@ function Navbar({
 
   const bgColor = `bg-${color}`;
 
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
   return (
     <NextNavbar
       maxWidth={maxWidth}
       className={`${bgColor} ${fixed ? "fixed" : ""}`}
       height="4.5em"
+      onMenuOpenChange={setIsMenuOpen}
     >
-      <div className="ml-3.5">
-        <NavbarBrand>
-          <h1 className="font-gluten font-bold text-cookeri-green">Cookeri</h1>
-        </NavbarBrand>
-      </div>
       {isUserLoggedIn ? (
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <Button
-              className="text-white"
-              as={Link}
-              href="/myrecipes"
-              radius="sm"
-              variant={pathname === "/myrecipes" ? "bordered" : "light"}
-              size="lg"
-              endContent={
-                <BookSquareIcon height={15} width={15} stroke="white" />
-              }
-            >
-              My Recipes
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button
-              className="text-white"
-              as={Link}
-              color="default"
-              href="/importrecipe"
-              radius="sm"
-              variant={pathname === "/importrecipe" ? "bordered" : "light"}
-              size="lg"
-              endContent={<ImportIcon height={15} width={15} stroke="white" />}
-            >
-              Import
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button
-              onPress={async () => {
-                await supabase.auth.signOut();
-                router.push("/");
-              }}
-              color="danger"
-              href="#"
-              radius="none"
-              variant="solid"
-            >
-              Log out
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
+        <>
+          <NavbarBrand className="hidden sm:block">
+            <h1 className="font-gluten font-bold text-cookeri-green">
+              Cookeri
+            </h1>
+          </NavbarBrand>
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className={
+              isUserLoggedIn
+                ? "text-white sm:hidden"
+                : "text-cookeri-green sm:hidden"
+            }
+          />
+          <div className="hidden sm:block">
+            <NavbarContent justify="end">
+              <NavbarItem>
+                <Button
+                  className="text-white"
+                  as={Link}
+                  href="/myrecipes"
+                  radius="sm"
+                  variant={pathname === "/myrecipes" ? "bordered" : "light"}
+                  size="lg"
+                  endContent={
+                    <BookSquareIcon height={15} width={15} stroke="white" />
+                  }
+                >
+                  My Recipes
+                </Button>
+              </NavbarItem>
+              <NavbarItem>
+                <Button
+                  className="text-white"
+                  as={Link}
+                  color="default"
+                  href="/importrecipe"
+                  radius="sm"
+                  variant={pathname === "/importrecipe" ? "bordered" : "light"}
+                  size="lg"
+                  endContent={
+                    <ImportIcon height={15} width={15} stroke="white" />
+                  }
+                >
+                  Import
+                </Button>
+              </NavbarItem>
+              <NavbarItem>
+                <Button
+                  onPress={async () => {
+                    await supabase.auth.signOut();
+                    router.push("/");
+                  }}
+                  color="danger"
+                  href="#"
+                  radius="none"
+                  variant="solid"
+                >
+                  Log out
+                </Button>
+              </NavbarItem>
+            </NavbarContent>
+          </div>
+          <NavbarMenu className="bg-lightest-black flex">
+            <NavbarMenuItem>
+              <Button
+                className="text-white"
+                as={Link}
+                href="/myrecipes"
+                radius="sm"
+                variant="light"
+                size="lg"
+                endContent={
+                  <BookSquareIcon height={15} width={15} stroke="white" />
+                }
+              >
+                My Recipes
+              </Button>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Button
+                className="text-white"
+                as={Link}
+                color="default"
+                href="/importrecipe"
+                radius="sm"
+                variant="light"
+                size="lg"
+                endContent={
+                  <ImportIcon height={15} width={15} stroke="white" />
+                }
+              >
+                Import
+              </Button>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Button
+                onPress={async () => {
+                  await supabase.auth.signOut();
+                  router.push("/");
+                }}
+                color="danger"
+                href="#"
+                radius="none"
+                variant="light"
+                size="lg"
+              >
+                Log out
+              </Button>
+            </NavbarMenuItem>
+          </NavbarMenu>
+          <NavbarBrand className="flex-grow-0 ml-auto sm:hidden">
+            <h1 className="font-gluten font-bold text-cookeri-green">
+              Cookeri
+            </h1>
+          </NavbarBrand>
+        </>
       ) : (
-        <NavbarContent justify="end">
-          <NavbarItem className="hidden lg:flex">
-            <Button
-              as={Link}
-              color="success"
-              radius="sm"
-              size="lg"
-              href="/login"
-              variant="light"
-            >
-              Sign in
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button
-              as={Link}
-              color="success"
-              radius="sm"
-              size="lg"
-              href="/login"
-              variant="ghost"
-              className="hover:!text-white"
-            >
-              Sign Up
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
+        <>
+          <div className="ml-3.5">
+            <NavbarBrand>
+              <h1 className="font-gluten font-bold text-cookeri-green">
+                Cookeri
+              </h1>
+            </NavbarBrand>
+          </div>
+          <NavbarContent justify="end">
+            <NavbarItem>
+              <Button
+                className="flex sm:hidden"
+                as={Link}
+                color="success"
+                radius="sm"
+                size="lg"
+                href="/login"
+                variant="ghost"
+              >
+                Sign in
+              </Button>
+            </NavbarItem>
+            <NavbarItem>
+              <Button
+                className="hidden sm:flex"
+                as={Link}
+                color="success"
+                radius="sm"
+                size="lg"
+                href="/login"
+                variant="light"
+              >
+                Sign in
+              </Button>
+            </NavbarItem>
+            <NavbarItem className="hidden sm:flex">
+              <Button
+                as={Link}
+                color="success"
+                radius="sm"
+                size="lg"
+                href="/login"
+                variant="ghost"
+                className="hover:!text-white"
+              >
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </NavbarContent>
+        </>
       )}
     </NextNavbar>
   );
