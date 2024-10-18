@@ -1,7 +1,9 @@
-<img width="636" alt="Screenshot 2024-10-18 at 10 27 45 AM" src="https://github.com/user-attachments/assets/4939e22f-3c26-4c97-9a9c-dafa32425ff5">
 
+<img width="1235" alt="Screenshot 2024-10-18 at 10 31 20 AM" src="https://github.com/user-attachments/assets/1ca94606-61ea-4721-b610-05c37a7ec6f1">
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## **Introduction**
+
+Cookeri is web app for importing recipes from the web.
 
 ## Getting Started
 
