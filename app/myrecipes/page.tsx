@@ -22,6 +22,7 @@ import { UserResponse } from "@supabase/supabase-js";
 import { Link } from "@nextui-org/link";
 import { Tooltip } from "@nextui-org/tooltip";
 import RecipesList from "@/components/RecipesList";
+import React from "react";
 
 export type Recipe = {
   url?: string;
@@ -71,6 +72,11 @@ export default function MyRecipes() {
       });
   }, [supabase, editorState]);
 
+  useEffect(() => {
+    if (!currentRecipe) return;
+    setSidebarShown(false);
+  }, [currentRecipe]);
+
   /* ------- Fetch recipe instructions ------- */
 
   function fetchRecipeData(selectedValue: string) {
@@ -78,7 +84,7 @@ export default function MyRecipes() {
 
     const index = Number.parseInt(selectedValue);
     const recipe = recipes[index];
-    console.log("fetch!", recipe);
+
     if (!recipe) return;
 
     supabase
@@ -122,7 +128,7 @@ export default function MyRecipes() {
           author: recipe.author,
           id: recipe.id,
         };
-        console.log("parsedRecipe", parsedRecipe);
+
         setCurrentRecipe(parsedRecipe);
 
         // Save the initial recipe to compare changes
@@ -238,9 +244,25 @@ export default function MyRecipes() {
     );
   } else
     return (
-      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
+      <main className="flex relative h-full w-screen overflow-hidden flex-row items-start justify-start">
         {sidebarShown ? (
           <SideBar>
+            <Tooltip
+              content="Full screen"
+              className="px-4 *:bg-white"
+              placement="right"
+              radius="sm"
+            >
+              <Button
+                isIconOnly
+                className="absolute -right-[48px] top-0"
+                onPress={() => setSidebarShown(!sidebarShown)}
+                color="primary"
+                endContent={<MaximizeIcon stroke="white" />}
+                radius="none"
+                size="lg"
+              />
+            </Tooltip>
             {editorState === "myRecipes" ? (
               <>
                 <div className="flex items-center">
@@ -249,11 +271,13 @@ export default function MyRecipes() {
                     My recipes
                   </h1>
                 </div>
-                <div className="bg-light-black text-white flex-1 w-full max-h-[450px] overflow-scroll">
+                <div className="flex-1 bg-lighter-black text-white w-full overflow-y-scroll mb-4">
                   {recipes ? (
                     <RecipesList
                       recipes={recipes}
-                      onRecipeChange={(value) => fetchRecipeData(value)}
+                      onRecipeChange={(value) => {
+                        fetchRecipeData(value);
+                      }}
                     />
                   ) : (
                     <></>
@@ -290,6 +314,16 @@ export default function MyRecipes() {
                     className="w-full"
                     name="recipe-title"
                   />
+                  <Button
+                    className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
+                    onPress={() => setSidebarShown(!sidebarShown)}
+                    endContent={<MaximizeIcon stroke="white" />}
+                    radius="none"
+                    variant="flat"
+                    size="lg"
+                  >
+                    View recipe
+                  </Button>
                 </div>
                 <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
                   <p className="font-league-spartan text-lg text-left w-full pl-2">
@@ -363,13 +397,13 @@ export default function MyRecipes() {
               </>
             )}
             {editorState === "myRecipes" && (
-              <div className="mt-auto flex flex-col gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 <Button
                   className="font-league-spartan text-lg text-white w-full px-4"
                   color="primary"
                   isDisabled={!currentRecipe}
                   size="lg"
-                  radius="sm"
+                  radius="none"
                   variant="solid"
                   onClick={() => setEditorState("editRecipe")}
                 >
@@ -381,11 +415,21 @@ export default function MyRecipes() {
                   as={Link}
                   color="secondary"
                   size="lg"
-                  radius="sm"
+                  radius="none"
                   variant="solid"
                   href="/importrecipe"
                 >
                   Add a new recipe
+                </Button>
+                <Button
+                  className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
+                  onPress={() => setSidebarShown(!sidebarShown)}
+                  endContent={<MaximizeIcon stroke="white" />}
+                  radius="none"
+                  variant="flat"
+                  size="lg"
+                >
+                  View recipe
                 </Button>
               </div>
             )}
@@ -393,24 +437,10 @@ export default function MyRecipes() {
         ) : (
           <></>
         )}
-        <section className="relative flex flex-col h-full w-full p-0 overflow-hidden">
+        <section className="fixed md:relative flex flex-col h-full w-full p-0 overflow-hidden">
           <div className="absolute flex flex-col items-start top-0 h-12 w-full">
             {sidebarShown ? (
-              <Tooltip
-                content="Full screen"
-                className="px-4 bg-white"
-                placement="right"
-                radius="sm"
-              >
-                <Button
-                  isIconOnly
-                  onPress={() => setSidebarShown(!sidebarShown)}
-                  color="primary"
-                  endContent={<MaximizeIcon stroke="white" />}
-                  radius="none"
-                  size="lg"
-                />
-              </Tooltip>
+              <></>
             ) : (
               <Button
                 onPress={() => setSidebarShown(!sidebarShown)}

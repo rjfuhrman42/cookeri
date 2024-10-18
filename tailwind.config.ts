@@ -16,6 +16,8 @@ const config: Config = {
         "cookeri-green": "#02D084",
         "cookeri-green-light": "rgba(179, 241, 218, 0.42)",
         "light-black": "#252627",
+        "lighter-black": "#303132",
+        "lightest-black": "#515152",
         "light-grey": "#EBECF0",
         "lighter-grey": "#a3a3a3",
         "glass-white": "rgba(255, 255, 255, 0.09)",
