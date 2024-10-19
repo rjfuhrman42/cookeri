@@ -1,9 +1,9 @@
 
 ![logo](https://github.com/user-attachments/assets/c035c06f-c67a-42e4-ad74-11a1514fa598)
 
-## **Introduction**
+## **About the app**
 
-Cookeri is web app for importing recipes from the web.
+Cookeri is a personal recipe manager with a Supabase & PostgreSQL backend and a Nextjs frontend. Add recipes to your database by providing the URL and Cookeri will automatically import the recipe data. You can even make your own edits via the recipe editor. 
 
 ## Getting Started
 
