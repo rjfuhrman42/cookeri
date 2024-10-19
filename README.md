@@ -1,5 +1,6 @@
 
-![logo](https://github.com/user-attachments/assets/c035c06f-c67a-42e4-ad74-11a1514fa598)
+[![logo](https://github.com/user-attachments/assets/c035c06f-c67a-42e4-ad74-11a1514fa598)](https://cookeri.vercel.app/)
+
 
 ## **About the app**
 
