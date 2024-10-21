@@ -1,5 +1,6 @@
+![Button](https://github.com/user-attachments/assets/5d670962-2b6c-49a7-a9f5-a44643bde893)
+![smartmockups_m2je6l7h](https://github.com/user-attachments/assets/cb4b366e-9238-4033-a110-2364100adccc)
 
-[![logo](https://github.com/user-attachments/assets/c035c06f-c67a-42e4-ad74-11a1514fa598)](https://cookeri.vercel.app/)
 
 
 ## **About the app**
