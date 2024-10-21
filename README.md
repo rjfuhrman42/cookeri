@@ -10,22 +10,7 @@
 
 Cookeri is a personal recipe manager with a Supabase & PostgreSQL backend and a Nextjs frontend. Add recipes to your database by providing the URL and Cookeri will automatically import the recipe data. You can even make your own edits via the recipe editor. 
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Key features
+- Import recipes: Create and save recipes, by **importing via a URL**
+- Make edits: Edit the title, instructions, or ingredients of any saved recipe
+- View: View your recipe in a clean UI, free from ads, popups, and life stories 🙂
