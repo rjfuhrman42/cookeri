@@ -1,5 +1,6 @@
 ![Button](https://github.com/user-attachments/assets/5d670962-2b6c-49a7-a9f5-a44643bde893)
-![smartmockups_m2je6l7h](https://github.com/user-attachments/assets/cb4b366e-9238-4033-a110-2364100adccc)
+
+<img width="2298" alt="Group 1 (1)" src="https://github.com/user-attachments/assets/e7151eda-516d-48ed-aeec-fda7a9a118f0">
 
 
 
