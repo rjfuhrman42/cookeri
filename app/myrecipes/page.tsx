@@ -72,11 +72,6 @@ export default function MyRecipes() {
       });
   }, [supabase, editorState]);
 
-  useEffect(() => {
-    if (!currentRecipe) return;
-    setSidebarShown(false);
-  }, [currentRecipe]);
-
   /* ------- Fetch recipe instructions ------- */
 
   function fetchRecipeData(selectedValue: string) {
