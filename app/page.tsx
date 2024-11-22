@@ -14,9 +14,11 @@ import Footer from "@/components/Footer";
 import ViewAndCook from "../public/view-and-cook.png";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
@@ -24,6 +26,14 @@ export default function Home() {
       setUser(data.user);
     });
   });
+
+  useEffect(() => {
+    if (!router) return;
+
+    if (user !== null) {
+      router.push("/myrecipes");
+    }
+  }, [user, router]);
 
   const isUserLoggedIn = user !== null;
 
