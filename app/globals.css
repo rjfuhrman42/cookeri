@@ -7,6 +7,7 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --lighter-grey: #a3a3a3;
+  @apply bg-light-grey;
 }
 
 /* @media (prefers-color-scheme: dark) {

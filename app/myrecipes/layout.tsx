@@ -16,7 +16,7 @@ export default async function Layout({
   if (!user) redirect("/login");
 
   return (
-    <div className="flex flex-col h-dvh">
+    <div className="flex flex-col overflow-x-hidden">
       <Navbar isUserLoggedIn={user !== null} maxWidth="full" />
       {children}
     </div>
