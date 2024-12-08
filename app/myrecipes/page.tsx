@@ -48,18 +48,18 @@ export default function MyRecipes() {
   }, [supabase]);
 
   return (
-    <main className="flex relative h-full w-screen flex-row items-start justify-center py-36">
-      <div className="container flex justify-start px-24 gap-10 flex-wrap">
+    <main className="flex relative h-full w-screen flex-row items-start justify-center py-8 md:py-36">
+      <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
         {recipes &&
           recipes.map((recipe, id) => {
             const { name, image } = recipe;
             return (
-              <Card className="w-[400px]" key={id} radius="sm">
+              <Card className="w-[350px]" key={id} radius="sm">
                 <Image
                   alt="Card background"
-                  className="object-cover"
+                  className="object-cover p-2 rounded-xl"
                   src={image}
-                  width={400}
+                  width={350}
                   height={250}
                   radius="none"
                 />
