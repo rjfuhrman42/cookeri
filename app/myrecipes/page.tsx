@@ -10,6 +10,7 @@ import { Card, CardFooter } from "@nextui-org/card";
 
 import React from "react";
 import { Image } from "@nextui-org/image";
+import { Link } from "@nextui-org/link";
 
 export type Recipe = {
   url?: string;
@@ -54,7 +55,14 @@ export default function MyRecipes() {
           recipes.map((recipe, id) => {
             const { name, image } = recipe;
             return (
-              <Card className="w-[350px]" key={id} radius="sm">
+              <Card
+                isPressable
+                radius="sm"
+                className="w-[350px]"
+                key={id}
+                as={Link}
+                href={`myrecipes/${id}`}
+              >
                 <Image
                   alt="Card background"
                   className="object-cover p-2 rounded-xl"
