@@ -5,6 +5,8 @@ import { createClient } from "@/utils/supabase/server";
 import React from "react";
 import { getRecipes } from "../page";
 
+import BackButton from "@/components/BackButton";
+
 export type Recipe = {
   url?: string;
   name: string;
@@ -30,7 +32,6 @@ export default async function MyRecipe({ id }: { id: string }) {
     if (!recipes) return;
 
     const recipe = recipes.find((recipe) => recipe.id == id);
-    console.log("the recipe", recipe);
 
     const parsedRecipe = supabase
       .from("recipe_instructions")
@@ -83,6 +84,9 @@ export default async function MyRecipe({ id }: { id: string }) {
 
   return (
     <main className="flex relative h-full w-screen overflow-hidden flex-row items-start justify-start">
+      <div className="absolute top-4 left-4 z-10">
+        <BackButton text="Back to My Recipes" />
+      </div>
       <section className="fixed md:relative flex flex-col h-full w-full p-0 overflow-hidden">
         <RecipeViewer
           recipe={currentRecipe}

@@ -6,7 +6,7 @@ export default async function Layout({
   params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
-  console.log(id);
+
   return (
     <div className="flex flex-col overflow-x-hidden">
       <MyRecipe id={id} />

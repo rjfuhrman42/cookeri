@@ -6,6 +6,7 @@ import React, { cache } from "react";
 import { Image } from "@nextui-org/image";
 import { Link } from "@nextui-org/link";
 import { createClient } from "@/utils/supabase/server";
+import { BookSquareIcon } from "@/components/icons";
 
 export type Recipe = {
   url?: string;
@@ -33,7 +34,6 @@ export const getRecipes = cache(async () => {
         return [];
       }
       if (data) {
-        console.log("recipe data", data);
         return data;
       }
     });
@@ -45,7 +45,11 @@ export default async function MyRecipes() {
   const recipes = await getRecipes();
 
   return (
-    <main className="flex relative h-full w-screen flex-row items-start justify-center py-8 md:py-36">
+    <main className="flex relative h-full w-screen flex-col items-center justify-center py-16">
+      <div className="flex flex-row items-center justify-center gap-2 pb-16">
+        <BookSquareIcon height={50} width={50} stroke="black" />
+        <h1 className="font-bold">My Recipes</h1>
+      </div>
       <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
         {recipes &&
           recipes.map((recipe) => {
