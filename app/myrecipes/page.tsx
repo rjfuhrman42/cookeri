@@ -1,16 +1,12 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
 import { RecipeInstructions } from "@/components/ImportBar";
-
-import { createClient } from "@/utils/supabase/client";
 
 import { Card, CardFooter } from "@nextui-org/card";
 
-import React from "react";
+import React, { cache } from "react";
 import { Image } from "@nextui-org/image";
 import { Link } from "@nextui-org/link";
+import { createClient } from "@/utils/supabase/server";
+import { BookSquareIcon } from "@/components/icons";
 
 export type Recipe = {
   url?: string;
@@ -27,33 +23,37 @@ export type Recipe = {
   id?: number;
 };
 
-export default function MyRecipes() {
-  const [recipes, setRecipes] = useState<any[] | undefined>();
-
+export const getRecipes = cache(async () => {
   const supabase = createClient();
+  const recipes = await supabase
+    .from("recipe")
+    .select("*")
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("error fetching recipes", error.message);
+        return [];
+      }
+      if (data) {
+        return data;
+      }
+    });
+  return recipes;
+});
 
+export default async function MyRecipes() {
   /* ------- Fetch recipes ------- */
-  useEffect(() => {
-    supabase
-      .from("recipe")
-      .select("*")
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("error fetching recipes", error.message);
-          return;
-        }
-        if (data) {
-          setRecipes(data);
-        }
-      });
-  }, [supabase]);
+  const recipes = await getRecipes();
 
   return (
-    <main className="flex relative h-full w-screen flex-row items-start justify-center py-8 md:py-36">
+    <main className="flex relative h-full w-screen flex-col items-center justify-center py-16">
+      <div className="flex flex-row items-center justify-center gap-2 pb-16">
+        <BookSquareIcon height={50} width={50} stroke="black" />
+        <h1 className="font-bold">My Recipes</h1>
+      </div>
       <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
         {recipes &&
-          recipes.map((recipe, id) => {
-            const { name, image } = recipe;
+          recipes.map((recipe) => {
+            const { name, image, id } = recipe;
             return (
               <Card
                 isPressable

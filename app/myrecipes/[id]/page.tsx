@@ -1,28 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-import SideBar from "@/components/SideBar";
 import { RecipeInstructions } from "@/components/ImportBar";
-import { Button } from "@nextui-org/button";
 import RecipeViewer from "@/components/RecipeViewer";
-import {
-  ArrowRightIcon,
-  BookSquareIcon,
-  CloseCircleIcon,
-  EditIcon,
-  MaximizeIcon,
-  SaveIcon,
-} from "@/components/icons";
-import { Input } from "@nextui-org/input";
-import IngredientsEditor from "@/components/IngredientsEditor";
-import StepsEditor from "@/components/StepsEditor";
-import { createClient } from "@/utils/supabase/client";
-import { UserResponse } from "@supabase/supabase-js";
-import { Link } from "@nextui-org/link";
-import { Tooltip } from "@nextui-org/tooltip";
-import RecipesList from "@/components/RecipesList";
+import { createClient } from "@/utils/supabase/server";
+
 import React from "react";
+import { getRecipes } from "../page";
+
+import BackButton from "@/components/BackButton";
 
 export type Recipe = {
   url?: string;
@@ -39,53 +22,21 @@ export type Recipe = {
   id?: number;
 };
 
-type editorStateType =
-  | "recipeIngredient"
-  | "recipeInstructions"
-  | "myRecipes"
-  | "editRecipe";
-
-export default function MyRecipes() {
-  const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
-  const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
-  const [recipes, setRecipes] = useState<any[] | undefined>();
-
-  const [sidebarShown, setSidebarShown] = useState(true);
-
+export default async function MyRecipe({ id }: { id: string }) {
   const supabase = createClient();
-
-  /* ------- Fetch recipes ------- */
-  useEffect(() => {
-    if (editorState !== "myRecipes") return;
-    supabase
-      .from("recipe")
-      .select("*")
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("error fetching recipes", error.message);
-          return;
-        }
-        if (data) {
-          setRecipes(data);
-        }
-      });
-  }, [supabase, editorState]);
 
   /* ------- Fetch recipe instructions ------- */
 
-  function fetchRecipeData(selectedValue: string) {
+  async function getRecipe(id: string) {
+    const recipes = await getRecipes();
     if (!recipes) return;
 
-    const index = Number.parseInt(selectedValue);
-    const recipe = recipes[index];
+    const recipe = recipes.find((recipe) => recipe.id == id);
 
-    if (!recipe) return;
-
-    supabase
+    const parsedRecipe = supabase
       .from("recipe_instructions")
       .select()
-      .eq("recipe_id", recipe.id)
+      .eq("recipe_id", id)
       .then(({ data, error }) => {
         if (error) {
           console.error("error fetching recipe instructions", error.message);
@@ -124,336 +75,24 @@ export default function MyRecipes() {
           id: recipe.id,
         };
 
-        setCurrentRecipe(parsedRecipe);
-
-        // Save the initial recipe to compare changes
-        // Use this to revert changes if needed
-        setInitialRecipe(parsedRecipe);
+        return parsedRecipe;
       });
+    return parsedRecipe;
   }
 
-  async function handleUpdateRecipe() {
-    if (!currentRecipe || !currentRecipe.id) return;
+  const currentRecipe = await getRecipe(id);
 
-    const userData: UserResponse = await supabase.auth.getUser();
-    if (!userData?.data?.user) return;
-
-    const payload = {
-      name: currentRecipe.name,
-      description: currentRecipe.description,
-      prep_time: currentRecipe.prepTime,
-      cook_time: currentRecipe.cookTime,
-      total_time: currentRecipe.totalTime,
-      recipe_yield: currentRecipe.recipeYield,
-      recipe_ingredients: currentRecipe.recipeIngredient,
-      image: currentRecipe.image,
-      author: currentRecipe.author,
-    };
-
-    try {
-      const { data, error } = await supabase
-        .from("recipe")
-        .update({ ...payload })
-        .eq("id", currentRecipe.id)
-        .select();
-
-      if (error) {
-        console.error("error saving recipe", error.message);
-        return;
-      }
-
-      if (!data) return;
-
-      // TODO: don't update steps if steps haven't changed
-      const { error: stepsError } = await supabase
-        .from("recipe_instructions")
-        .upsert(
-          currentRecipe.recipeInstructions.map((step) => {
-            return {
-              ...step,
-              recipe_id: currentRecipe.id,
-              id: step.id,
-            };
-          })
-        )
-        .select();
-      if (stepsError) {
-        console.error("error saving steps", stepsError.message);
-        return;
-      }
-      setEditorState("myRecipes");
-    } catch (error) {
-      console.error("error", error);
-    }
-  }
-
-  async function handleDeleteRecipe(recipeId: number) {
-    try {
-      const { error } = await supabase
-        .from("recipe")
-        .delete()
-        .eq("id", recipeId)
-        .select();
-
-      if (error) {
-        console.error("error deleting recipe", error.message);
-        return;
-      }
-
-      setCurrentRecipe(undefined);
-      setEditorState("myRecipes");
-    } catch (error) {
-      console.error("error", error);
-    }
-  }
-
-  if (editorState === "recipeIngredient" && currentRecipe?.recipeIngredient) {
-    return (
-      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
-        <IngredientsEditor
-          ingredients={currentRecipe.recipeIngredient as string[]}
-          onCancel={() => setEditorState("editRecipe")}
-          onSave={(data: string[]) => {
-            setCurrentRecipe(() => {
-              return { ...currentRecipe, recipeIngredient: data };
-            });
-            setEditorState("editRecipe");
-          }}
+  return (
+    <main className="flex relative h-full w-screen overflow-hidden flex-row items-start justify-start">
+      <div className="absolute top-4 left-4 z-10">
+        <BackButton text="Back to My Recipes" />
+      </div>
+      <section className="fixed md:relative flex flex-col h-full w-full p-0 overflow-hidden">
+        <RecipeViewer
+          recipe={currentRecipe}
+          emptyText="No recipe loaded. Choose a recipe and it will show up here!"
         />
-      </main>
-    );
-  } else if (editorState === "recipeInstructions" && currentRecipe) {
-    return (
-      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
-        <StepsEditor
-          steps={currentRecipe.recipeInstructions}
-          onCancel={() => setEditorState("editRecipe")}
-          onSave={(data: RecipeInstructions[]) => {
-            setCurrentRecipe(() => {
-              return { ...currentRecipe, recipeInstructions: data };
-            });
-            setEditorState("editRecipe");
-          }}
-        />
-      </main>
-    );
-  } else
-    return (
-      <main className="flex relative h-full w-screen overflow-hidden flex-row items-start justify-start">
-        {sidebarShown ? (
-          <SideBar>
-            <Tooltip
-              content="Full screen"
-              className="px-4 *:bg-white"
-              placement="right"
-              radius="sm"
-            >
-              <Button
-                isIconOnly
-                className="absolute -right-[48px] top-0"
-                onPress={() => setSidebarShown(!sidebarShown)}
-                color="primary"
-                endContent={<MaximizeIcon stroke="white" />}
-                radius="none"
-                size="lg"
-              />
-            </Tooltip>
-            {editorState === "myRecipes" ? (
-              <>
-                <div className="flex items-center">
-                  <BookSquareIcon className="mb-1.5" stroke="white" />
-                  <h1 className="font-bold pl-4 text-white text-3xl">
-                    My recipes
-                  </h1>
-                </div>
-                <div className="flex-1 bg-lighter-black text-white w-full overflow-y-scroll mb-4">
-                  {recipes ? (
-                    <RecipesList
-                      recipes={recipes}
-                      onRecipeChange={(value) => {
-                        fetchRecipeData(value);
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
-
-            {currentRecipe && editorState === "editRecipe" && (
-              <>
-                <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
-                  <label
-                    htmlFor="recipe-title"
-                    className="font-league-spartan text-lg text-left w-full pl-2"
-                  >
-                    Recipe title:
-                  </label>
-                  <Input
-                    type="text"
-                    value={currentRecipe?.name?.toString()}
-                    color="default"
-                    radius="sm"
-                    size="lg"
-                    onChange={(e) => {
-                      setCurrentRecipe(() => {
-                        return {
-                          ...currentRecipe,
-                          name: e.target.value,
-                        };
-                      });
-                    }}
-                    className="w-full"
-                    name="recipe-title"
-                  />
-                  <Button
-                    className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
-                    onPress={() => setSidebarShown(!sidebarShown)}
-                    endContent={<MaximizeIcon stroke="white" />}
-                    radius="none"
-                    variant="flat"
-                    size="lg"
-                  >
-                    View recipe
-                  </Button>
-                </div>
-                <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
-                  <p className="font-league-spartan text-lg text-left w-full pl-2">
-                    Recipe details:
-                  </p>
-                  <Button
-                    className="font-league-spartan text-lg text-white w-full px-4"
-                    onClick={() => setEditorState("recipeIngredient")}
-                    size="lg"
-                    color="primary"
-                    radius="sm"
-                    variant="solid"
-                    endContent={<EditIcon fill="white" />}
-                  >
-                    Edit ingredients
-                  </Button>
-                  <Button
-                    className="font-league-spartan text-lg text-white w-full px-4"
-                    onClick={() => setEditorState("recipeInstructions")}
-                    size="lg"
-                    color="primary"
-                    radius="sm"
-                    variant="solid"
-                    endContent={<EditIcon fill="white" />}
-                  >
-                    Edit steps
-                  </Button>
-                  <Button
-                    className="font-league-spartan text-lg text-white w-full px-4"
-                    onClick={() => {
-                      handleDeleteRecipe(currentRecipe.id as number);
-                    }}
-                    size="md"
-                    color="danger"
-                    radius="sm"
-                    variant="solid"
-                    endContent={<CloseCircleIcon stroke="white" />}
-                  >
-                    Delete recipe
-                  </Button>
-                </div>
-                <div className="mt-auto flex w-full justify-between between gap-1">
-                  <Button
-                    className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
-                    onClick={() => handleUpdateRecipe()}
-                    size="lg"
-                    color="success"
-                    radius="sm"
-                    variant="solid"
-                    endContent={
-                      <SaveIcon stroke="rgb(34 197 94)" fill="white" />
-                    }
-                  >
-                    Save changes
-                  </Button>
-                  <Button
-                    className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
-                    onClick={() => {
-                      setCurrentRecipe(initialRecipe);
-                      setEditorState("myRecipes");
-                    }}
-                    size="lg"
-                    color="danger"
-                    radius="sm"
-                    variant="flat"
-                    endContent={<CloseCircleIcon stroke="red" />}
-                  >
-                    Discard
-                  </Button>
-                </div>
-              </>
-            )}
-            {editorState === "myRecipes" && (
-              <div className="flex flex-col gap-y-4">
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  color="primary"
-                  isDisabled={!currentRecipe}
-                  size="lg"
-                  radius="none"
-                  variant="solid"
-                  onClick={() => setEditorState("editRecipe")}
-                >
-                  Edit current recipe
-                </Button>
-
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  as={Link}
-                  color="secondary"
-                  size="lg"
-                  radius="none"
-                  variant="solid"
-                  href="/importrecipe"
-                >
-                  Add a new recipe
-                </Button>
-                <Button
-                  className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
-                  onPress={() => setSidebarShown(!sidebarShown)}
-                  endContent={<MaximizeIcon stroke="white" />}
-                  radius="none"
-                  variant="flat"
-                  size="lg"
-                >
-                  View recipe
-                </Button>
-              </div>
-            )}
-          </SideBar>
-        ) : (
-          <></>
-        )}
-        <section className="fixed md:relative flex flex-col h-full w-full p-0 overflow-hidden">
-          <div className="absolute flex flex-col items-start top-0 h-12 w-full">
-            {sidebarShown ? (
-              <></>
-            ) : (
-              <Button
-                onPress={() => setSidebarShown(!sidebarShown)}
-                className="text-base"
-                color="primary"
-                endContent={<ArrowRightIcon stroke="white" fill="white" />}
-                radius="none"
-                size="lg"
-              >
-                Show sidebar
-              </Button>
-            )}
-          </div>
-          <RecipeViewer
-            recipe={currentRecipe}
-            emptyText="No recipe loaded. Choose a recipe and it will show up here!"
-          />
-        </section>
-      </main>
-    );
+      </section>
+    </main>
+  );
 }
