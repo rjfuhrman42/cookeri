@@ -60,11 +60,11 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
   }
 
   return (
-    <div className="h-full w-full overflow-scroll bg-light-grey">
+    <div className="h-full w-full overflow-y-scroll overflow-x-hidden bg-light-grey">
       {recipe ? (
         <div className="flex items-center justify-center px-0 md:px-10">
-          <article className="flex flex-col gap-y-12 py-20 w-full lg:max-w-[1000px]">
-            <h1 className="text-3xl font-bold text-center">
+          <article className="flex flex-col gap-y-8 pt-8 pb-16 w-full lg:max-w-[1000px] md:gap-y-12">
+            <h1 className="text-3xl font-bold px-8 text-left sm:text-center">
               {name?.toString()}
             </h1>
             <div className="flex sm:flex-row min-h-[400px]">

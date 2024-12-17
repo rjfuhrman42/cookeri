@@ -31,7 +31,7 @@ export const getRecipes = cache(async () => {
     .then(({ data, error }) => {
       if (error) {
         console.error("error fetching recipes", error.message);
-        return [];
+        return;
       }
       if (data) {
         return data;
