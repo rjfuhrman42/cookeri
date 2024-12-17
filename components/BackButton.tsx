@@ -8,16 +8,20 @@ import { ArrowLeftIcon } from "./icons";
 interface Props {
   text: string;
   noIcon?: boolean;
+  className?: string;
 }
 
-function BackButton({ text, noIcon = false }: Props) {
+function BackButton({ text, noIcon = false, className = "" }: Props) {
   const router = useRouter();
   return (
     <Button
+      className={className}
       startContent={noIcon ? <></> : <ArrowLeftIcon />}
       onPress={() => {
         router.back();
       }}
+      radius="sm"
+      size="lg"
     >
       {text}
     </Button>
