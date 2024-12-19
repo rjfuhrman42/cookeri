@@ -17,10 +17,11 @@ import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
-import { Link } from "@nextui-org/link";
+
 import { Tooltip } from "@nextui-org/tooltip";
 
 import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export type Recipe = {
   url?: string;
@@ -37,94 +38,91 @@ export type Recipe = {
   id?: number;
 };
 
-type editorStateType =
-  | "recipeIngredient"
-  | "recipeInstructions"
-  | "myRecipes"
-  | "editRecipe";
+type editorStateType = "recipeIngredient" | "recipeInstructions" | "editRecipe";
 
-export default function EditRecipe({ id }: { id: string }) {
-  const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
+export default function EditRecipe() {
+  const [editorState, setEditorState] = useState<editorStateType>("editRecipe");
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
   const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
 
   const [sidebarShown, setSidebarShown] = useState(true);
-  console.log(id);
+  const params = useSearchParams();
+  const recipeId = params.get("recipeId");
+  const router = useRouter();
 
   const supabase = createClient();
 
   useEffect(() => {
-    fetchRecipeData();
-  }, [supabase]);
-
-  /* ------- Fetch recipe instructions ------- */
-
-  function fetchRecipeData() {
-    if (!id) return;
+    if (!recipeId) return;
 
     supabase
       .from("recipe")
       .select("*")
+      .eq("id", recipeId)
       .then(({ data, error }) => {
         if (error) {
           console.error("error fetching recipes", error.message);
           return;
         }
         if (data) {
+          const recipe = data[0];
           console.log("recipe data", data);
-          setRecipes(data);
+          supabase
+            .from("recipe_instructions")
+            .select()
+            .eq("recipe_id", recipeId)
+            .then(({ data, error }) => {
+              if (error) {
+                console.error(
+                  "error fetching recipe instructions",
+                  error.message
+                );
+                return;
+              }
+
+              if (!data) return;
+              /* <a href="https://storyset.com/online">Online illustrations by Storyset</a> */
+              // <a href="https://storyset.com/book">Book illustrations by Storyset</a>
+              const recipeInstructions = data
+                .map((step: RecipeInstructions) => {
+                  return { name: step.name, steps: step.steps, id: step.id };
+                })
+                .sort((cur, next) => {
+                  if (!cur.id || !next.id) return 0;
+                  // Sort by ID - maybe add an order column in the future
+                  // Not sure if ID will always represent the order
+                  if (cur.id && next.id) {
+                    return cur.id - next.id;
+                  }
+                  return 0;
+                });
+
+              const parsedRecipe = {
+                url: recipe?.url,
+                name: recipe.name,
+                description: recipe.description,
+                prepTime: recipe.prep_time,
+                cookTime: recipe.cook_time,
+                totalTime: recipe?.total_time,
+                recipeYield: recipe.recipe_yield,
+                recipeIngredient: recipe.recipe_ingredients,
+                recipeInstructions,
+                image: recipe.image,
+                author: recipe.author,
+                id: recipe.id,
+              } as Recipe;
+
+              setCurrentRecipe(parsedRecipe);
+
+              // Save the initial recipe to compare changes
+              // Use this to revert changes if needed
+              setInitialRecipe(parsedRecipe);
+            });
         }
       });
+  }, [supabase, recipeId]);
 
-    supabase
-      .from("recipe_instructions")
-      .select()
-      .eq("recipe_id", id)
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("error fetching recipe instructions", error.message);
-          return;
-        }
-
-        if (!data) return;
-        /* <a href="https://storyset.com/online">Online illustrations by Storyset</a> */
-        // <a href="https://storyset.com/book">Book illustrations by Storyset</a>
-        const recipeInstructions = data
-          .map((step: RecipeInstructions) => {
-            return { name: step.name, steps: step.steps, id: step.id };
-          })
-          .sort((cur, next) => {
-            if (!cur.id || !next.id) return 0;
-            // Sort by ID - maybe add an order column in the future
-            // Not sure if ID will always represent the order
-            if (cur.id && next.id) {
-              return cur.id - next.id;
-            }
-            return 0;
-          });
-
-        const parsedRecipe = {
-          url: recipe?.url,
-          name: recipe.name,
-          description: recipe.description,
-          prepTime: recipe.prep_time,
-          cookTime: recipe.cook_time,
-          totalTime: recipe?.total_time,
-          recipeYield: recipe.recipe_yield,
-          recipeIngredient: recipe.recipe_ingredients,
-          recipeInstructions,
-          image: recipe.image,
-          author: recipe.author,
-          id: recipe.id,
-        };
-
-        setCurrentRecipe(parsedRecipe);
-
-        // Save the initial recipe to compare changes
-        // Use this to revert changes if needed
-        setInitialRecipe(parsedRecipe);
-      });
-  }
+  /* ------- Fetch recipe instructions ------- */
 
   async function handleUpdateRecipe() {
     if (!currentRecipe || !currentRecipe.id) return;
@@ -175,7 +173,7 @@ export default function EditRecipe({ id }: { id: string }) {
         console.error("error saving steps", stepsError.message);
         return;
       }
-      setEditorState("myRecipes");
+      router.push(`/myrecipes/${currentRecipe.id}`);
     } catch (error) {
       console.error("error", error);
     }
@@ -195,7 +193,7 @@ export default function EditRecipe({ id }: { id: string }) {
       }
 
       setCurrentRecipe(undefined);
-      setEditorState("myRecipes");
+      setEditorState("editRecipe");
     } catch (error) {
       console.error("error", error);
     }
@@ -347,7 +345,7 @@ export default function EditRecipe({ id }: { id: string }) {
                     className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
                     onClick={() => {
                       setCurrentRecipe(initialRecipe);
-                      setEditorState("myRecipes");
+                      setEditorState("editRecipe");
                     }}
                     size="lg"
                     color="danger"
@@ -359,43 +357,6 @@ export default function EditRecipe({ id }: { id: string }) {
                   </Button>
                 </div>
               </>
-            )}
-            {editorState === "myRecipes" && (
-              <div className="flex flex-col gap-y-4">
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  color="primary"
-                  isDisabled={!currentRecipe}
-                  size="lg"
-                  radius="none"
-                  variant="solid"
-                  onClick={() => setEditorState("editRecipe")}
-                >
-                  Edit current recipe
-                </Button>
-
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  as={Link}
-                  color="secondary"
-                  size="lg"
-                  radius="none"
-                  variant="solid"
-                  href="/importrecipe"
-                >
-                  Add a new recipe
-                </Button>
-                <Button
-                  className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
-                  onPress={() => setSidebarShown(!sidebarShown)}
-                  endContent={<MaximizeIcon stroke="white" />}
-                  radius="none"
-                  variant="flat"
-                  size="lg"
-                >
-                  View recipe
-                </Button>
-              </div>
             )}
           </SideBar>
         ) : (
