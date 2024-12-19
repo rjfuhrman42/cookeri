@@ -8,6 +8,8 @@ import { getRecipes } from "../page";
 import BackButton from "@/components/BackButton";
 import { Button } from "@nextui-org/button";
 
+import Link from "next/link";
+
 export type Recipe = {
   url?: string;
   name: string;
@@ -41,8 +43,7 @@ export const getRecipe = cache(async (id: string) => {
       }
 
       if (!data) return;
-      /* <a href="https://storyset.com/online">Online illustrations by Storyset</a> */
-      // <a href="https://storyset.com/book">Book illustrations by Storyset</a>
+
       const recipeInstructions = data
         .map((step: RecipeInstructions) => {
           return { name: step.name, steps: step.steps, id: step.id };
@@ -85,18 +86,29 @@ export default async function MyRecipe({ id }: { id: string }) {
   return (
     <main className="flex relative h-full w-screen overflow-hidden flex-col items-start justify-start">
       <div className="flex flex-row w-screen gap-2 p-4 z-10 sm:w-min">
-        <BackButton className="flex-1" text="My Recipes" />
-        <Button
-          className="flex-1 font-league-spartan text-lg text-white w-full"
-          color="success"
-          size="lg"
-          radius="sm"
-          variant="solid"
+        <BackButton
+          className="flex-1"
+          text="My Recipes"
+          pathname="/myrecipes"
+        />
+        <Link
+          href={{
+            pathname: "/editrecipe",
+            query: { recipeId: id },
+          }}
         >
-          Edit current recipe
-        </Button>
+          <Button
+            className="flex-1 font-league-spartan text-lg text-white w-full"
+            color="success"
+            size="lg"
+            radius="sm"
+            variant="solid"
+          >
+            Edit this recipe
+          </Button>
+        </Link>
       </div>
-      <section className="relative flex flex-col h-full w-full pt-8 overflow-hidden">
+      <section className="relative flex flex-col h-full w-full pt-8 overflow-scroll">
         <RecipeViewer
           recipe={currentRecipe}
           emptyText="No recipe loaded. Choose a recipe and it will show up here!"
