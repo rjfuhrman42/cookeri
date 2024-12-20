@@ -317,6 +317,7 @@ export default function EditRecipe() {
                     className="font-league-spartan text-lg text-white w-full px-4"
                     onClick={() => {
                       handleDeleteRecipe(currentRecipe.id as number);
+                      router.push("/myrecipes");
                     }}
                     size="md"
                     color="danger"
@@ -345,7 +346,7 @@ export default function EditRecipe() {
                     className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
                     onClick={() => {
                       setCurrentRecipe(initialRecipe);
-                      setEditorState("editRecipe");
+                      router.push(`/myrecipes/${currentRecipe.id}`);
                     }}
                     size="lg"
                     color="danger"
@@ -379,10 +380,12 @@ export default function EditRecipe() {
               </Button>
             )}
           </div>
-          <RecipeViewer
-            recipe={currentRecipe}
-            emptyText="No recipe loaded. Choose a recipe and it will show up here!"
-          />
+          <div className="pt-8 overflow-y-auto">
+            <RecipeViewer
+              recipe={currentRecipe}
+              emptyText="No recipe loaded. Choose a recipe and it will show up here!"
+            />
+          </div>
         </section>
       </main>
     );

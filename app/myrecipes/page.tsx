@@ -23,7 +23,7 @@ export type Recipe = {
   id?: number;
 };
 
-export const getRecipes = cache(async () => {
+const getRecipes = cache(async () => {
   const supabase = createClient();
   const recipes = await supabase
     .from("recipe")

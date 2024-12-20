@@ -3,7 +3,6 @@ import RecipeViewer from "@/components/RecipeViewer";
 import { createClient } from "@/utils/supabase/server";
 
 import React, { cache } from "react";
-import { getRecipes } from "../page";
 
 import BackButton from "@/components/BackButton";
 import { Button } from "@nextui-org/button";
@@ -25,7 +24,24 @@ export type Recipe = {
   id?: number;
 };
 
-export const getRecipe = cache(async (id: string) => {
+const getRecipes = cache(async () => {
+  const supabase = createClient();
+  const recipes = await supabase
+    .from("recipe")
+    .select("*")
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("error fetching recipes", error.message);
+        return;
+      }
+      if (data) {
+        return data;
+      }
+    });
+  return recipes;
+});
+
+const getRecipe = cache(async (id: string) => {
   const supabase = createClient();
   const recipes = await getRecipes();
   if (!recipes) return;
@@ -78,9 +94,14 @@ export const getRecipe = cache(async (id: string) => {
   return parsedRecipe;
 });
 
-export default async function MyRecipe({ id }: { id: string }) {
+export default async function MyRecipe({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   /* ------- Fetch recipe instructions ------- */
 
+  const id = (await params).id;
   const currentRecipe = await getRecipe(id);
 
   return (
@@ -108,7 +129,7 @@ export default async function MyRecipe({ id }: { id: string }) {
           </Button>
         </Link>
       </div>
-      <section className="relative flex flex-col h-full w-full pt-8 overflow-scroll">
+      <section className="relative flex flex-col h-full w-full pt-8 overflow-y-auto">
         <RecipeViewer
           recipe={currentRecipe}
           emptyText="No recipe loaded. Choose a recipe and it will show up here!"

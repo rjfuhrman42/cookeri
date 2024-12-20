@@ -60,7 +60,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
   }
 
   return (
-    <div className="flex-1 w-full overflow-y-scroll overflow-x-hidden bg-light-grey">
+    <div className="flex-1 w-full overflow-x-hidden">
       {recipe ? (
         <div className="flex items-center justify-center px-0 md:px-10">
           <article className="flex flex-col gap-y-8 pt-8 pb-16 w-full lg:max-w-[1000px] md:gap-y-12">
