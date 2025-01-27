@@ -4,7 +4,8 @@
 <p align="center"><a href="https://cookeri.vercel.app">View the live site</a>
   · <a href="https://github.com/rjfuhrman42/cookeri/issues">Report a bug</a></p>
 
-<img width="2298" alt="Group 1 (1)" src="https://github.com/user-attachments/assets/e7151eda-516d-48ed-aeec-fda7a9a118f0">
+<img width="2298" alt="cookeri mockup images on a 14 inch macbook pro and an iphone 13 mini" src="https://github.com/user-attachments/assets/1b4df819-c652-4ef5-90cf-1d938093ce26">
+
 
 ## **About The App**
 
