@@ -60,14 +60,14 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
   }
 
   return (
-    <div className="flex-1 w-full overflow-x-hidden">
+    <div className="flex-1 w-full pb-8">
       {recipe ? (
         <div className="flex items-center justify-center px-0 md:px-10">
           <article className="flex flex-col gap-y-8 pt-8 pb-16 w-full lg:max-w-[1000px] md:gap-y-12">
             <h1 className="text-3xl font-bold px-8 text-left sm:text-center">
               {name?.toString()}
             </h1>
-            <div className="flex sm:flex-row min-h-[400px]">
+            <div className="h-[600px] flex flex-col-reverse sm:flex-row min-h-[400px] sm:h-[400px]">
               <div className="bg-cookeri-green-light flex-1 p-8 flex flex-col">
                 <div className="flex flex-col pb-8 gap-y-2">
                   {authorDetails?.name && (
@@ -130,15 +130,17 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                 If any image bugs pop up, this might be the first place to look
               */}
               {imageUrl ? (
-                <div className="relative flex-1 overflow-hidden">
-                  <Image
-                    src={imageUrl}
-                    unoptimized
-                    fill
-                    alt={name?.toString() || "Recipe Image Not Provided"}
-                    className="object-cover object-center"
-                  />
-                </div>
+                <>
+                  <div className="relative flex-1 overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      unoptimized
+                      fill
+                      alt={name?.toString() || "Recipe Image Not Provided"}
+                      className="object-cover object-center"
+                    />
+                  </div>
+                </>
               ) : (
                 <></>
               )}

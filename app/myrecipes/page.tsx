@@ -1,10 +1,10 @@
 import { RecipeInstructions } from "@/components/ImportBar";
 
-import { Card, CardFooter } from "@nextui-org/card";
+import { Card, CardFooter } from "@heroui/card";
 
 import React, { cache } from "react";
-import { Image } from "@nextui-org/image";
-import { Link } from "@nextui-org/link";
+import { Image } from "@heroui/image";
+import { Link } from "@heroui/link";
 import { createClient } from "@/utils/supabase/server";
 import { BookSquareIcon } from "@/components/icons";
 

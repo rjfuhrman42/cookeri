@@ -1,5 +1,5 @@
 "use client";
-import { NextUIProvider } from "@nextui-org/system";
+import { HeroUIProvider } from "@heroui/system";
 
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ export default function Home() {
   }, [user, router]);
 
   return (
-    <NextUIProvider>
+    <HeroUIProvider>
       <main className="flex flex-col items-center justify-start overflow-x-hidden">
         <Navbar isUserLoggedIn={false} color="cookeri-green-light" />
         <div className="flex flex-col items-center w-screen md:-mt-16">
@@ -85,6 +85,6 @@ export default function Home() {
           <Footer />
         </div>
       </main>
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 }

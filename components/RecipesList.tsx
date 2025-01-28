@@ -1,4 +1,4 @@
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Listbox, ListboxItem } from "@heroui/listbox";
 import React, { useMemo, useState } from "react";
 import { Recipe } from "@/app/myrecipes/page";
 
