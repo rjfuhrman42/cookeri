@@ -110,6 +110,12 @@ function LoginPage() {
           </Button>
         </form>
       </div>
+      <a
+        href="https://storyset.com/illustration/recipe-book/bro"
+        className="flex justify-center w-full"
+      >
+        <p className="text-xs italic ">Recipe illustrations by Storyset</p>
+      </a>
     </div>
   );
 }

@@ -31,7 +31,7 @@ function Hero() {
         <div className="mt-8 relative">
           <Image src={Cookbook} alt="cookbook" width={600} height={600} />
           <a
-            href="https://storyset.com/book"
+            href="https://storyset.com/illustration/recipe-book/bro"
             className="block italic text-xs text-gray-400 w-full text-right"
           >
             Book illustrations by Storyset
