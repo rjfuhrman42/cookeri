@@ -1,12 +1,11 @@
 import { RecipeInstructions } from "@/components/ImportBar";
 
-import { Card, CardFooter } from "@heroui/card";
-
 import React, { cache } from "react";
-import { Image } from "@heroui/image";
-import { Link } from "@heroui/link";
+
 import { createClient } from "@/utils/supabase/server";
 import { BookSquareIcon } from "@/components/icons";
+
+import RecipesList from "@/components/RecipesList";
 
 export type Recipe = {
   url?: string;
@@ -21,6 +20,7 @@ export type Recipe = {
   image: string;
   author?: string;
   id?: number;
+  created_at?: string;
 };
 
 const getRecipes = cache(async () => {
@@ -28,6 +28,7 @@ const getRecipes = cache(async () => {
   const recipes = await supabase
     .from("recipe")
     .select("*")
+    .order("created_at", { ascending: false })
     .then(({ data, error }) => {
       if (error) {
         console.error("error fetching recipes", error.message);
@@ -42,42 +43,18 @@ const getRecipes = cache(async () => {
 
 export default async function MyRecipes() {
   /* ------- Fetch recipes ------- */
-  const recipes = await getRecipes();
+  const recipes = (await getRecipes()) as Recipe[];
+
+  // This might need to change to a client component
+  // if we plan to sort based on an interactive dropdown menu...?
 
   return (
-    <main className="flex relative w-screen flex-col items-center justify-center py-16">
-      <div className="flex flex-row items-center justify-center gap-2 pb-16">
+    <main className="flex relative w-screen flex-col items-center justify-center py-16 gap-8">
+      <div className="flex flex-row items-center justify-center gap-2">
         <BookSquareIcon height={50} width={50} stroke="black" />
         <h1 className="font-bold">My Recipes</h1>
       </div>
-      <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
-        {recipes &&
-          recipes.map((recipe) => {
-            const { name, image, id } = recipe;
-            return (
-              <Card
-                isPressable
-                radius="sm"
-                className="w-[350px]"
-                key={id}
-                as={Link}
-                href={`myrecipes/${id}`}
-              >
-                <Image
-                  alt="Card background"
-                  className="object-cover p-2 rounded-xl"
-                  src={image}
-                  width={350}
-                  height={250}
-                  radius="none"
-                />
-                <CardFooter className="pt-4">
-                  <h2 className="font-bold text-2xl">{name}</h2>
-                </CardFooter>
-              </Card>
-            );
-          })}
-      </div>
+      <RecipesList recipes={recipes} />
     </main>
   );
 }
