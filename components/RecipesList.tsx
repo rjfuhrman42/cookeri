@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Recipe } from "@/app/myrecipes/page";
 import { Image } from "@heroui/image";
 import { Card, CardFooter } from "@heroui/card";
@@ -19,6 +19,8 @@ type Props = {
   recipes: Recipe[];
 };
 
+type SortingCategories = "recent" | "a-z" | "z-a";
+
 function RecipesList({ recipes }: Props) {
   const [recipesList, setRecipesList] = useState<Recipe[]>(recipes);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(
@@ -31,16 +33,59 @@ function RecipesList({ recipes }: Props) {
   );
 
   useEffect(() => {
-    console.log("val", selectedValue);
-    if (!selectedValue) return;
-  }, [selectedValue]);
+    const selectedCategory = selectedValue as SortingCategories;
+
+    if (!selectedValue || !recipes) return;
+
+    switch (selectedCategory) {
+      case "recent":
+        setRecipesList(recipes);
+        break;
+      case "a-z":
+        setRecipesList(
+          recipes.toSorted((a, b) => {
+            const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+            const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            // names must be equal
+            return 0;
+          })
+        );
+        break;
+      case "z-a":
+        setRecipesList(
+          recipes.toSorted((a, b) => {
+            const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+            const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            if (nameA > nameB) {
+              return -1;
+            }
+            if (nameA < nameB) {
+              return 1;
+            }
+
+            // names must be equal
+            return 0;
+          })
+        );
+        break;
+      default:
+        break;
+    }
+  }, [selectedValue, recipes]);
 
   return (
     <div>
       <div className="py-8">
         <Dropdown>
           <DropdownTrigger>
-            <Button className="capitalize w-36" variant="solid">
+            <Button className="capitalize w-36" variant="solid" radius="sm">
               {selectedValue}
             </Button>
           </DropdownTrigger>
@@ -49,7 +94,7 @@ function RecipesList({ recipes }: Props) {
             aria-label="Single selection example"
             selectedKeys={selectedKeys}
             selectionMode="single"
-            variant="solid"
+            variant="bordered"
             onSelectionChange={setSelectedKeys}
           >
             <DropdownItem key="recent">Most recent</DropdownItem>
@@ -59,7 +104,7 @@ function RecipesList({ recipes }: Props) {
         </Dropdown>
       </div>
       <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
-        {recipes &&
+        {recipesList &&
           recipesList.map((recipe) => {
             const { name, image, id } = recipe;
             return (
