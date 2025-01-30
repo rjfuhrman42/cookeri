@@ -1,14 +1,14 @@
 import type { Config } from "tailwindcss";
 
-import { nextui } from "@nextui-org/theme";
+import { heroui } from "@heroui/theme";
 
 const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/components/(button|input|link|listbox|navbar|card|image).js",
-    "./node_modules/@nextui-org/theme/dist/components/tooltip.js",
+    "./node_modules/@heroui/theme/dist/components/(button|input|link|listbox|navbar|card|image).js",
+    "./node_modules/@heroui/theme/dist/components/tooltip.js",
   ],
   theme: {
     extend: {
@@ -40,6 +40,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [nextui()],
+  plugins: [heroui()],
 };
 export default config;

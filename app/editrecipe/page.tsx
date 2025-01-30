@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import { RecipeInstructions } from "@/components/ImportBar";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import {
   ArrowRightIcon,
@@ -12,13 +12,13 @@ import {
   MaximizeIcon,
   SaveIcon,
 } from "@/components/icons";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
 
-import { Tooltip } from "@nextui-org/tooltip";
+import { Tooltip } from "@heroui/tooltip";
 
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";

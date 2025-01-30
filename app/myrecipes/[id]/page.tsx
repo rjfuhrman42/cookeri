@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import React, { cache } from "react";
 
 import BackButton from "@/components/BackButton";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 import Link from "next/link";
 
@@ -105,7 +105,7 @@ export default async function MyRecipe({
   const currentRecipe = await getRecipe(id);
 
   return (
-    <main className="flex relative h-full w-screen overflow-hidden flex-col items-start justify-start">
+    <main className="flex relative h-full w-screen overflow-y-scroll flex-col items-start justify-start">
       <div className="flex flex-row w-screen gap-2 p-4 z-10 sm:w-min">
         <BackButton
           className="flex-1"
@@ -129,7 +129,7 @@ export default async function MyRecipe({
           </Button>
         </Link>
       </div>
-      <section className="relative flex flex-col h-full w-full pt-8 overflow-y-auto">
+      <section className="relative flex flex-col h-full w-full pt-8">
         <RecipeViewer
           recipe={currentRecipe}
           emptyText="No recipe loaded. Choose a recipe and it will show up here!"

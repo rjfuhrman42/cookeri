@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { HowToSection, HowToStep } from "schema-dts";
 import CloseCircle from "./icons/CloseCircle";
 import { TickCircleIcon } from "./icons";
 import { useEffect, useMemo, useState } from "react";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Listbox, ListboxItem } from "@heroui/listbox";
 import { RecipeInstructions } from "./ImportBar";
 
 export type RecipeSteps = HowToStep[] | HowToSection[];

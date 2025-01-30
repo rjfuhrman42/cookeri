@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import {
   ArrowRightIcon,
@@ -12,7 +12,7 @@ import {
   MaximizeIcon,
   SaveIcon,
 } from "@/components/icons";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";

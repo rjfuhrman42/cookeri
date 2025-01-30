@@ -2,9 +2,9 @@ import { HowToStep, ImageObject, Recipe } from "schema-dts";
 import { Recipe as SimpleRecipe } from "../app/myrecipes/page";
 
 import React from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { ImportIcon } from "./icons";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import { RecipeSteps } from "./StepsEditor";
 
 interface Props {

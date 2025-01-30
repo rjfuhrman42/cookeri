@@ -1,9 +1,9 @@
 import React from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import Image from "next/image";
 
 import Cookbook from "../public/cookbook.svg";
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 
 function Hero() {
   return (
