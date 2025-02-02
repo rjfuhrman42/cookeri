@@ -45,9 +45,6 @@ export default async function MyRecipes() {
   /* ------- Fetch recipes ------- */
   const recipes = (await getRecipes()) as Recipe[];
 
-  // This might need to change to a client component
-  // if we plan to sort based on an interactive dropdown menu...?
-
   return (
     <main className="flex relative w-screen flex-col items-center justify-center py-16 gap-8">
       <div className="flex flex-row items-center justify-center gap-2">
