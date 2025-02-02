@@ -67,7 +67,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
             <h1 className="text-3xl font-bold px-8 text-left sm:text-center">
               {name?.toString()}
             </h1>
-            <div className="h-[600px] flex flex-col-reverse sm:flex-row min-h-[400px] sm:h-[400px]">
+            <div className="flex flex-col-reverse sm:flex-row min-h-[400px]">
               <div className="bg-cookeri-green-light flex-1 p-8 flex flex-col">
                 <div className="flex flex-col pb-8 gap-y-2">
                   {authorDetails?.name && (
@@ -109,7 +109,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                     </div>
                   )}
                 </div>
-                <p className="mb-auto">{description?.toString()}</p>
+                <p className="pb-8">{description?.toString()}</p>
                 {url && (
                   <div className="flex flex-row">
                     <h4 className="font-bold mr-1">URL: </h4>
@@ -130,17 +130,15 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                 If any image bugs pop up, this might be the first place to look
               */}
               {imageUrl ? (
-                <>
-                  <div className="relative flex-1 overflow-hidden">
-                    <Image
-                      src={imageUrl}
-                      unoptimized
-                      fill
-                      alt={name?.toString() || "Recipe Image Not Provided"}
-                      className="object-cover object-center"
-                    />
-                  </div>
-                </>
+                <div className="relative h-[300px] sm:flex-1 sm:h-auto">
+                  <Image
+                    src={imageUrl}
+                    unoptimized
+                    fill
+                    alt={name?.toString() || "Recipe Image Not Provided"}
+                    className="object-cover object-center"
+                  />
+                </div>
               ) : (
                 <></>
               )}
