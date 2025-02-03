@@ -28,6 +28,8 @@ function RecipesList({ recipes }: Props) {
     new Set(["recent"])
   );
 
+  const [searchInput, setSearchInput] = useState<string>("");
+
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
     [selectedKeys]
@@ -81,6 +83,20 @@ function RecipesList({ recipes }: Props) {
     }
   }, [selectedValue, recipes]);
 
+  useEffect(() => {
+    if (!recipes) return;
+    if (!searchInput) {
+      setRecipesList(recipes);
+      return;
+    }
+
+    const filteredRecipes = recipes.filter((recipe) =>
+      recipe.name.toLowerCase().includes(searchInput.toLowerCase())
+    );
+
+    setRecipesList(filteredRecipes);
+  }, [searchInput, recipes]);
+
   return (
     <div>
       <div className="flex py-8 gap-2">
@@ -126,6 +142,8 @@ function RecipesList({ recipes }: Props) {
           label="Search"
           placeholder="Type to search..."
           radius="sm"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
       <div className="grid grid-cols-1 justify-items-center gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
