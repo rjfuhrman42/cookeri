@@ -86,7 +86,11 @@ function RecipesList({ recipes }: Props) {
       <div className="flex py-8 gap-2">
         <Dropdown>
           <DropdownTrigger>
-            <Button className="capitalize w-36" variant="solid" radius="sm">
+            <Button
+              className="capitalize w-36 h-auto"
+              variant="faded"
+              radius="sm"
+            >
               {selectedValue}
             </Button>
           </DropdownTrigger>
@@ -95,7 +99,7 @@ function RecipesList({ recipes }: Props) {
             aria-label="Single selection example"
             selectedKeys={selectedKeys}
             selectionMode="single"
-            variant="bordered"
+            variant="faded"
             onSelectionChange={setSelectedKeys}
           >
             <DropdownItem key="recent">Most recent</DropdownItem>
@@ -108,31 +112,23 @@ function RecipesList({ recipes }: Props) {
           classNames={{
             label: "text-black/50 dark:text-white/90",
             input: [
-              "bg-transparent",
-              "flex-1",
               "text-black/90 dark:text-white/90",
               "placeholder:text-default-700/50 dark:placeholder:text-white/60",
             ],
-            innerWrapper: "bg-transparent",
             inputWrapper: [
               "shadow-xl",
-              "bg-default-200/50",
-              "dark:bg-default/60",
               "backdrop-blur-xl",
               "backdrop-saturate-200",
-              "hover:bg-default-200/70",
-              "dark:hover:bg-default/70",
-              "group-data-[focus=true]:bg-default-200/50",
-              "dark:group-data-[focus=true]:bg-default/60",
               "!cursor-text",
+              "max-w-72",
             ],
           }}
           label="Search"
           placeholder="Type to search..."
-          radius="lg"
+          radius="sm"
         />
       </div>
-      <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 justify-items-center gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
         {recipesList &&
           recipesList.map((recipe) => {
             const { name, image, id } = recipe;
