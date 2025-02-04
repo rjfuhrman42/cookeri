@@ -91,14 +91,21 @@ function RecipesList({ recipes }: Props) {
   }, [searchInput, recipes]);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearchInput(e.target.value);
-    verify(e.target.value);
+    const searchValue = e.target.value;
+    setSearchInput(searchValue);
+    // Verify the user is done typing and then search
+    verify(searchValue);
   }
+
+  /*
+   1. Cache the function between renders
+   2. Debounce the function to avoid calling it too often 
+  */
   const verify = useCallback(
-    (args: string) => {
+    (input: string) => {
       debounce(() => {
         const filteredRecipes = recipes.filter((recipe) =>
-          recipe.name.toLowerCase().includes(args.toLowerCase())
+          recipe.name.toLowerCase().includes(input.toLowerCase())
         );
 
         setRecipesList(filteredRecipes);
