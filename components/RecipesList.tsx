@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Recipe } from "@/app/myrecipes/page";
 import { Image } from "@heroui/image";
 import { Card, CardFooter } from "@heroui/card";
@@ -19,8 +19,8 @@ import { Input } from "@heroui/input";
 type Props = {
   recipes: Recipe[];
 };
-
 type SortingCategories = "recent" | "a-z" | "z-a";
+type CallbackFunctionVariadic = (...args: any[]) => void;
 
 function RecipesList({ recipes }: Props) {
   const [recipesList, setRecipesList] = useState<Recipe[]>(recipes);
@@ -84,18 +84,38 @@ function RecipesList({ recipes }: Props) {
   }, [selectedValue, recipes]);
 
   useEffect(() => {
-    if (!recipes) return;
     if (!searchInput) {
       setRecipesList(recipes);
       return;
     }
-
-    const filteredRecipes = recipes.filter((recipe) =>
-      recipe.name.toLowerCase().includes(searchInput.toLowerCase())
-    );
-
-    setRecipesList(filteredRecipes);
   }, [searchInput, recipes]);
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchInput(e.target.value);
+    verify(e.target.value);
+  }
+  const verify = useCallback(
+    (args: string) => {
+      debounce(() => {
+        const filteredRecipes = recipes.filter((recipe) =>
+          recipe.name.toLowerCase().includes(args.toLowerCase())
+        );
+
+        setRecipesList(filteredRecipes);
+      });
+    },
+    [recipes]
+  );
+
+  function debounce(func: CallbackFunctionVariadic, timer = 500) {
+    let timeout: NodeJS.Timeout;
+    return (...args: string[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        func(...args);
+      }, timer);
+    };
+  }
 
   return (
     <div>
@@ -125,6 +145,7 @@ function RecipesList({ recipes }: Props) {
         </Dropdown>
         <Input
           isClearable
+          onClear={() => setSearchInput("")}
           classNames={{
             label: "text-black/50 dark:text-white/90",
             input: [
@@ -143,7 +164,7 @@ function RecipesList({ recipes }: Props) {
           placeholder="Type to search..."
           radius="sm"
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={handleSearch}
         />
       </div>
       <div className="grid grid-cols-1 justify-items-center gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
