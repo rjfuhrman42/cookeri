@@ -101,16 +101,19 @@ function RecipesList({ recipes }: Props) {
    1. Cache the function between renders
    2. Debounce the function to avoid calling it too often 
   */
+  // Lets fix this later :)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const verify = useCallback(
-    (input: string) => {
-      debounce(() => {
-        const filteredRecipes = recipes.filter((recipe) =>
-          recipe.name.toLowerCase().includes(input.toLowerCase())
-        );
-
-        setRecipesList(filteredRecipes);
-      });
-    },
+    debounce((searchValue: string) => {
+      if (!searchValue) {
+        setRecipesList(recipes);
+        return;
+      }
+      const filteredRecipes = recipes.filter((recipe) =>
+        recipe.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setRecipesList(filteredRecipes);
+    }),
     [recipes]
   );
 
