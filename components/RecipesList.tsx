@@ -157,11 +157,8 @@ function RecipesList({ recipes }: Props) {
           isClearable
           onClear={() => setSearchInput("")}
           classNames={{
-            label: "text-black/50 dark:text-white/90",
-            input: [
-              "text-black/90 dark:text-white/90",
-              "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-            ],
+            label: "text-black/50",
+            input: ["text-black/90 ", "placeholder:text-default-700/50"],
             inputWrapper: [
               "shadow-xl",
               "backdrop-blur-xl",
