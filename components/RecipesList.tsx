@@ -4,6 +4,7 @@ import { Recipe } from "@/app/myrecipes/page";
 import { Image } from "@heroui/image";
 import { Card, CardFooter } from "@heroui/card";
 import { Link } from "@heroui/link";
+import debounce from "lodash/debounce";
 
 import type { Selection } from "@react-types/shared";
 
@@ -20,7 +21,6 @@ type Props = {
   recipes: Recipe[];
 };
 type SortingCategories = "recent" | "a-z" | "z-a";
-type CallbackFunctionVariadic = (...args: any[]) => void;
 
 function RecipesList({ recipes }: Props) {
   const [recipesList, setRecipesList] = useState<Recipe[]>(recipes);
@@ -101,7 +101,7 @@ function RecipesList({ recipes }: Props) {
    1. Cache the function between renders
    2. Debounce the function to avoid calling it too often 
   */
-  // Lets fix this later :)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const verify = useCallback(
     debounce((searchValue: string) => {
@@ -113,19 +113,9 @@ function RecipesList({ recipes }: Props) {
         recipe.name.toLowerCase().includes(searchValue.toLowerCase())
       );
       setRecipesList(filteredRecipes);
-    }),
-    [recipes]
+    }, 500),
+    []
   );
-
-  function debounce(func: CallbackFunctionVariadic, timer = 500) {
-    let timeout: NodeJS.Timeout;
-    return (...args: string[]) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        func(...args);
-      }, timer);
-    };
-  }
 
   return (
     <div>
