@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Recipe } from "@/app/myrecipes/page";
 import { Image } from "@heroui/image";
 import { Card, CardFooter } from "@heroui/card";
@@ -14,18 +14,21 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 
 type Props = {
   recipes: Recipe[];
 };
-
 type SortingCategories = "recent" | "a-z" | "z-a";
+type CallbackFunctionVariadic = (...args: any[]) => void;
 
 function RecipesList({ recipes }: Props) {
   const [recipesList, setRecipesList] = useState<Recipe[]>(recipes);
   const [selectedKeys, setSelectedKeys] = useState<Selection>(
     new Set(["recent"])
   );
+
+  const [searchInput, setSearchInput] = useState<string>("");
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -80,12 +83,60 @@ function RecipesList({ recipes }: Props) {
     }
   }, [selectedValue, recipes]);
 
+  useEffect(() => {
+    if (!searchInput) {
+      setRecipesList(recipes);
+      return;
+    }
+  }, [searchInput, recipes]);
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    const searchValue = e.target.value;
+    setSearchInput(searchValue);
+    // Verify the user is done typing and then search
+    verify(searchValue);
+  }
+
+  /*
+   1. Cache the function between renders
+   2. Debounce the function to avoid calling it too often 
+  */
+  // Lets fix this later :)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const verify = useCallback(
+    debounce((searchValue: string) => {
+      if (!searchValue) {
+        setRecipesList(recipes);
+        return;
+      }
+      const filteredRecipes = recipes.filter((recipe) =>
+        recipe.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setRecipesList(filteredRecipes);
+    }),
+    [recipes]
+  );
+
+  function debounce(func: CallbackFunctionVariadic, timer = 500) {
+    let timeout: NodeJS.Timeout;
+    return (...args: string[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        func(...args);
+      }, timer);
+    };
+  }
+
   return (
     <div>
-      <div className="py-8">
+      <div className="flex py-8 gap-2">
         <Dropdown>
           <DropdownTrigger>
-            <Button className="capitalize w-36" variant="solid" radius="sm">
+            <Button
+              className="capitalize w-36 h-auto"
+              variant="faded"
+              radius="sm"
+            >
               {selectedValue}
             </Button>
           </DropdownTrigger>
@@ -94,7 +145,7 @@ function RecipesList({ recipes }: Props) {
             aria-label="Single selection example"
             selectedKeys={selectedKeys}
             selectionMode="single"
-            variant="bordered"
+            variant="faded"
             onSelectionChange={setSelectedKeys}
           >
             <DropdownItem key="recent">Most recent</DropdownItem>
@@ -102,9 +153,29 @@ function RecipesList({ recipes }: Props) {
             <DropdownItem key="z-a">Alphabetical (z-a)</DropdownItem>
           </DropdownMenu>
         </Dropdown>
+        <Input
+          isClearable
+          onClear={() => setSearchInput("")}
+          classNames={{
+            label: "text-black/50",
+            input: ["text-black/90 ", "placeholder:text-default-700/50"],
+            inputWrapper: [
+              "shadow-xl",
+              "backdrop-blur-xl",
+              "backdrop-saturate-200",
+              "!cursor-text",
+              "max-w-72",
+            ],
+          }}
+          label="Search"
+          placeholder="Type to search..."
+          radius="sm"
+          value={searchInput}
+          onChange={handleSearch}
+        />
       </div>
-      <div className="grid grid-cols-1 gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
-        {recipesList &&
+      <div className="container pb-16 grid grid-cols-1 justify-items-between gap-y-8 gap-x-16 md:gap-y-16 md:grid-cols-2 xl:grid-cols-3 xl:min-w-[1280px]">
+        {recipesList && recipesList.length > 0 ? (
           recipesList.map((recipe) => {
             const { name, image, id } = recipe;
             return (
@@ -129,7 +200,10 @@ function RecipesList({ recipes }: Props) {
                 </CardFooter>
               </Card>
             );
-          })}
+          })
+        ) : (
+          <h1>No recipes found!</h1>
+        )}
       </div>
     </div>
   );

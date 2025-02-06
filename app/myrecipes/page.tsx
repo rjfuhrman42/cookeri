@@ -46,7 +46,7 @@ export default async function MyRecipes() {
   const recipes = (await getRecipes()) as Recipe[];
 
   return (
-    <main className="flex relative w-screen flex-col items-center justify-center py-16 gap-8">
+    <main className="flex relative w-screen flex-col items-center justify-center pt-8">
       <div className="flex flex-row items-center justify-center gap-2">
         <BookSquareIcon height={50} width={50} stroke="black" />
         <h1 className="font-bold">My Recipes</h1>
