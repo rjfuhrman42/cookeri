@@ -174,8 +174,8 @@ function RecipesList({ recipes }: Props) {
           onChange={handleSearch}
         />
       </div>
-      <div className="grid grid-cols-1 justify-items-center gap-y-8 gap-x-16 max-w-[1440px] md:gap-y-16 md:grid-cols-2 xl:grid-cols-3">
-        {recipesList &&
+      <div className="container pb-16 grid grid-cols-1 justify-items-between gap-y-8 gap-x-16 md:gap-y-16 md:grid-cols-2 xl:grid-cols-3 xl:min-w-[1280px]">
+        {recipesList && recipesList.length > 0 ? (
           recipesList.map((recipe) => {
             const { name, image, id } = recipe;
             return (
@@ -200,7 +200,10 @@ function RecipesList({ recipes }: Props) {
                 </CardFooter>
               </Card>
             );
-          })}
+          })
+        ) : (
+          <h1>No recipes found!</h1>
+        )}
       </div>
     </div>
   );
