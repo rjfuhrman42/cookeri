@@ -114,7 +114,7 @@ function RecipeViewer({ recipe, emptyText = "No recipe to show..." }: Props) {
                   <div className="flex flex-row">
                     <h4 className="font-bold mr-1">URL: </h4>
                     <Link
-                      className="text-sm italic underline hover:text-blue-700"
+                      className="text-sm italic underline break-all sm:break-normal hover:text-blue-700"
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
