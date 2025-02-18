@@ -158,7 +158,7 @@ export default function ImportRecipe() {
                   <div className="flex flex-row sm:flex-col gap-2 w-full">
                     <Button
                       className="font-league-spartan text-medium sm:text-lg text-white w-full"
-                      onClick={() => setEditorState("recipeIngredient")}
+                      onPress={() => setEditorState("recipeIngredient")}
                       size="lg"
                       color="primary"
                       radius="sm"
@@ -168,7 +168,7 @@ export default function ImportRecipe() {
                     </Button>
                     <Button
                       className="font-league-spartan text-medium sm:text-lg text-white w-full"
-                      onClick={() => setEditorState("recipeInstructions")}
+                      onPress={() => setEditorState("recipeInstructions")}
                       size="lg"
                       color="primary"
                       radius="sm"
@@ -190,7 +190,7 @@ export default function ImportRecipe() {
                 </Button>
                 <Button
                   className="font-league-spartan text-lg text-white w-full px-4"
-                  onClick={() => handleSaveRecipe()}
+                  onPress={() => handleSaveRecipe()}
                   size="lg"
                   color="success"
                   radius="sm"
@@ -204,25 +204,29 @@ export default function ImportRecipe() {
         ) : (
           <></>
         )}
-        <section className=" relative flex flex-col h-full w-full p-0 overflow-hidden">
-          {sidebarShown ? (
-            <></>
-          ) : (
-            <Button
-              onPress={() => setSidebarShown(!sidebarShown)}
-              className="text-base"
-              color="primary"
-              endContent={<ArrowRightIcon stroke="white" fill="white" />}
-              radius="none"
-              size="lg"
-            >
-              Show sidebar
-            </Button>
-          )}
-          <RecipeViewer
-            recipe={currentRecipe}
-            emptyText="No recipe right now! Import a recipe and it will show up here..."
-          />
+        <section className="fixed md:relative flex flex-col h-full w-full p-0 overflow-hidden">
+          <div className="absolute flex flex-col items-start top-0 h-12 w-full">
+            {sidebarShown ? (
+              <></>
+            ) : (
+              <Button
+                onPress={() => setSidebarShown(!sidebarShown)}
+                className="text-base z-10"
+                color="primary"
+                endContent={<ArrowRightIcon stroke="white" fill="white" />}
+                radius="none"
+                size="lg"
+              >
+                Show sidebar
+              </Button>
+            )}
+          </div>
+          <div className="pt-8 overflow-y-auto">
+            <RecipeViewer
+              recipe={currentRecipe}
+              emptyText="No recipe loaded. Choose a recipe and it will show up here!"
+            />
+          </div>
         </section>
       </main>
     );
