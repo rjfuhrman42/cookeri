@@ -22,27 +22,27 @@ import { Tooltip } from "@heroui/tooltip";
 
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
-export type Recipe = {
-  url?: string;
-  name: string;
-  description: string;
-  prepTime?: string;
-  cookTime?: string;
-  totalTime?: string;
-  recipeYield: string;
-  recipeIngredient: string[];
-  recipeInstructions: RecipeInstructions[];
-  image: string;
-  author?: string;
-  id?: number;
-};
+import { Recipe } from "../editrecipe/page";
+import { uniqueId } from "lodash";
 
 type editorStateType = "recipeIngredient" | "recipeInstructions" | "editRecipe";
 
-export default function EditRecipe() {
+export default function CreateRecipe() {
   const [editorState, setEditorState] = useState<editorStateType>("editRecipe");
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>({
+    url: "",
+    name: "",
+    description: "",
+    prepTime: "",
+    cookTime: "",
+    totalTime: "",
+    recipeYield: "",
+    recipeIngredient: [""],
+    recipeInstructions: [],
+    image: "",
+    author: "",
+    id: 0,
+  });
   const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
 
   const [sidebarShown, setSidebarShown] = useState(true);
@@ -122,15 +122,14 @@ export default function EditRecipe() {
       });
   }, [supabase, recipeId]);
 
-  /* ------- Fetch recipe instructions ------- */
-
-  async function handleUpdateRecipe() {
-    if (!currentRecipe || !currentRecipe.id) return;
+  async function handleSaveRecipe() {
+    if (!currentRecipe) return;
 
     const userData: UserResponse = await supabase.auth.getUser();
     if (!userData?.data?.user) return;
 
     const payload = {
+      url: currentRecipe.url,
       name: currentRecipe.name,
       description: currentRecipe.description,
       prep_time: currentRecipe.prepTime,
@@ -140,13 +139,15 @@ export default function EditRecipe() {
       recipe_ingredients: currentRecipe.recipeIngredient,
       image: currentRecipe.image,
       author: currentRecipe.author,
+      id: 1,
     };
+
+    console.log("the payload", payload);
 
     try {
       const { data, error } = await supabase
         .from("recipe")
-        .update({ ...payload })
-        .eq("id", currentRecipe.id)
+        .insert({ ...payload, user_id: userData.data.user.id })
         .select();
 
       if (error) {
@@ -156,44 +157,20 @@ export default function EditRecipe() {
 
       if (!data) return;
 
-      // TODO: don't update steps if steps haven't changed
       const { error: stepsError } = await supabase
         .from("recipe_instructions")
-        .upsert(
-          currentRecipe.recipeInstructions.map((step) => {
-            return {
-              ...step,
-              recipe_id: currentRecipe.id,
-              id: step.id,
-            };
-          })
-        )
-        .select();
+        .insert(
+          currentRecipe.recipeInstructions.map((step) => ({
+            ...step,
+            recipe_id: data?.[0].id,
+          }))
+        );
       if (stepsError) {
         console.error("error saving steps", stepsError.message);
         return;
       }
-      router.push(`/myrecipes/${currentRecipe.id}`);
-    } catch (error) {
-      console.error("error", error);
-    }
-  }
-
-  async function handleDeleteRecipe(recipeId: number) {
-    try {
-      const { error } = await supabase
-        .from("recipe")
-        .delete()
-        .eq("id", recipeId)
-        .select();
-
-      if (error) {
-        console.error("error deleting recipe", error.message);
-        return;
-      }
-
-      setCurrentRecipe(undefined);
-      setEditorState("editRecipe");
+      // If the save was successful, redirect to the user's recipes page
+      router.push("/myrecipes");
     } catch (error) {
       console.error("error", error);
     }
@@ -250,7 +227,7 @@ export default function EditRecipe() {
                 size="lg"
               />
             </Tooltip>
-            {currentRecipe && editorState === "editRecipe" && (
+            {editorState === "editRecipe" && (
               <>
                 <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
                   <label
@@ -267,6 +244,7 @@ export default function EditRecipe() {
                     size="lg"
                     onChange={(e) => {
                       setCurrentRecipe(() => {
+                        if (!currentRecipe) return;
                         return {
                           ...currentRecipe,
                           name: e.target.value,
@@ -300,7 +278,7 @@ export default function EditRecipe() {
                     variant="solid"
                     endContent={<EditIcon fill="white" />}
                   >
-                    Edit ingredients
+                    Add ingredients
                   </Button>
                   <Button
                     className="font-league-spartan text-lg text-white w-full px-4"
@@ -311,27 +289,13 @@ export default function EditRecipe() {
                     variant="solid"
                     endContent={<EditIcon fill="white" />}
                   >
-                    Edit steps
-                  </Button>
-                  <Button
-                    className="font-league-spartan text-lg text-white w-full px-4"
-                    onPress={() => {
-                      handleDeleteRecipe(currentRecipe.id as number);
-                      router.push("/myrecipes");
-                    }}
-                    size="md"
-                    color="danger"
-                    radius="sm"
-                    variant="solid"
-                    endContent={<CloseCircleIcon stroke="white" />}
-                  >
-                    Delete recipe
+                    Add steps
                   </Button>
                 </div>
                 <div className="mt-auto flex w-full justify-between between gap-1">
                   <Button
                     className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
-                    onPress={() => handleUpdateRecipe()}
+                    onPress={() => handleSaveRecipe()}
                     size="lg"
                     color="success"
                     radius="sm"
@@ -340,7 +304,7 @@ export default function EditRecipe() {
                       <SaveIcon stroke="rgb(34 197 94)" fill="white" />
                     }
                   >
-                    Save changes
+                    Save recipe
                   </Button>
                   <Button
                     className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"

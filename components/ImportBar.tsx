@@ -475,7 +475,7 @@ function ImportBar({ url, setUrl, setData }: Props) {
         />
         <Button
           className="font-league-spartan text-lg text-white w-full px-4"
-          onClick={() => importData()}
+          onPress={() => importData()}
           size="md"
           color="primary"
           radius="sm"

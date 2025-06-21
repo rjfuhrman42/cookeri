@@ -77,7 +77,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
       <div className="flex flex-row justify-end container w-[825px] gap-x-4">
         <Button
           className="hidden sm:flex absolute top-5 right-5 text-lg text-white px-4"
-          onClick={() => onCancel()}
+          onPress={() => onCancel()}
           size="lg"
           color="danger"
           radius="sm"
@@ -125,7 +125,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
         </div>
         <Button
           className="text-lg text-white px-4 w-full mb-2"
-          onClick={() => {
+          onPress={() => {
             saveRecipeData();
           }}
           size="md"
@@ -141,7 +141,7 @@ export default function StepsEditor({ steps, onSave, onCancel }: Props) {
         </Button>
         <Button
           className="sm:hidden text-lg text-white px-4"
-          onClick={() => onCancel()}
+          onPress={() => onCancel()}
           size="md"
           color="danger"
           radius="sm"

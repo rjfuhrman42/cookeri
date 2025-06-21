@@ -13,7 +13,7 @@ import {
 } from "@heroui/navbar";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
-import { BookSquareIcon, ImportIcon } from "./icons";
+import { BookSquareIcon, EditIcon, ImportIcon } from "./icons";
 
 type Props = {
   isUserLoggedIn: boolean;
@@ -91,6 +91,22 @@ function Navbar({
                   Import
                 </Button>
               </NavbarItem>
+              <NavbarMenuItem>
+                <Button
+                  className="text-white"
+                  as={Link}
+                  color="default"
+                  href="/createrecipe"
+                  radius="sm"
+                  variant="light"
+                  size="lg"
+                  endContent={
+                    <EditIcon height={15} width={15} stroke="white" />
+                  }
+                >
+                  Create
+                </Button>
+              </NavbarMenuItem>
               <NavbarItem>
                 <Button
                   onPress={async () => {
@@ -139,6 +155,7 @@ function Navbar({
                 Import
               </Button>
             </NavbarMenuItem>
+
             <NavbarMenuItem>
               <Button
                 onPress={async () => {
