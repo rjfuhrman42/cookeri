@@ -71,10 +71,12 @@ export default function ImportRecipe() {
       const { error: stepsError } = await supabase
         .from("recipe_instructions")
         .insert(
-          currentRecipe.recipeInstructions.map((step) => ({
-            ...step,
-            recipe_id: data?.[0].id,
-          }))
+          currentRecipe.recipeInstructions.map((step) => {
+            return {
+              ...step,
+              recipe_id: data?.[0].id,
+            };
+          })
         );
       if (stepsError) {
         console.error("error saving steps", stepsError.message);

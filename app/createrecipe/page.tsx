@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import SideBar from "@/components/SideBar";
 import { RecipeInstructions } from "@/components/ImportBar";
@@ -21,9 +21,8 @@ import { UserResponse } from "@supabase/supabase-js";
 import { Tooltip } from "@heroui/tooltip";
 
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Recipe } from "../editrecipe/page";
-import { uniqueId } from "lodash";
 
 type editorStateType = "recipeIngredient" | "recipeInstructions" | "editRecipe";
 
@@ -41,86 +40,14 @@ export default function CreateRecipe() {
     recipeInstructions: [],
     image: "",
     author: "",
-    id: 0,
+    id: undefined,
   });
-  const [initialRecipe, setInitialRecipe] = useState<Recipe | undefined>();
 
   const [sidebarShown, setSidebarShown] = useState(true);
-  const params = useSearchParams();
-  const recipeId = params.get("recipeId");
+
   const router = useRouter();
 
   const supabase = createClient();
-
-  useEffect(() => {
-    if (!recipeId) return;
-
-    supabase
-      .from("recipe")
-      .select("*")
-      .eq("id", recipeId)
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("error fetching recipes", error.message);
-          return;
-        }
-        if (data) {
-          const recipe = data[0];
-          console.log("recipe data", data);
-          supabase
-            .from("recipe_instructions")
-            .select()
-            .eq("recipe_id", recipeId)
-            .then(({ data, error }) => {
-              if (error) {
-                console.error(
-                  "error fetching recipe instructions",
-                  error.message
-                );
-                return;
-              }
-
-              if (!data) return;
-              /* <a href="https://storyset.com/online">Online illustrations by Storyset</a> */
-              // <a href="https://storyset.com/book">Book illustrations by Storyset</a>
-              const recipeInstructions = data
-                .map((step: RecipeInstructions) => {
-                  return { name: step.name, steps: step.steps, id: step.id };
-                })
-                .sort((cur, next) => {
-                  if (!cur.id || !next.id) return 0;
-                  // Sort by ID - maybe add an order column in the future
-                  // Not sure if ID will always represent the order
-                  if (cur.id && next.id) {
-                    return cur.id - next.id;
-                  }
-                  return 0;
-                });
-
-              const parsedRecipe = {
-                url: recipe?.url,
-                name: recipe.name,
-                description: recipe.description,
-                prepTime: recipe.prep_time,
-                cookTime: recipe.cook_time,
-                totalTime: recipe?.total_time,
-                recipeYield: recipe.recipe_yield,
-                recipeIngredient: recipe.recipe_ingredients,
-                recipeInstructions,
-                image: recipe.image,
-                author: recipe.author,
-                id: recipe.id,
-              } as Recipe;
-
-              setCurrentRecipe(parsedRecipe);
-
-              // Save the initial recipe to compare changes
-              // Use this to revert changes if needed
-              setInitialRecipe(parsedRecipe);
-            });
-        }
-      });
-  }, [supabase, recipeId]);
 
   async function handleSaveRecipe() {
     if (!currentRecipe) return;
@@ -139,10 +66,7 @@ export default function CreateRecipe() {
       recipe_ingredients: currentRecipe.recipeIngredient,
       image: currentRecipe.image,
       author: currentRecipe.author,
-      id: 1,
     };
-
-    console.log("the payload", payload);
 
     try {
       const { data, error } = await supabase
@@ -156,17 +80,20 @@ export default function CreateRecipe() {
       }
 
       if (!data) return;
-
+      // console.log("new recipe id", data?.[0].id);
       const { error: stepsError } = await supabase
         .from("recipe_instructions")
         .insert(
-          currentRecipe.recipeInstructions.map((step) => ({
-            ...step,
-            recipe_id: data?.[0].id,
-          }))
+          currentRecipe.recipeInstructions.map((step) => {
+            console.log(data?.[0].id, step);
+            return {
+              ...step,
+              recipe_id: data?.[0].id,
+            };
+          })
         );
       if (stepsError) {
-        console.error("error saving steps", stepsError.message);
+        console.error("error saving steps:", stepsError.message);
         return;
       }
       // If the save was successful, redirect to the user's recipes page
@@ -198,6 +125,7 @@ export default function CreateRecipe() {
           steps={currentRecipe.recipeInstructions}
           onCancel={() => setEditorState("editRecipe")}
           onSave={(data: RecipeInstructions[]) => {
+            console.log("data saved", data);
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeInstructions: data };
             });
@@ -309,8 +237,7 @@ export default function CreateRecipe() {
                   <Button
                     className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
                     onPress={() => {
-                      setCurrentRecipe(initialRecipe);
-                      router.push(`/myrecipes/${currentRecipe.id}`);
+                      router.push(`/myrecipes`);
                     }}
                     size="lg"
                     color="danger"
