@@ -293,7 +293,7 @@ export default function EditRecipe() {
                   </p>
                   <Button
                     className="font-league-spartan text-lg text-white w-full px-4"
-                    onClick={() => setEditorState("recipeIngredient")}
+                    onPress={() => setEditorState("recipeIngredient")}
                     size="lg"
                     color="primary"
                     radius="sm"
@@ -304,7 +304,7 @@ export default function EditRecipe() {
                   </Button>
                   <Button
                     className="font-league-spartan text-lg text-white w-full px-4"
-                    onClick={() => setEditorState("recipeInstructions")}
+                    onPress={() => setEditorState("recipeInstructions")}
                     size="lg"
                     color="primary"
                     radius="sm"
@@ -315,7 +315,7 @@ export default function EditRecipe() {
                   </Button>
                   <Button
                     className="font-league-spartan text-lg text-white w-full px-4"
-                    onClick={() => {
+                    onPress={() => {
                       handleDeleteRecipe(currentRecipe.id as number);
                       router.push("/myrecipes");
                     }}
@@ -331,7 +331,7 @@ export default function EditRecipe() {
                 <div className="mt-auto flex w-full justify-between between gap-1">
                   <Button
                     className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
-                    onClick={() => handleUpdateRecipe()}
+                    onPress={() => handleUpdateRecipe()}
                     size="lg"
                     color="success"
                     radius="sm"
@@ -344,7 +344,7 @@ export default function EditRecipe() {
                   </Button>
                   <Button
                     className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
-                    onClick={() => {
+                    onPress={() => {
                       setCurrentRecipe(initialRecipe);
                       router.push(`/myrecipes/${currentRecipe.id}`);
                     }}

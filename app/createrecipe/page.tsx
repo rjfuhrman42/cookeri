@@ -1,13 +1,13 @@
 "use client";
-
 import { useState } from "react";
 
 import SideBar from "@/components/SideBar";
-import ImportBar, { RecipeInstructions } from "@/components/ImportBar";
+import { RecipeInstructions } from "@/components/ImportBar";
 import { Button } from "@heroui/button";
 import RecipeViewer from "@/components/RecipeViewer";
 import {
   ArrowRightIcon,
+  CloseCircleIcon,
   EditIcon,
   MaximizeIcon,
   SaveIcon,
@@ -17,21 +17,34 @@ import IngredientsEditor from "@/components/IngredientsEditor";
 import StepsEditor from "@/components/StepsEditor";
 import { createClient } from "@/utils/supabase/client";
 import { UserResponse } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
-import { Recipe } from "../myrecipes/page";
+
+import { Tooltip } from "@heroui/tooltip";
+
 import React from "react";
+import { useRouter } from "next/navigation";
+import { Recipe } from "../editrecipe/page";
 
-type editorStateType =
-  | "recipeIngredient"
-  | "recipeInstructions"
-  | "myRecipes"
-  | "importRecipe";
+type editorStateType = "recipeIngredient" | "recipeInstructions" | "editRecipe";
 
-export default function ImportRecipe() {
-  const [url, setUrl] = useState("");
-  const [editorState, setEditorState] = useState<editorStateType>("myRecipes");
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+export default function CreateRecipe() {
+  const [editorState, setEditorState] = useState<editorStateType>("editRecipe");
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>({
+    url: "",
+    name: "",
+    description: "",
+    prepTime: "",
+    cookTime: "",
+    totalTime: "",
+    recipeYield: "",
+    recipeIngredient: [""],
+    recipeInstructions: [],
+    image: "",
+    author: "",
+    id: undefined,
+  });
+
   const [sidebarShown, setSidebarShown] = useState(true);
+
   const router = useRouter();
 
   const supabase = createClient();
@@ -67,11 +80,12 @@ export default function ImportRecipe() {
       }
 
       if (!data) return;
-
+      // console.log("new recipe id", data?.[0].id);
       const { error: stepsError } = await supabase
         .from("recipe_instructions")
         .insert(
           currentRecipe.recipeInstructions.map((step) => {
+            console.log(data?.[0].id, step);
             return {
               ...step,
               recipe_id: data?.[0].id,
@@ -79,7 +93,7 @@ export default function ImportRecipe() {
           })
         );
       if (stepsError) {
-        console.error("error saving steps", stepsError.message);
+        console.error("error saving steps:", stepsError.message);
         return;
       }
       // If the save was successful, redirect to the user's recipes page
@@ -94,12 +108,12 @@ export default function ImportRecipe() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <IngredientsEditor
           ingredients={currentRecipe.recipeIngredient as string[]}
-          onCancel={() => setEditorState("myRecipes")}
+          onCancel={() => setEditorState("editRecipe")}
           onSave={(data: string[]) => {
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeIngredient: data };
             });
-            setEditorState("myRecipes");
+            setEditorState("editRecipe");
           }}
         />
       </main>
@@ -109,24 +123,39 @@ export default function ImportRecipe() {
       <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
         <StepsEditor
           steps={currentRecipe.recipeInstructions}
-          onCancel={() => setEditorState("myRecipes")}
+          onCancel={() => setEditorState("editRecipe")}
           onSave={(data: RecipeInstructions[]) => {
+            console.log("data saved", data);
             setCurrentRecipe(() => {
               return { ...currentRecipe, recipeInstructions: data };
             });
-            setEditorState("myRecipes");
+            setEditorState("editRecipe");
           }}
         />
       </main>
     );
   } else
     return (
-      <main className="flex h-full w-screen overflow-hidden flex-row items-start justify-start">
+      <main className="flex relative h-full w-screen overflow-hidden flex-row items-start justify-start">
         {sidebarShown ? (
           <SideBar>
-            <ImportBar url={url} setUrl={setUrl} setData={setCurrentRecipe} />
-
-            {currentRecipe && (
+            <Tooltip
+              content="Full screen"
+              className="px-4 *:bg-white"
+              placement="right"
+              radius="sm"
+            >
+              <Button
+                isIconOnly
+                className="absolute -right-[48px] top-0"
+                onPress={() => setSidebarShown(!sidebarShown)}
+                color="primary"
+                endContent={<MaximizeIcon stroke="white" />}
+                radius="none"
+                size="lg"
+              />
+            </Tooltip>
+            {editorState === "editRecipe" && (
               <>
                 <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
                   <label
@@ -139,10 +168,11 @@ export default function ImportRecipe() {
                     type="text"
                     value={currentRecipe?.name?.toString()}
                     color="default"
-                    size="lg"
                     radius="sm"
+                    size="lg"
                     onChange={(e) => {
                       setCurrentRecipe(() => {
+                        if (!currentRecipe) return;
                         return {
                           ...currentRecipe,
                           name: e.target.value,
@@ -152,54 +182,72 @@ export default function ImportRecipe() {
                     className="w-full"
                     name="recipe-title"
                   />
+                  <Button
+                    className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
+                    onPress={() => setSidebarShown(!sidebarShown)}
+                    endContent={<MaximizeIcon stroke="white" />}
+                    radius="none"
+                    variant="flat"
+                    size="lg"
+                  >
+                    View recipe
+                  </Button>
                 </div>
                 <div className="w-full flex flex-col gap-4 z-10 items-center justify-center">
                   <p className="font-league-spartan text-lg text-left w-full pl-2">
                     Recipe details:
                   </p>
-                  <div className="flex flex-row sm:flex-col gap-2 w-full">
-                    <Button
-                      className="font-league-spartan text-medium sm:text-lg text-white w-full"
-                      onPress={() => setEditorState("recipeIngredient")}
-                      size="lg"
-                      color="primary"
-                      radius="sm"
-                      endContent={<EditIcon fill="white" />}
-                    >
-                      Edit ingredients
-                    </Button>
-                    <Button
-                      className="font-league-spartan text-medium sm:text-lg text-white w-full"
-                      onPress={() => setEditorState("recipeInstructions")}
-                      size="lg"
-                      color="primary"
-                      radius="sm"
-                      endContent={<EditIcon fill="white" />}
-                    >
-                      Edit steps
-                    </Button>
-                  </div>
+                  <Button
+                    className="font-league-spartan text-lg text-white w-full px-4"
+                    onPress={() => setEditorState("recipeIngredient")}
+                    size="lg"
+                    color="primary"
+                    radius="sm"
+                    variant="solid"
+                    endContent={<EditIcon fill="white" />}
+                  >
+                    Add ingredients
+                  </Button>
+                  <Button
+                    className="font-league-spartan text-lg text-white w-full px-4"
+                    onPress={() => setEditorState("recipeInstructions")}
+                    size="lg"
+                    color="primary"
+                    radius="sm"
+                    variant="solid"
+                    endContent={<EditIcon fill="white" />}
+                  >
+                    Add steps
+                  </Button>
                 </div>
-                <Button
-                  className="sm:hidden font-league-spartan text-lg text-white w-full px-4"
-                  onPress={() => setSidebarShown(!sidebarShown)}
-                  endContent={<MaximizeIcon stroke="white" />}
-                  radius="sm"
-                  variant="flat"
-                  size="md"
-                >
-                  View recipe
-                </Button>
-                <Button
-                  className="font-league-spartan text-lg text-white w-full px-4"
-                  onPress={() => handleSaveRecipe()}
-                  size="lg"
-                  color="success"
-                  radius="sm"
-                  endContent={<SaveIcon stroke="rgb(34 197 94)" fill="white" />}
-                >
-                  Save recipe
-                </Button>
+                <div className="mt-auto flex w-full justify-between between gap-1">
+                  <Button
+                    className="font-league-spartan text-lg text-white px-4 2xl:w-1/2"
+                    onPress={() => handleSaveRecipe()}
+                    size="lg"
+                    color="success"
+                    radius="sm"
+                    variant="solid"
+                    endContent={
+                      <SaveIcon stroke="rgb(34 197 94)" fill="white" />
+                    }
+                  >
+                    Save recipe
+                  </Button>
+                  <Button
+                    className="font-league-spartan text-lg px-4 w-2/8 2xl:w-1/2"
+                    onPress={() => {
+                      router.push(`/myrecipes`);
+                    }}
+                    size="lg"
+                    color="danger"
+                    radius="sm"
+                    variant="flat"
+                    endContent={<CloseCircleIcon stroke="red" />}
+                  >
+                    Discard
+                  </Button>
+                </div>
               </>
             )}
           </SideBar>
@@ -213,7 +261,7 @@ export default function ImportRecipe() {
             ) : (
               <Button
                 onPress={() => setSidebarShown(!sidebarShown)}
-                className="text-base z-10"
+                className="text-base"
                 color="primary"
                 endContent={<ArrowRightIcon stroke="white" fill="white" />}
                 radius="none"

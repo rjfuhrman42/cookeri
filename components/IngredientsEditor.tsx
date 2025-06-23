@@ -31,7 +31,7 @@ export default function IngredientsEditor({
       </div>
       <Button
         className="hidden sm:flex absolute top-5 right-5 text-lg text-white px-4"
-        onClick={() => onCancel()}
+        onPress={() => onCancel()}
         size="lg"
         color="danger"
         radius="sm"
@@ -50,7 +50,7 @@ export default function IngredientsEditor({
         ></textarea>
         <Button
           className="text-lg text-white px-4 w-full mb-4"
-          onClick={() => {
+          onPress={() => {
             const data = document.querySelector("textarea")?.value;
             if (!data) return;
             saveRecipeData(data);
@@ -68,7 +68,7 @@ export default function IngredientsEditor({
         </Button>
         <Button
           className="sm:hidden text-lg text-white px-4"
-          onClick={() => onCancel()}
+          onPress={() => onCancel()}
           size="lg"
           color="danger"
           radius="sm"
